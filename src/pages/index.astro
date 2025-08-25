@@ -1,16 +1,92 @@
 ---
-
+// Importar CSS global con Tailwind
+import '../styles/globals.css';
 ---
 
-<html lang="en">
+<html lang="es">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>SJT Contratistas - Construcción y Infraestructura</title>
+		
+		<!-- Fuentes de Google Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&display=swap" rel="stylesheet">
 	</head>
-	<body>
-		<h1>Astro</h1>
+	<body class="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
+		<!-- Usar clases de Tailwind directamente -->
+		<div class="container mx-auto px-4 py-16">
+			<div class="text-center">
+				<!-- Tailwind classes para el heading -->
+				<h1 class="text-4xl md:text-6xl font-heading font-bold text-gray-900 mb-6">
+					SJT Contratistas
+				</h1>
+				
+				<!-- Tailwind classes para el subtítulo -->
+				<p class="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
+					Construyendo el futuro con <span class="text-primary-600 font-semibold">calidad</span>, 
+					<span class="text-accent-500 font-semibold">experiencia</span> y 
+					<span class="text-primary-600 font-semibold">compromiso</span>
+				</p>
+				
+				<!-- Botones con clases de Tailwind -->
+				<div class="flex flex-col sm:flex-row gap-4 justify-center">
+					<a href="/services" 
+					   class="px-8 py-3 bg-primary-600 text-white font-semibold rounded-lg 
+					          hover:bg-primary-700 transition-colors duration-200 
+					          shadow-lg hover:shadow-xl text-2xl">
+						Nuestros Servicios
+					</a>
+					
+					<a href="/projects" 
+					   class="px-8 py-3 border-2 border-primary-600 text-primary-600 font-semibold 
+					          rounded-lg hover:bg-primary-600 hover:text-white 
+					          transition-colors duration-200">
+						Ver Proyectos
+					</a>
+				</div>
+				
+				<!-- Card con shadow y efectos -->
+				<div class="mt-16 bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto">
+					<div class="grid md:grid-cols-3 gap-8">
+						<div class="text-center">
+							<div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+								<span class="text-2xl">🏗️</span>
+							</div>
+							<h3 class="text-lg font-heading font-semibold text-gray-900 mb-2">Construcción</h3>
+							<p class="text-gray-600">Proyectos integrales de construcción</p>
+						</div>
+						
+						<div class="text-center">
+							<div class="w-16 h-16 bg-accent-100 rounded-full flex items-center justify-center mx-auto mb-4">
+								<span class="text-2xl">🛣️</span>
+							</div>
+							<h3 class="text-lg font-heading font-semibold text-gray-900 mb-2">Infraestructura</h3>
+							<p class="text-gray-600">Desarrollo de infraestructura urbana</p>
+						</div>
+						
+						<div class="text-center">
+							<div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+								<span class="text-2xl">🔧</span>
+							</div>
+							<h3 class="text-lg font-heading font-semibold text-gray-900 mb-2">Mantenimiento</h3>
+							<p class="text-gray-600">Servicios especializados de mantenimiento</p>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Link de prueba con estilos -->
+				<div class="mt-12">
+					<a href="/test-strapi" 
+					   class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-primary-600 
+					          transition-colors duration-200">
+						🔌 Probar conexión Strapi Cloud
+					</a>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>
