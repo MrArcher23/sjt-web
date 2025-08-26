@@ -1,0 +1,221 @@
+---
+// Componente individual para mostrar un paso del proceso
+export interface Props {
+  title: string;
+  description: string;
+  svgIcon: string;
+  backgroundColor?: "yellow" | "blue" | "green" | "purple" | "orange";
+  showArrow?: boolean;
+  animationDelay?: number;
+}
+
+// Extraer props con valores por defecto
+const {
+  title,
+  description,
+  svgIcon,
+  backgroundColor = "yellow",
+  showArrow = false,
+  animationDelay = 0,
+} = Astro.props;
+
+// Definir clases de fondo según el color elegido (Mobile First)
+const backgroundClasses = {
+  yellow: "bg-yellow-400",
+  blue: "bg-blue-400",
+  green: "bg-green-400",
+  purple: "bg-purple-400",
+  orange: "bg-orange-400",
+};
+
+// Calcular delay de animación
+const animationDelayValue = `${animationDelay}s`;
+---
+
+<div
+  class="step-container flex flex-col items-center text-center space-y-4 sm:space-y-6"
+>
+  <!-- Icono SVG con círculo de fondo -->
+  <div
+    class={`step-icon relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 ${backgroundClasses[backgroundColor]} 
+           rounded-full flex items-center justify-center shadow-lg transform transition-all duration-300
+           hover:scale-105 hover:shadow-xl`}
+    style={`animation-delay: ${animationDelayValue}`}
+  >
+    <!-- SVG dinámico desde Strapi -->
+    <div
+      class="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gray-900"
+      set:html={svgIcon}
+    />
+  </div>
+
+  <!-- Título del paso -->
+  <h3
+    class="step-title text-lg sm:text-xl md:text-2xl font-bold text-gray-900 leading-tight max-w-xs sm:max-w-sm"
+    style={`animation-delay: ${animationDelayValue + 0.1}s`}
+  >
+    {title}
+  </h3>
+
+  <!-- Descripción del paso -->
+  <p
+    class="step-description text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed max-w-xs sm:max-w-sm lg:max-w-md"
+    style={`animation-delay: ${animationDelayValue + 0.2}s`}
+  >
+    {description}
+  </p>
+
+  <!-- Flecha opcional (solo se muestra si showArrow es true) -->
+  {
+    showArrow && (
+      <div
+        class="step-arrow hidden lg:block absolute -right-8 xl:-right-12 top-1/2 transform -translate-y-1/2"
+        style={`animation-delay: ${animationDelayValue + 0.3}s`}
+      >
+        <svg
+          class="w-6 h-6 xl:w-8 xl:h-8 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  /* Variables CSS para personalización */
+  :root {
+    --step-animation-duration: 0.8s;
+    --step-animation-timing: ease-out;
+  }
+
+  /* Estado inicial - elementos ocultos y listos para animar */
+  .step-icon,
+  .step-title,
+  .step-description,
+  .step-arrow {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity var(--step-animation-duration) var(--step-animation-timing),
+      transform var(--step-animation-duration) var(--step-animation-timing);
+  }
+
+  /* Animaciones que se activan SOLO cuando el contenedor tiene clase 'animate' */
+  .step-container.animate .step-icon,
+  .step-container.animate .step-title,
+  .step-container.animate .step-description,
+  .step-container.animate .step-arrow {
+    animation: stepFadeInUp var(--step-animation-duration)
+      var(--step-animation-timing) forwards;
+  }
+
+  /* Keyframe para la animación de fade in up */
+  @keyframes stepFadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Hover especial para el icono */
+  .step-icon:hover {
+    animation-play-state: paused;
+  }
+
+  /* Responsive: En móviles, animaciones más rápidas */
+  @media (max-width: 640px) {
+    :root {
+      --step-animation-duration: 0.6s;
+    }
+
+    .step-icon,
+    .step-title,
+    .step-description,
+    .step-arrow {
+      transform: translateY(15px);
+    }
+  }
+
+  /* Respeto por prefer-reduced-motion (accesibilidad) */
+  @media (prefers-reduced-motion: reduce) {
+    .step-container.animate .step-icon,
+    .step-container.animate .step-title,
+    .step-container.animate .step-description,
+    .step-container.animate .step-arrow {
+      animation: stepFadeIn var(--step-animation-duration)
+        var(--step-animation-timing) forwards;
+      transform: none;
+    }
+
+    /* Para usuarios con reduced-motion, hacer visible inmediatamente */
+    .step-container .step-icon,
+    .step-container .step-title,
+    .step-container .step-description,
+    .step-container .step-arrow {
+      opacity: 1;
+      transform: none;
+    }
+
+    @keyframes stepFadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  }
+
+  /* Modo alto contraste - sin animaciones */
+  @media (prefers-contrast: high) {
+    .step-container .step-icon,
+    .step-container .step-title,
+    .step-container .step-description,
+    .step-container .step-arrow {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Asegurar que el SVG se ajuste correctamente */
+  .step-icon [data-icon] {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Estilos para SVG dinámico */
+  .step-icon svg {
+    width: 100%;
+    height: 100%;
+    max-width: 3rem;
+    max-height: 3rem;
+  }
+
+  @media (min-width: 640px) {
+    .step-icon svg {
+      max-width: 2.5rem;
+      max-height: 2.5rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .step-icon svg {
+      max-width: 3rem;
+      max-height: 3rem;
+    }
+  }
+</style>

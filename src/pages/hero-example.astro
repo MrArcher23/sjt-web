@@ -1,0 +1,111 @@
+---
+// Ejemplo de diferentes usos del componente Hero
+import '../styles/globals.css';
+import Hero from '../components/ui/Hero.astro';
+---
+
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>Ejemplos de Hero - SJT Contratistas</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&display=swap" rel="stylesheet">
+	</head>
+	<body class="bg-white">
+
+		<!-- Hero 1: Con color primario -->
+		<Hero
+			title="Construcción de calidad"
+			subtitle="Transformamos sus ideas en realidad con la mejor calidad y experiencia en el mercado mexicano."
+			buttonText="Ver proyectos"
+			buttonLink="/projects"
+			backgroundColor="primary"
+		/>
+
+		<!-- Hero 2: Con color azul y rating -->
+		<Hero
+			title="Infraestructura confiable"
+			subtitle="Desarrollamos proyectos de infraestructura que conectan comunidades y generan progreso."
+			buttonText="Conocer más"
+			buttonLink="/services"
+			backgroundColor="blue"
+			rating={{
+				stars: 5,
+				count: "1500+"
+			}}
+		>
+			<div slot="additional-content">
+				<p class="text-blue-200 mb-2">🏆 20+ años de experiencia</p>
+				<p class="text-blue-200">🚧 500+ proyectos completados</p>
+			</div>
+		</Hero>
+
+		<!-- Hero 3: Con color accent e imagen -->
+		<Hero
+			title="Mantenimiento especializado"
+			subtitle="Servicios de mantenimiento preventivo y correctivo para mantener sus instalaciones en óptimas condiciones."
+			buttonText="Solicitar cotización"
+			buttonLink="/contact"
+			backgroundColor="accent"
+			image={{
+				src: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+				alt: "Trabajador de construcción con casco y herramientas"
+			}}
+		>
+			<div slot="right-content">
+				<div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+					<h3 class="text-2xl font-bold mb-4">Servicios 24/7</h3>
+					<p class="text-orange-100 mb-4">Disponibles para emergencias</p>
+					<button class="bg-white text-accent-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+						Llamar ahora
+					</button>
+				</div>
+			</div>
+		</Hero>
+
+		<!-- Hero 4: Minimalista sin extras -->
+		<Hero
+			title="¿Necesita una cotización?"
+			subtitle="Contáctenos hoy mismo para recibir una propuesta personalizada sin compromiso."
+			buttonText="Obtener cotización gratuita"
+			buttonLink="/quote"
+			backgroundColor="primary"
+		>
+			<div slot="bottom-content">
+				<div class="bg-white/10 rounded-xl p-8 max-w-4xl mx-auto">
+					<div class="grid md:grid-cols-3 gap-8 text-center">
+						<div>
+							<div class="text-3xl font-bold mb-2">20+</div>
+							<p class="text-blue-200">Años de experiencia</p>
+						</div>
+						<div>
+							<div class="text-3xl font-bold mb-2">500+</div>
+							<p class="text-blue-200">Proyectos completados</p>
+						</div>
+						<div>
+							<div class="text-3xl font-bold mb-2">100%</div>
+							<p class="text-blue-200">Clientes satisfechos</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</Hero>
+
+		<!-- Navegación -->
+		<footer class="bg-gray-800 text-white py-8">
+			<div class="container mx-auto px-4 text-center">
+				<div class="flex justify-center gap-6">
+					<a href="/" class="text-gray-400 hover:text-white transition-colors">
+						← Volver al inicio
+					</a>
+					<a href="/test-strapi" class="text-gray-400 hover:text-white transition-colors">
+						🔌 Test Strapi
+					</a>
+				</div>
+			</div>
+		</footer>
+
+	</body>
+</html>

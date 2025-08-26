@@ -1,0 +1,166 @@
+---
+// Ejemplo de diferentes usos del componente Header
+import '../styles/globals.css';
+import Header from '../components/layout/Header.astro';
+---
+
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>Ejemplos de Header - SJT Contratistas</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&display=swap" rel="stylesheet">
+	</head>
+	<body class="bg-gray-100">
+
+		<!-- Header 1: Versión completa con navegación -->
+		<Header 
+			companyName="SJT Contratistas"
+			buttonText="Obtener cotización"
+			buttonLink="/contact"
+			phoneNumber="(555) 123-4567"
+			backgroundColor="primary"
+		>
+			<!-- Tagline -->
+			<span slot="tagline">Construcción e Infraestructura</span>
+			
+			<!-- Navegación Desktop -->
+			<div slot="navigation" class="flex items-center gap-6">
+				<a href="/" class="hover:text-yellow-400 transition-colors font-medium">Inicio</a>
+				<a href="/about" class="hover:text-yellow-400 transition-colors font-medium">Nosotros</a>
+				<a href="/services" class="hover:text-yellow-400 transition-colors font-medium">Servicios</a>
+				<a href="/projects" class="hover:text-yellow-400 transition-colors font-medium">Proyectos</a>
+				<a href="/blog" class="hover:text-yellow-400 transition-colors font-medium">Blog</a>
+			</div>
+			
+			<!-- Navegación Mobile -->
+			<div slot="mobile-navigation" class="space-y-3">
+				<a href="/" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Inicio</a>
+				<a href="/about" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Nosotros</a>
+				<a href="/services" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Servicios</a>
+				<a href="/projects" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Proyectos</a>
+				<a href="/blog" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Blog</a>
+			</div>
+
+			<!-- Contenido extra en mobile -->
+			<div slot="mobile-extra" class="border-t border-white/20 pt-4">
+				<div class="text-center">
+					<p class="text-sm opacity-90 mb-2">¿Necesita ayuda?</p>
+					<a href="tel:5551234567" class="text-yellow-400 font-semibold">(555) 123-4567</a>
+				</div>
+			</div>
+		</Header>
+
+		<!-- Contenido de ejemplo -->
+		<main class="py-8">
+			<div class="container mx-auto px-4">
+				<h1 class="text-3xl font-bold mb-8">Ejemplos de Header Component</h1>
+				
+				<div class="grid gap-8">
+					<div class="bg-white p-6 rounded-lg shadow">
+						<h2 class="text-xl font-semibold mb-4">Header 1: Completo con navegación</h2>
+						<p class="text-gray-600">
+							Header completo con logo, navegación, teléfono y botón de contacto. 
+							Incluye menú hamburguesa responsive y slots personalizables.
+						</p>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<!-- Espaciador para demostrar sticky -->
+		<div class="h-screen bg-gradient-to-br from-blue-100 to-gray-200 flex items-center justify-center">
+			<div class="text-center">
+				<h2 class="text-2xl font-bold mb-4">Scroll para probar el Header sticky</h2>
+				<p class="text-gray-600">El header permanece fijo en la parte superior</p>
+			</div>
+		</div>
+
+	</body>
+</html>
+
+<!-- Segundo ejemplo con diferente estilo -->
+<div class="mt-8">
+	<Header 
+		companyName="Plumbing Pro"
+		buttonText="Contact"
+		buttonLink="/contact"
+		phoneNumber="(505) 555-0123"
+		backgroundColor="blue"
+	>
+		<span slot="tagline">Professional Services</span>
+		
+		<div slot="navigation" class="flex items-center gap-6">
+			<a href="/" class="hover:text-yellow-400 transition-colors">Home</a>
+			<a href="/about" class="hover:text-yellow-400 transition-colors">About</a>
+			<a href="/services" class="hover:text-yellow-400 transition-colors">Services</a>
+			<a href="/blog" class="hover:text-yellow-400 transition-colors">Blog</a>
+		</div>
+		
+		<div slot="mobile-navigation" class="space-y-3">
+			<a href="/" class="block py-2 px-4 hover:bg-white/10 rounded-lg">Home</a>
+			<a href="/about" class="block py-2 px-4 hover:bg-white/10 rounded-lg">About</a>
+			<a href="/services" class="block py-2 px-4 hover:bg-white/10 rounded-lg">Services</a>
+			<a href="/blog" class="block py-2 px-4 hover:bg-white/10 rounded-lg">Blog</a>
+		</div>
+	</Header>
+
+	<div class="py-16 bg-white">
+		<div class="container mx-auto px-4 text-center">
+			<h2 class="text-2xl font-bold mb-4">Header 2: Estilo azul</h2>
+			<p class="text-gray-600">Variación con fondo azul, similar al ejemplo de las imágenes</p>
+		</div>
+	</div>
+</div>
+
+<!-- Tercer ejemplo: Header blanco -->
+<div class="mt-8">
+	<Header 
+		companyName="SJT Contratistas"
+		buttonText="Contacto"
+		phoneNumber="(555) 987-6543"
+		backgroundColor="white"
+	>
+		<span slot="tagline" class="text-gray-600">Soluciones de Construcción</span>
+		
+		<div slot="navigation" class="flex items-center gap-6">
+			<a href="/" class="hover:text-primary-600 transition-colors">Inicio</a>
+			<a href="/servicios" class="hover:text-primary-600 transition-colors">Servicios</a>
+			<a href="/proyectos" class="hover:text-primary-600 transition-colors">Proyectos</a>
+			<a href="/contacto" class="hover:text-primary-600 transition-colors">Contacto</a>
+		</div>
+		
+		<div slot="mobile-navigation" class="space-y-3">
+			<a href="/" class="block py-2 px-4 hover:bg-gray-100 rounded-lg text-gray-900">Inicio</a>
+			<a href="/servicios" class="block py-2 px-4 hover:bg-gray-100 rounded-lg text-gray-900">Servicios</a>
+			<a href="/proyectos" class="block py-2 px-4 hover:bg-gray-100 rounded-lg text-gray-900">Proyectos</a>
+			<a href="/contacto" class="block py-2 px-4 hover:bg-gray-100 rounded-lg text-gray-900">Contacto</a>
+		</div>
+	</Header>
+
+	<div class="py-16 bg-gray-50">
+		<div class="container mx-auto px-4 text-center">
+			<h2 class="text-2xl font-bold mb-4">Header 3: Fondo blanco con sombra</h2>
+			<p class="text-gray-600">Perfecto para sitios con fondo claro</p>
+		</div>
+	</div>
+</div>
+
+<!-- Navegación de regreso -->
+<footer class="bg-gray-800 text-white py-8 mt-16">
+	<div class="container mx-auto px-4 text-center">
+		<div class="flex justify-center gap-6">
+			<a href="/" class="text-gray-400 hover:text-white transition-colors">
+				← Volver al inicio
+			</a>
+			<a href="/hero-example" class="text-gray-400 hover:text-white transition-colors">
+				Ver ejemplos Hero
+			</a>
+			<a href="/test-strapi" class="text-gray-400 hover:text-white transition-colors">
+				🔌 Test Strapi
+			</a>
+		</div>
+	</div>
+</footer>

@@ -1,0 +1,203 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  keywords?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = "Soluciones profesionales de construcción y plomería con más de 20 años de experiencia.",
+  keywords = "construcción, plomería, servicios profesionales, México",
+  ogImage = "/images/og-default.jpg",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={ogImage} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Title -->
+    <title>{title}</title>
+
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Google Fonts - Inter for modern UI -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS CDN (development) - Replace with build version in production -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Config -->
+    <script is:inline>
+      if (typeof tailwind !== "undefined") {
+        tailwind.config = {
+          theme: {
+            extend: {
+              fontFamily: {
+                sans: ["Inter", "system-ui", "sans-serif"],
+                heading: ["Inter", "system-ui", "sans-serif"],
+              },
+              colors: {
+                primary: {
+                  50: "#eff6ff",
+                  100: "#dbeafe",
+                  200: "#bfdbfe",
+                  300: "#93c5fd",
+                  400: "#60a5fa",
+                  500: "#3b82f6",
+                  600: "#2563eb",
+                  700: "#1d4ed8",
+                  800: "#1e40af",
+                  900: "#1e3a8a",
+                  950: "#172554",
+                },
+                accent: {
+                  50: "#fefce8",
+                  100: "#fef9c3",
+                  200: "#fef08a",
+                  300: "#fde047",
+                  400: "#facc15",
+                  500: "#eab308",
+                  600: "#ca8a04",
+                  700: "#a16207",
+                  800: "#854d0e",
+                  900: "#713f12",
+                  950: "#422006",
+                },
+              },
+            },
+          },
+        };
+      }
+    </script>
+  </head>
+
+  <body class="font-sans antialiased bg-white text-gray-900">
+    <!-- Slot para el contenido principal -->
+    <slot />
+
+    <!-- Scripts adicionales -->
+    <script is:inline>
+      // Smooth scrolling para enlaces internos
+      document.addEventListener("DOMContentLoaded", function () {
+        const links = document.querySelectorAll('a[href^="#"]');
+        links.forEach((link) => {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            const targetId = link.getAttribute("href");
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+              targetElement.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* Reset y estilos globales */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    line-height: 1.6;
+  }
+
+  /* Tailwind utilities personalizadas */
+  .container {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  /* Animaciones suaves para todos los elementos */
+  * {
+    transition-property:
+      color, background-color, border-color, text-decoration-color, fill,
+      stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+  /* Focus states accesibles */
+  *:focus-visible {
+    outline: 2px solid theme("colors.primary.500");
+    outline-offset: 2px;
+  }
+
+  /* Estilos para elementos de formulario */
+  input,
+  textarea,
+  select,
+  button {
+    transition-duration: 200ms;
+  }
+
+  /* Mejoras de tipografía */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  /* Responsive images por defecto */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+</style>

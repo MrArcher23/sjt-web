@@ -1,21 +1,37 @@
 ---
 import strapi from '../utils/strapi';
-import type { StrapiEntity, Service, Company } from '../types/strapi';
+import type { StrapiEntity, Service, Company, Article } from '../types/strapi';
 
 let company: Company | null = null;
 let services: StrapiEntity<Service>[] = [];
+let articles: StrapiEntity<Article>[] = [];
 let error: string | null = null;
 
 try {
-  // Probar conexión con Strapi Cloud
-  const companyResponse = await strapi.getCompany();
-  company = companyResponse.data;
+  // Probar conexión con Strapi Cloud usando el cliente arreglado
+  console.log('🔍 Testing Strapi connection...');
+  console.log('📍 STRAPI_URL:', import.meta.env.STRAPI_URL);
+  console.log('🔑 Token presente:', import.meta.env.STRAPI_API_TOKEN ? 'Sí' : 'No');
   
-  const servicesResponse = await strapi.getServices();
-  services = servicesResponse.data;
+  // Usar el cliente de Strapi con URL limpia
+  const articlesResponse = await strapi.getArticles();
+  console.log('🔥 RAW Response:', JSON.stringify(articlesResponse, null, 2));
+  
+  articles = articlesResponse.data || [];
+  console.log('✅ Articles found:', articles.length);
+  
+  // Debug de cada artículo individualmente
+  if (articles.length > 0) {
+    articles.forEach((article, index) => {
+      console.log(`📰 Article ${index}:`, JSON.stringify(article, null, 2));
+      console.log(`   - Has attributes?`, !!article?.attributes);
+      console.log(`   - Title?`, article?.attributes?.title);
+    });
+  }
+  
 } catch (e) {
   error = e instanceof Error ? e.message : 'Error desconocido';
-  console.error('Error connecting to Strapi:', e);
+  console.error('❌ Error connecting to Strapi:', e);
 }
 ---
 
@@ -49,7 +65,69 @@ try {
       </div>
       
       <div class="grid gap-6">
-        <!-- Información de la empresa -->
+        <!-- Artículos (Content Type existente) -->
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h2 class="text-xl font-semibold mb-4">📄 Debug Artículos ({articles.length})</h2>
+          
+          {articles.length > 0 ? (
+            <div class="grid gap-4">
+              <div class="bg-green-100 p-4 rounded-lg">
+                <h3 class="font-semibold text-green-800 mb-2">✅ ¡Conexión con Strapi exitosa!</h3>
+                <p class="text-green-700">Se encontraron {articles.length} artículo(s)</p>
+                <p class="text-sm text-green-600 mt-1">Revisa la consola del navegador para ver la estructura de datos</p>
+              </div>
+              
+              <div class="bg-blue-50 p-4 rounded-lg">
+                <h4 class="font-semibold text-blue-800 mb-2">🔍 Datos RAW (para debug):</h4>
+                <pre class="text-xs bg-white p-2 rounded border overflow-auto max-h-40 text-gray-700">
+{JSON.stringify(articles, null, 2)}
+                </pre>
+              </div>
+              
+              {articles.map((article, index) => (
+                <div class="border p-4 rounded-lg bg-green-50" key={index}>
+                  <div class="flex items-center gap-2 mb-3">
+                    <span class="text-2xl">✅</span>
+                    <h4 class="font-semibold text-green-800">¡Datos encontrados!</h4>
+                  </div>
+                  
+                  <div class="bg-white p-3 rounded border">
+                    <h5 class="font-bold text-lg text-gray-900 mb-2">
+                      📰 {article?.title || article?.attributes?.title || 'Sin título'}
+                    </h5>
+                    
+                    <div class="text-sm space-y-2 text-gray-700">
+                      <p><strong>📝 Descripción:</strong> {article?.description || article?.attributes?.description || 'Sin descripción'}</p>
+                      <p><strong>🔗 Slug:</strong> {article?.slug || article?.attributes?.slug || 'Sin slug'}</p>
+                      <div class="flex gap-2 mt-3">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                          🆔 ID: {article?.id}
+                        </span>
+                        {(article?.slug || article?.attributes?.slug) && (
+                          <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">
+                            🌐 {article?.slug || article?.attributes?.slug}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div class="bg-red-100 p-4 rounded-lg">
+              <h3 class="font-semibold text-red-800 mb-2">❌ No se encontraron artículos</h3>
+              <p class="text-red-700">Posibles causas:</p>
+              <ul class="list-disc list-inside text-red-600 text-sm mt-2">
+                <li>No hay artículos con status "Published"</li>
+                <li>Permisos de API no configurados</li>
+                <li>Token de API incorrecto</li>
+              </ul>
+            </div>
+          )}
+        </div>
+
+        <!-- Información de la empresa (opcional) -->
         <div class="bg-white p-6 rounded-lg shadow">
           <h2 class="text-xl font-semibold mb-4">📋 Información de la Empresa</h2>
           {company ? (
@@ -60,11 +138,11 @@ try {
               <p><strong>Empleados:</strong> {company.employeeCount || 'No configurado'}</p>
             </div>
           ) : (
-            <p class="text-gray-500">No hay información de empresa configurada en Strapi</p>
+            <p class="text-gray-500">No hay Content Type 'Company' en Strapi (normal)</p>
           )}
         </div>
         
-        <!-- Servicios -->
+        <!-- Servicios (opcional) -->
         <div class="bg-white p-6 rounded-lg shadow">
           <h2 class="text-xl font-semibold mb-4">🛠️ Servicios ({services.length})</h2>
           {services.length > 0 ? (
@@ -80,7 +158,7 @@ try {
               ))}
             </div>
           ) : (
-            <p class="text-gray-500">No hay servicios configurados en Strapi</p>
+            <p class="text-gray-500">No hay Content Type 'Services' en Strapi (normal)</p>
           )}
         </div>
       </div>
@@ -91,6 +169,12 @@ try {
           Tu proyecto frontend está conectado correctamente con Strapi Cloud. 
           Ya puedes comenzar a crear contenido y desarrollar tu sitio web.
         </p>
+        <div class="mt-4 text-sm">
+          <p><strong>🔧 Info de Debug:</strong></p>
+          <p>• URL: {import.meta.env.STRAPI_URL}</p>
+          <p>• Token configurado: {import.meta.env.STRAPI_API_TOKEN ? 'Sí' : 'No'}</p>
+          <p>• Revisa la consola del navegador para más detalles</p>
+        </div>
       </div>
     </div>
   )}
