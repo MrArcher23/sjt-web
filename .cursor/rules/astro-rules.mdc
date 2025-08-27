@@ -1,30 +1,33 @@
 ---
 alwaysApply: true
 ---
+
 // src/components/StrapiImage.astro
 export interface Props {
-  image: StrapiImage;
-  width?: number;
-  height?: number;
-  class?: string;
+image: StrapiImage;
+width?: number;
+height?: number;
+class?: string;
 }
 
 const { image, width, height, class: className } = Astro.props;
 const imageUrl = image.data.attributes.url;
-const optimizedUrl = width || height 
-  ? `${imageUrl}?w=${width}&h=${height}&fit=cover`
-  : imageUrl;
+const optimizedUrl = width || height
+? `${imageUrl}?w=${width}&h=${height}&fit=cover`
+: imageUrl;
+
 ---
 
-<img 
-  src={optimizedUrl}
-  alt={image.data.attributes.alternativeText}
-  width={width || image.data.attributes.width}
-  height={height || image.data.attributes.height}
-  class={className}
-  loading="lazy"
+<img
+src={optimizedUrl}
+alt={image.data.attributes.alternativeText}
+width={width || image.data.attributes.width}
+height={height || image.data.attributes.height}
+class={className}
+loading="lazy"
 />
-```
+
+````
 
 #### Static Generation Strategy
 - **Pre-fetch critical content** during build time
@@ -52,14 +55,16 @@ export function validateStrapiContent<T>(
   }
   return content;
 }
-```
+````
 
 ### Multi-Environment Workflow
 
 #### Environment-Specific Configurations
+
 - **Separate Strapi Cloud projects** for development, staging, and production
 - **Use different API tokens** for each environment
 - **Implement environment-specific content strategies**:
+
   ```typescript
   // src/lib/config.ts
   const config = {
@@ -70,13 +75,15 @@ export function validateStrapiContent<T>(
     production: {
       strapiUrl: import.meta.env.PROD_STRAPI_API_URL,
       strapiToken: import.meta.env.PROD_STRAPI_API_TOKEN,
-    }
+    },
   };
 
-  export const currentConfig = config[import.meta.env.MODE] || config.production;
+  export const currentConfig =
+    config[import.meta.env.MODE] || config.production;
   ```
 
 #### Deployment Strategy
+
 - **Deploy Strapi changes first**, then frontend
 - **Use Strapi Cloud's auto-deployment** features with Git integration
 - **Implement proper backup strategies** for content
@@ -85,31 +92,42 @@ export function validateStrapiContent<T>(
 ### Component Development with Strapi
 
 #### Reusable Strapi Components
+
 ```astro
 ---
 // src/components/StrapiHero.astro
-import type { Hero } from '../types/strapi';
+import type { Hero } from "../types/strapi";
 
 export interface Props {
   hero: Hero;
 }
 
 const { hero } = Astro.props;
-const { title, description, buttonText, buttonUrl, backgroundImage } = hero.attributes;
+const { title, description, buttonText, buttonUrl, backgroundImage } =
+  hero.attributes;
 ---
 
-<section class="hero" style={backgroundImage && `background-image: url(${backgroundImage.data.attributes.url})`}>
+<section
+  class="hero"
+  style={backgroundImage &&
+    `background-image: url(${backgroundImage.data.attributes.url})`}
+>
   <div class="hero-content">
     <h1>{title}</h1>
     <p>{description}</p>
-    {buttonText && buttonUrl && (
-      <a href={buttonUrl} class="hero-button">{buttonText}</a>
-    )}
+    {
+      buttonText && buttonUrl && (
+        <a href={buttonUrl} class="hero-button">
+          {buttonText}
+        </a>
+      )
+    }
   </div>
 </section>
 ```
 
 #### Dynamic Content Loading
+
 - **Use client-side hydration sparingly** for Strapi content
 - **Prefer static generation** over client-side fetching
 - **Implement loading states** for dynamic content
@@ -117,6 +135,7 @@ const { title, description, buttonText, buttonUrl, backgroundImage } = hero.attr
 ### Error Handling and Monitoring
 
 #### Robust Error Handling
+
 ```typescript
 // src/lib/error-handling.ts
 export class StrapiError extends Error {
@@ -126,7 +145,7 @@ export class StrapiError extends Error {
     public endpoint?: string
   ) {
     super(message);
-    this.name = 'StrapiError';
+    this.name = "StrapiError";
   }
 }
 
@@ -148,7 +167,19 @@ export async function safeStrapiCall<T>(
 }
 ```
 
+🎉 LECCIÓN APRENDIDA:
+Para futuros Content-Types:
+❌ Evitar endpoints personalizados en Strapi Cloud
+✅ Usar siempre filtros estándar que son más confiables
+✅ Mantener rutas simples con factories.createCoreRouter()
+El patrón que SIEMPRE funciona:
+
+- Remove custom /section-infos/active endpoint ❌
+- Usar solo rutas estándar de Strapi ✅
+- Mismo patrón que funcionó para Hero y Steps ✅
+
 #### Content Fallbacks
+
 - **Always provide fallback content** for failed API calls
 - **Implement graceful degradation** for missing Strapi data
 - **Use local content as backup** when possible
@@ -156,6 +187,7 @@ export async function safeStrapiCall<T>(
 ## Astro-Specific Best Practices (Enhanced)
 
 ### Component Development
+
 - Create .astro files for Astro components with Strapi integration
 - Use framework-specific components (React, Vue, Svelte) when client-side interactivity is needed with Strapi data
 - Implement proper component composition and reusability for Strapi content
@@ -163,18 +195,21 @@ export async function safeStrapiCall<T>(
 - Leverage Astro's built-in components like <Markdown /> for Strapi rich text content
 
 ### Routing and Pages
+
 - Utilize Astro's file-based routing system in the src/pages/ directory
 - Implement dynamic routes using [...slug].astro syntax for Strapi content
 - Use getStaticPaths() for generating static pages with Strapi data
 - Implement proper 404 handling with a 404.astro page that may fetch from Strapi
 
 ### Content Management
+
 - Use Markdown (.md) or MDX (.mdx) files for static content
 - Use Strapi for dynamic, manageable content
 - Leverage Astro's built-in support for frontmatter in Markdown files
 - Implement content collections for organized local content management alongside Strapi
 
 ### Styling with Tailwind CSS
+
 - Integrate Tailwind CSS with Astro @astrojs/tailwind
 - Use Tailwind utility classes extensively in your Astro components
 - Leverage Tailwind's responsive design utilities (sm:, md:, lg:, etc.)
@@ -183,6 +218,7 @@ export async function safeStrapiCall<T>(
 - Never use the @apply directive
 
 ### Build and Deployment
+
 - Optimize the build process using Astro's build command
 - Implement proper environment variable handling for different environments
 - Use static hosting platforms compatible with Astro (Netlify, Vercel, etc.)
@@ -190,18 +226,21 @@ export async function safeStrapiCall<T>(
 - Coordinate deployments between Strapi Cloud and Astro hosting
 
 ### Testing
+
 - Implement unit tests for utility functions and Strapi API helpers
 - Use end-to-end testing tools like Cypress for testing the built site with Strapi data
 - Test API integration thoroughly across different environments
 - Implement visual regression testing if applicable
 
 ### SEO and Meta Tags with Strapi
+
 - Use Astro's <head> tag for adding meta information from Strapi
 - Implement canonical URLs for proper SEO
 - Use Strapi content for dynamic SEO data
 - Create SEO component pattern for reusable SEO setups with Strapi data
 
 ### Key Conventions
+
 1. Follow Astro's Style Guide for consistent code formatting
 2. Use TypeScript for enhanced type safety and developer experience
 3. Implement proper error handling and logging for API calls
@@ -214,6 +253,7 @@ export async function safeStrapiCall<T>(
 10. Monitor API usage and performance regularly
 
 ### Performance Metrics
+
 - Prioritize Core Web Vitals (LCP, FID, CLS) in development
 - Use Lighthouse and WebPageTest for performance auditing
 - Implement performance budgets and monitoring

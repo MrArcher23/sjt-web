@@ -1,0 +1,727 @@
+---
+// Importar CSS global y componentes
+import "../styles/globals.css";
+import Layout from "../components/layout/Layout.astro";
+import Header from "../components/layout/Header.astro";
+import strapi from '../utils/strapi';
+import type { StrapiEntity, Header as HeaderType } from '../types/strapi';
+
+// Metadata de la página
+const pageTitle = "Contacto - Solicite Su Cotización Personalizada en 24 Horas | SJT Contratistas";
+const pageDescription = "Contáctenos para recibir una propuesta personalizada con cronograma, presupuesto y garantías incluidas. Respuesta garantizada en 24 horas.";
+
+// Obtener Header desde Strapi (mismo patrón establecido)
+let headerData: StrapiEntity<HeaderType> | null = null;
+
+try {
+  console.log('🔍 Obteniendo header activo para Contact');
+  headerData = await strapi.getActiveHeader();
+  if (headerData) {
+    console.log('🏠 Header activo encontrado:', headerData.companyName);
+  }
+} catch (error) {
+  console.warn('⚠️ Header loading failed, using fallback:', error);
+}
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <!-- Header dinámico (mismo patrón) -->
+  {headerData ? (
+    <Header
+      companyName={headerData.companyName}
+      buttonText={headerData.buttonText}
+      buttonLink={headerData.buttonLink}
+      phoneNumber={headerData.phoneNumber}
+      backgroundColor={headerData.backgroundColor}
+      logoSrc={headerData.logoSrc}
+      logoFile={headerData.logoFile}
+      logoAlt={headerData.logoAlt}
+    >
+      <span slot="tagline">{headerData.subtitle}</span>
+      
+      <!-- Navegación Desktop -->
+      <div slot="navigation" class="flex items-center gap-6">
+        <a href="/" class="hover:text-yellow-400 transition-colors font-medium">Inicio</a>
+        <a href="/servicios" class="hover:text-yellow-400 transition-colors font-medium">Servicios</a>
+        <a href="/projects" class="hover:text-yellow-400 transition-colors font-medium">Proyectos</a>
+        <a href="/quienes-somos" class="hover:text-yellow-400 transition-colors font-medium">Nosotros</a>
+        <a href="/contact" class="text-yellow-400 font-medium">Contacto</a>
+      </div>
+
+      <!-- Navegación Mobile -->
+      <div slot="mobile-navigation" class="space-y-3">
+        <a href="/" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Inicio</a>
+        <a href="/servicios" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Servicios</a>
+        <a href="/projects" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Proyectos</a>
+        <a href="/quienes-somos" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Nosotros</a>
+        <a href="/contact" class="block py-2 px-4 bg-white/10 rounded-lg text-yellow-400">Contacto</a>
+      </div>
+
+      <!-- Mobile Extra -->
+      <div slot="mobile-extra" class="border-t border-white/20 pt-4">
+        <div class="text-center">
+          <p class="text-sm opacity-90 mb-2">Emergencias 24/7</p>
+          <a href="tel:9931843294" class="text-yellow-400 font-semibold">993-184-3294</a>
+        </div>
+      </div>
+    </Header>
+  ) : (
+    <!-- Fallback Header -->
+    <Header
+      companyName="SJT Contratistas"
+      buttonText="Obtener cotización"
+      buttonLink="/contact"
+      phoneNumber="(993) 184-3294"
+      backgroundColor="primary"
+    >
+      <span slot="tagline">Construcción e Infraestructura</span>
+      
+      <div slot="navigation" class="flex items-center gap-6">
+        <a href="/" class="hover:text-yellow-400 transition-colors font-medium">Inicio</a>
+        <a href="/servicios" class="hover:text-yellow-400 transition-colors font-medium">Servicios</a>
+        <a href="/projects" class="hover:text-yellow-400 transition-colors font-medium">Proyectos</a>
+        <a href="/quienes-somos" class="hover:text-yellow-400 transition-colors font-medium">Nosotros</a>
+        <a href="/contact" class="text-yellow-400 font-medium">Contacto</a>
+      </div>
+
+      <div slot="mobile-navigation" class="space-y-3">
+        <a href="/" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Inicio</a>
+        <a href="/servicios" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Servicios</a>
+        <a href="/projects" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Proyectos</a>
+        <a href="/quienes-somos" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Nosotros</a>
+        <a href="/contact" class="block py-2 px-4 bg-white/10 rounded-lg text-yellow-400">Contacto</a>
+      </div>
+
+      <div slot="mobile-extra" class="border-t border-white/20 pt-4">
+        <div class="text-center">
+          <p class="text-sm opacity-90 mb-2">Emergencias 24/7</p>
+          <a href="tel:9931843294" class="text-yellow-400 font-semibold">993-184-3294</a>
+        </div>
+      </div>
+    </Header>
+  )}
+
+  <main>
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary-600 to-blue-800 py-20 lg:py-32 overflow-hidden relative">
+      <!-- Background decoration -->
+      <div class="absolute inset-0 bg-grid-white/5 bg-grid-32"></div>
+      <div class="absolute top-0 right-0 w-96 h-96 bg-yellow-400/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full blur-2xl"></div>
+      
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+          <!-- Badge -->
+          <div class="hero-badge inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 text-yellow-400 font-semibold text-sm lg:text-base mb-8">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Respuesta Garantizada en 24 Horas
+          </div>
+
+          <h1 class="hero-title text-4xl lg:text-6xl font-heading font-bold text-white mb-6 leading-tight">
+            ¿Listo para Comenzar Su
+            <br class="hidden sm:block">
+            <span class="text-yellow-400">Próximo Proyecto Exitoso</span>?
+          </h1>
+          
+          <p class="hero-subtitle text-xl lg:text-2xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
+            <strong class="text-white">Hablemos de su visión</strong>. En <strong class="text-white">24 horas</strong> tendrá una propuesta personalizada con cronograma, presupuesto y garantías incluidas.
+          </p>
+
+          <div class="hero-cta flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a 
+              href="#formulario" 
+              class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 text-lg"
+            >
+              Solicitar Cotización Gratuita
+            </a>
+            <a 
+              href="tel:9931843294" 
+              class="bg-transparent border-2 border-white/30 hover:bg-white/10 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 text-lg"
+            >
+              Llamar Ahora: 993-184-3294
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 Formas de Comenzar Section -->
+    <section class="py-20 lg:py-32 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+          <!-- Título de sección -->
+          <div class="text-center mb-16">
+            <h2 class="section-title text-3xl lg:text-5xl font-heading font-bold text-gray-900 mb-6">
+              <span class="text-primary-600">3 Formas</span> de Comenzar
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+              Elija la opción que mejor se adapte a sus necesidades. Todas garantizan respuesta profesional y rápida.
+            </p>
+          </div>
+
+          <!-- Grid de opciones de contacto -->
+          <div class="grid md:grid-cols-3 gap-8">
+            <!-- Llamada Estratégica -->
+            <div class="contact-method-card bg-white rounded-2xl shadow-xl p-8 text-center hover:shadow-2xl transition-all duration-500 border border-gray-100 relative">
+              <!-- Recomendado badge -->
+              <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span class="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                  Recomendado
+                </span>
+              </div>
+              
+              <div class="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6 mt-4">
+                <span class="text-3xl">📞</span>
+              </div>
+              
+              <h3 class="text-2xl font-heading font-bold text-gray-900 mb-4">
+                LLAMADA ESTRATÉGICA
+              </h3>
+              
+              <p class="text-primary-600 font-semibold mb-6 text-lg">
+                "15 minutos que pueden transformar su proyecto"
+              </p>
+              
+              <div class="space-y-4 mb-8">
+                <div class="flex items-center justify-center gap-3 text-gray-700">
+                  <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  <span class="font-semibold">Tel: 993-184-3294</span>
+                </div>
+                <div class="flex items-center justify-center gap-3 text-gray-700">
+                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  <span class="font-semibold">WhatsApp: 993-167-4490</span>
+                </div>
+              </div>
+              
+              <div class="flex flex-col gap-3">
+                <a 
+                  href="tel:9931843294" 
+                  class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 block"
+                >
+                  Llamar Ahora
+                </a>
+                <a 
+                  href="https://wa.me/5219931674490" 
+                  target="_blank"
+                  class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 block"
+                >
+                  WhatsApp
+                </a>
+              </div>
+            </div>
+
+            <!-- Consulta Especializada -->
+            <div class="contact-method-card bg-white rounded-2xl shadow-xl p-8 text-center hover:shadow-2xl transition-all duration-500 border border-gray-100">
+              <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-3xl">✉️</span>
+              </div>
+              
+              <h3 class="text-2xl font-heading font-bold text-gray-900 mb-4">
+                CONSULTA ESPECIALIZADA
+              </h3>
+              
+              <p class="text-blue-600 font-semibold mb-6 text-lg">
+                "Análisis técnico por email en 24h"
+              </p>
+              
+              <div class="space-y-4 mb-8">
+                <div class="flex items-center justify-center gap-3 text-gray-700">
+                  <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <span class="font-semibold">Email especializado</span>
+                </div>
+                <div class="text-center">
+                  <p class="text-sm text-gray-600 mb-2">Escríbanos a:</p>
+                  <p class="font-semibold text-gray-900">aclientes@sjtcontratistas.com</p>
+                </div>
+              </div>
+              
+              <a 
+                href="mailto:aclientes@sjtcontratistas.com?subject=Consulta de Proyecto - SJT Contratistas" 
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 block"
+              >
+                Enviar Email
+              </a>
+            </div>
+
+            <!-- Visita a Oficinas -->
+            <div class="contact-method-card bg-white rounded-2xl shadow-xl p-8 text-center hover:shadow-2xl transition-all duration-500 border border-gray-100">
+              <div class="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-3xl">🏢</span>
+              </div>
+              
+              <h3 class="text-2xl font-heading font-bold text-gray-900 mb-4">
+                VISITA A OFICINAS
+              </h3>
+              
+              <p class="text-yellow-600 font-semibold mb-6 text-lg">
+                "Conozca nuestros proyectos y capacidades"
+              </p>
+              
+              <div class="space-y-3 mb-8 text-left">
+                <div class="flex items-start gap-3 text-gray-700">
+                  <svg class="w-5 h-5 text-yellow-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <div>
+                    <p class="font-semibold">La Ceiba No. 15</p>
+                    <p class="text-sm">Fracc. Brisas del Carrizal</p>
+                    <p class="text-sm">Nacajuca, Tabasco C.P. 86220</p>
+                    <p class="text-xs text-gray-600 mt-1">(A 500m del Parque Dora María)</p>
+                  </div>
+                </div>
+              </div>
+              
+              <a 
+                href="https://maps.google.com/?q=La+Ceiba+15,+Fracc+Brisas+del+Carrizal,+Nacajuca,+Tabasco" 
+                target="_blank"
+                class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 block"
+              >
+                Ver en Mapa
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formulario Section -->
+    <section id="formulario" class="py-20 lg:py-32 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+          <!-- Título del formulario -->
+          <div class="text-center mb-12">
+            <h2 class="form-title text-3xl lg:text-5xl font-heading font-bold text-gray-900 mb-6">
+              Reciba Su <span class="text-primary-600">Cotización Personalizada</span> en 24 Horas
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+              Complete el formulario y nuestro equipo técnico preparará una propuesta detallada para su proyecto.
+            </p>
+          </div>
+
+          <!-- Formulario -->
+          <div class="form-container bg-gradient-to-br from-gray-50 to-blue-50 rounded-3xl p-8 lg:p-12 shadow-xl">
+            <form id="contact-form" class="space-y-6" action="#" method="POST">
+              <!-- Nombre y Empresa -->
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="form-field">
+                  <label for="nombre" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Nombre Completo *
+                  </label>
+                  <input 
+                    type="text" 
+                    id="nombre" 
+                    name="nombre" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                    placeholder="Su nombre completo"
+                  >
+                </div>
+                <div class="form-field">
+                  <label for="empresa" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Empresa
+                  </label>
+                  <input 
+                    type="text" 
+                    id="empresa" 
+                    name="empresa"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                    placeholder="Nombre de su empresa"
+                  >
+                </div>
+              </div>
+
+              <!-- Teléfono y Email -->
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="form-field">
+                  <label for="telefono" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Teléfono * <span class="text-xs text-gray-500">(para respuesta rápida)</span>
+                  </label>
+                  <input 
+                    type="tel" 
+                    id="telefono" 
+                    name="telefono" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                    placeholder="993-xxx-xxxx"
+                  >
+                </div>
+                <div class="form-field">
+                  <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Email Corporativo *
+                  </label>
+                  <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                    placeholder="su-email@empresa.com"
+                  >
+                </div>
+              </div>
+
+              <!-- Tipo de Proyecto y Presupuesto -->
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="form-field">
+                  <label for="tipo-proyecto" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Tipo de Proyecto *
+                  </label>
+                  <select 
+                    id="tipo-proyecto" 
+                    name="tipo-proyecto" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                  >
+                    <option value="">Seleccione su proyecto</option>
+                    <option value="construccion-integral">Construcción Integral</option>
+                    <option value="servicios-petroleros">Servicios Petroleros</option>
+                    <option value="sistemas-hidricos">Sistemas Hídricos</option>
+                    <option value="electromecanica">Electromecánica Avanzada</option>
+                    <option value="otro">Otro / Múltiples especialidades</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="presupuesto" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Presupuesto Aproximado
+                  </label>
+                  <select 
+                    id="presupuesto" 
+                    name="presupuesto"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                  >
+                    <option value="">Seleccione rango</option>
+                    <option value="100k-500k">$100,000 - $500,000</option>
+                    <option value="500k-1m">$500,000 - $1,000,000</option>
+                    <option value="1m-5m">$1,000,000 - $5,000,000</option>
+                    <option value="5m-plus">Más de $5,000,000</option>
+                    <option value="por-definir">Por definir</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Fecha de Inicio -->
+              <div class="form-field">
+                <label for="fecha-inicio" class="block text-sm font-semibold text-gray-700 mb-2">
+                  Fecha Objetivo de Inicio
+                </label>
+                <input 
+                  type="date" 
+                  id="fecha-inicio" 
+                  name="fecha-inicio"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+                >
+              </div>
+
+              <!-- Descripción del Proyecto -->
+              <div class="form-field">
+                <label for="descripcion" class="block text-sm font-semibold text-gray-700 mb-2">
+                  Descripción del Proyecto
+                </label>
+                <textarea 
+                  id="descripcion" 
+                  name="descripcion" 
+                  rows="4"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 resize-vertical"
+                  placeholder="Describa brevemente su proyecto, ubicación, objetivos y cualquier detalle importante..."
+                ></textarea>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="text-center">
+                <button 
+                  type="submit" 
+                  class="form-submit bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-8 rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 text-lg"
+                >
+                  Solicitar Cotización Gratuita
+                </button>
+              </div>
+            </form>
+
+            <!-- Garantías Post-Envío -->
+            <div class="form-guarantees mt-8 pt-8 border-t border-gray-200">
+              <h3 class="text-lg font-bold text-gray-900 text-center mb-6">
+                Garantía Post-Envío:
+              </h3>
+              <div class="grid sm:grid-cols-3 gap-4 text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span class="text-sm font-semibold text-gray-700">Respuesta garantizada en 24 horas</span>
+                </div>
+                <div class="flex items-center justify-center gap-2">
+                  <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span class="text-sm font-semibold text-gray-700">Cotización sin compromiso</span>
+                </div>
+                <div class="flex items-center justify-center gap-2">
+                  <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span class="text-sm font-semibold text-gray-700">Primera consulta gratuita</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Horarios Ejecutivos Section -->
+    <section class="py-20 lg:py-32 bg-primary-600 relative overflow-hidden">
+      <!-- Background decoration -->
+      <div class="absolute inset-0 bg-grid-white/5 bg-grid-16"></div>
+      <div class="absolute top-0 left-0 w-96 h-96 bg-yellow-400/10 rounded-full blur-3xl"></div>
+      
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+          <h2 class="horarios-title text-3xl lg:text-4xl font-heading font-bold text-white mb-12">
+            Horarios <span class="text-yellow-400">Ejecutivos</span>
+          </h2>
+
+          <div class="grid md:grid-cols-3 gap-8">
+            <!-- Horarios Normales -->
+            <div class="horarios-card bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+              <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2">Horarios Normales</h3>
+              <p class="text-blue-200 text-lg font-semibold mb-2">Lunes a Viernes</p>
+              <p class="text-yellow-400 text-xl font-bold">8:00 - 17:00 hrs</p>
+            </div>
+
+            <!-- WhatsApp -->
+            <div class="horarios-card bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+              <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2">WhatsApp</h3>
+              <p class="text-blue-200 text-lg font-semibold mb-2">Respuesta Inmediata</p>
+              <a href="https://wa.me/5219931674490" target="_blank" class="text-green-400 text-xl font-bold hover:text-green-300 transition-colors">
+                993-167-4490
+              </a>
+            </div>
+
+            <!-- Urgencias -->
+            <div class="horarios-card bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
+              <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L5.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2">Urgencias 24/7</h3>
+              <p class="text-blue-200 text-lg font-semibold mb-2">Proyectos Críticos</p>
+              <a href="tel:9931843294" class="text-red-400 text-xl font-bold hover:text-red-300 transition-colors">
+                993-184-3294
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<!-- Estilos y Animaciones -->
+<style>
+  /* Variables CSS para animaciones */
+  :root {
+    --contact-animation-duration: 0.8s;
+    --contact-animation-delay-base: 0.1s;
+    --contact-animation-stagger: 0.15s;
+  }
+
+  /* Elementos animables */
+  .hero-badge,
+  .hero-title,
+  .hero-subtitle,
+  .hero-cta,
+  .section-title,
+  .contact-method-card,
+  .form-title,
+  .form-container,
+  .form-field,
+  .form-submit,
+  .form-guarantees,
+  .horarios-title,
+  .horarios-card {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  /* Clase para activar animaciones */
+  .animate {
+    animation: fadeInUp var(--contact-animation-duration) ease-out forwards;
+  }
+
+  /* Keyframe para fade in up */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Form styling */
+  .form-container {
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+  }
+
+  .form-field input:focus,
+  .form-field select:focus,
+  .form-field textarea:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  /* Grid background */
+  .bg-grid-white\/5 {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.05)'%3e%3cpath d='m0 .5h32m-32 32v-32'/%3e%3c/svg%3e");
+  }
+  
+  .bg-grid-white\/5.bg-grid-16 {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' width='16' height='16' fill='none' stroke='rgb(255 255 255 / 0.05)'%3e%3cpath d='m0 .5h16m-16 16v-16'/%3e%3c/svg%3e");
+  }
+
+  /* Respetamos reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-badge,
+    .hero-title,
+    .hero-subtitle,
+    .hero-cta,
+    .section-title,
+    .contact-method-card,
+    .form-title,
+    .form-container,
+    .form-field,
+    .form-submit,
+    .form-guarantees,
+    .horarios-title,
+    .horarios-card {
+      opacity: 1;
+      transform: none;
+    }
+
+    .animate {
+      animation: none;
+    }
+  }
+</style>
+
+<!-- JavaScript para animaciones y validación -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (prefersReducedMotion) {
+      // Si el usuario prefiere animaciones reducidas, mostrar todo inmediatamente
+      document.querySelectorAll('[class*="hero-"], [class*="section-"], [class*="contact-"], [class*="form-"], [class*="horarios-"]').forEach(el => {
+        if (el instanceof HTMLElement) {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        }
+      });
+    } else {
+      // Intersection Observer para animaciones scroll-triggered
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const element = entry.target;
+            
+            // Agregar clase animate con delay progresivo
+            setTimeout(() => {
+              element.classList.add('animate');
+            }, Math.random() * 200);
+            
+            observer.unobserve(element);
+          }
+        });
+      }, observerOptions);
+
+      // Observar elementos animables
+      document.querySelectorAll('.hero-badge, .hero-title, .hero-subtitle, .hero-cta, .section-title, .contact-method-card, .form-title, .form-container, .form-field, .form-submit, .form-guarantees, .horarios-title, .horarios-card').forEach(el => {
+        if (el instanceof Element) {
+          observer.observe(el);
+        }
+      });
+
+      // Cleanup
+      window.addEventListener('beforeunload', () => {
+        observer.disconnect();
+      });
+    }
+
+    // Validación y manejo del formulario
+    const form = document.getElementById('contact-form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Aquí puedes agregar la lógica de envío del formulario
+        // Por ahora, mostraremos un mensaje de confirmación
+        
+        const submitButton = form.querySelector('.form-submit');
+        if (submitButton instanceof HTMLButtonElement) {
+          const originalText = submitButton.textContent;
+          submitButton.textContent = 'Enviando...';
+          submitButton.disabled = true;
+          
+          // Simular envío
+          setTimeout(() => {
+            alert('¡Gracias! Su cotización ha sido enviada. Nos pondremos en contacto en las próximas 24 horas.');
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+            if (form instanceof HTMLFormElement) {
+              form.reset();
+            }
+          }, 2000);
+        }
+      });
+
+      // Validación en tiempo real
+      const requiredFields = form.querySelectorAll('input[required], select[required]');
+      requiredFields.forEach(field => {
+        field.addEventListener('blur', function(event) {
+          const target = event.target as HTMLInputElement | HTMLSelectElement;
+          if (!target.value.trim()) {
+            target.style.borderColor = '#ef4444';
+            target.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+          } else {
+            target.style.borderColor = '#10b981';
+            target.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.1)';
+          }
+        });
+
+        field.addEventListener('input', function(event) {
+          const target = event.target as HTMLInputElement | HTMLSelectElement;
+          if (target.value.trim()) {
+            target.style.borderColor = '#10b981';
+            target.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.1)';
+          }
+        });
+      });
+    }
+  });
+</script>

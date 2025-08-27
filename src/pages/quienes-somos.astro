@@ -1,0 +1,536 @@
+---
+// Importar CSS global y componentes
+import "../styles/globals.css";
+import Layout from "../components/layout/Layout.astro";
+import Header from "../components/layout/Header.astro";
+import strapi from '../utils/strapi';
+import type { StrapiEntity, Header as HeaderType } from '../types/strapi';
+
+// Metadata de la página
+const pageTitle = "Quiénes Somos - 21 Años Construyendo el México del Futuro | SJT Contratistas";
+const pageDescription = "Desde 2004, SJT Contratistas ha sido el socio estratégico de empresas visionarias. Con 60 especialistas y presencia en 4 estados, somos la garantía de excelencia que México merece.";
+
+// Obtener Header desde Strapi (mismo patrón que index.astro)
+let headerData: StrapiEntity<HeaderType> | null = null;
+
+try {
+  console.log('🔍 Obteniendo header activo para About');
+  headerData = await strapi.getActiveHeader();
+  if (headerData) {
+    console.log('🏠 Header activo encontrado:', headerData.companyName);
+  }
+} catch (error) {
+  console.warn('⚠️ Header loading failed, using fallback:', error);
+}
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <!-- Header dinámico (mismo patrón) -->
+  {headerData ? (
+    <Header
+      companyName={headerData.companyName}
+      buttonText={headerData.buttonText}
+      buttonLink={headerData.buttonLink}
+      phoneNumber={headerData.phoneNumber}
+      backgroundColor={headerData.backgroundColor}
+      logoSrc={headerData.logoSrc}
+      logoFile={headerData.logoFile}
+      logoAlt={headerData.logoAlt}
+    >
+      <span slot="tagline">{headerData.subtitle}</span>
+      
+      <!-- Navegación Desktop -->
+      <div slot="navigation" class="flex items-center gap-6">
+        <a href="/" class="hover:text-yellow-400 transition-colors font-medium">Inicio</a>
+        <a href="/services" class="hover:text-yellow-400 transition-colors font-medium">Servicios</a>
+        <a href="/projects" class="hover:text-yellow-400 transition-colors font-medium">Proyectos</a>
+        <a href="/quienes-somos" class="text-yellow-400 font-medium">Nosotros</a>
+        <a href="/contact" class="hover:text-yellow-400 transition-colors font-medium">Contacto</a>
+      </div>
+
+      <!-- Navegación Mobile -->
+      <div slot="mobile-navigation" class="space-y-3">
+        <a href="/" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Inicio</a>
+        <a href="/services" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Servicios</a>
+        <a href="/projects" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Proyectos</a>
+        <a href="/quienes-somos" class="block py-2 px-4 bg-white/10 rounded-lg text-yellow-400">Nosotros</a>
+        <a href="/contact" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Contacto</a>
+      </div>
+
+      <!-- Mobile Extra -->
+      <div slot="mobile-extra" class="border-t border-white/20 pt-4">
+        <div class="text-center">
+          <p class="text-sm opacity-90 mb-2">Emergencias 24/7</p>
+          <a href="tel:5551234567" class="text-yellow-400 font-semibold">Llamar ahora</a>
+        </div>
+      </div>
+    </Header>
+  ) : (
+    <!-- Fallback Header -->
+    <Header
+      companyName="SJT Contratistas"
+      buttonText="Obtener cotización"
+      buttonLink="/contact"
+      phoneNumber="(555) 123-4567"
+      backgroundColor="primary"
+    >
+      <span slot="tagline">Construcción e Infraestructura</span>
+      
+      <div slot="navigation" class="flex items-center gap-6">
+        <a href="/" class="hover:text-yellow-400 transition-colors font-medium">Inicio</a>
+        <a href="/services" class="hover:text-yellow-400 transition-colors font-medium">Servicios</a>
+        <a href="/projects" class="hover:text-yellow-400 transition-colors font-medium">Proyectos</a>
+        <a href="/quienes-somos" class="text-yellow-400 font-medium">Nosotros</a>
+        <a href="/contact" class="hover:text-yellow-400 transition-colors font-medium">Contacto</a>
+      </div>
+
+      <div slot="mobile-navigation" class="space-y-3">
+        <a href="/" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Inicio</a>
+        <a href="/services" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Servicios</a>
+        <a href="/projects" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Proyectos</a>
+        <a href="/quienes-somos" class="block py-2 px-4 bg-white/10 rounded-lg text-yellow-400">Nosotros</a>
+        <a href="/contact" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Contacto</a>
+      </div>
+
+      <div slot="mobile-extra" class="border-t border-white/20 pt-4">
+        <div class="text-center">
+          <p class="text-sm opacity-90 mb-2">Emergencias 24/7</p>
+          <a href="tel:5551234567" class="text-yellow-400 font-semibold">Llamar ahora</a>
+        </div>
+      </div>
+    </Header>
+  )}
+
+  <main>
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary-600 to-blue-800 py-20 lg:py-32 overflow-hidden relative">
+      <!-- Background decoration -->
+      <div class="absolute inset-0 bg-grid-white/5 bg-grid-32"></div>
+      <div class="absolute top-0 right-0 w-96 h-96 bg-yellow-400/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full blur-2xl"></div>
+      
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+          <!-- Badge -->
+          <div class="hero-badge inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 text-yellow-400 font-semibold text-sm lg:text-base mb-8">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+            </svg>
+            Desde 2004 - Certificación Internacional
+          </div>
+
+          <h1 class="hero-title text-4xl lg:text-7xl font-heading font-bold text-white mb-6 leading-tight">
+            21 Años Construyendo el
+            <span class="text-yellow-400">México del Futuro</span>
+          </h1>
+          
+          <p class="hero-subtitle text-xl lg:text-2xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
+            Desde 2004, SJT Contratistas ha sido el socio estratégico de empresas visionarias que necesitan infraestructura de clase mundial. Hoy, con <strong class="text-white">60 especialistas</strong> y presencia en <strong class="text-white">4 estados</strong>, seguimos siendo la garantía de excelencia que México merece.
+          </p>
+
+          <div class="hero-cta flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a 
+              href="/projects" 
+              class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 text-lg"
+            >
+              Ver Nuestros Proyectos
+            </a>
+            <a 
+              href="/contact" 
+              class="bg-transparent border-2 border-white/30 hover:bg-white/10 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 text-lg"
+            >
+              Solicitar Cotización
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Misión y Visión Section -->
+    <section class="py-20 lg:py-32 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+          <!-- Título de sección -->
+          <div class="text-center mb-16">
+            <h2 class="section-title text-3xl lg:text-5xl font-heading font-bold text-gray-900 mb-6">
+              Por Qué Elegir <span class="text-primary-600">SJT</span>
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+              No solo construimos estructuras - creamos el futuro de México con cada proyecto que entregamos
+            </p>
+          </div>
+
+          <!-- Cards Misión y Visión -->
+          <div class="grid lg:grid-cols-2 gap-8">
+            <!-- Misión Card -->
+            <div class="mission-card bg-white rounded-2xl shadow-xl p-8 lg:p-12 hover:shadow-2xl transition-all duration-500 border border-gray-100">
+              <div class="flex items-center mb-6">
+                <div class="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mr-4">
+                  <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <h3 class="text-2xl lg:text-3xl font-heading font-bold text-gray-900">Nuestra Misión</h3>
+              </div>
+              <h4 class="text-xl font-bold text-primary-600 mb-4">
+                "Convertimos Sus Visiones en Realidades Rentables"
+              </h4>
+              <p class="text-gray-700 leading-relaxed text-lg">
+                No solo construimos estructuras - creamos activos que generan valor. Cada proyecto que entregamos está diseñado para exceder sus expectativas, proteger su inversión y generar retornos medibles. Con gestión íntegra y equipos especializados, garantizamos que su proyecto sea una historia de éxito.
+              </p>
+            </div>
+
+            <!-- Visión Card -->
+            <div class="vision-card bg-white rounded-2xl shadow-xl p-8 lg:p-12 hover:shadow-2xl transition-all duration-500 border border-gray-100">
+              <div class="flex items-center mb-6">
+                <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mr-4">
+                  <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </div>
+                <h3 class="text-2xl lg:text-3xl font-heading font-bold text-gray-900">Nuestra Visión</h3>
+              </div>
+              <h4 class="text-xl font-bold text-yellow-600 mb-4">
+                "Su Socio para Proyectos Extraordinarios"
+              </h4>
+              <p class="text-gray-700 leading-relaxed text-lg">
+                Ser la empresa de ingeniería que empresarios y desarrolladores buscan cuando necesitan resultados excepcionales. Rompemos esquemas tradicionales, implementamos tecnología de vanguardia y entregamos proyectos que marcan la diferencia en su industria.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Logros Section -->
+    <section class="py-20 lg:py-32 bg-primary-600 relative overflow-hidden">
+      <!-- Background decoration -->
+      <div class="absolute inset-0 bg-grid-white/5 bg-grid-16"></div>
+      <div class="absolute top-0 left-0 w-96 h-96 bg-yellow-400/10 rounded-full blur-3xl"></div>
+      
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-6xl mx-auto">
+          <!-- Título -->
+          <div class="text-center mb-16">
+            <h2 class="achievements-title text-3xl lg:text-5xl font-heading font-bold text-white mb-6">
+              Logros que Hablan por <span class="text-yellow-400">Sí Solos</span>
+            </h2>
+            <p class="text-xl text-blue-100 max-w-3xl mx-auto">
+              Más de dos décadas de excelencia comprobada en cada proyecto que entregamos
+            </p>
+          </div>
+
+          <!-- Grid de logros -->
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            <!-- Logro 1 -->
+            <div class="achievement-card text-center bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-500">
+              <div class="text-4xl lg:text-5xl font-bold text-yellow-400 mb-2 counter" data-target="1000">0</div>
+              <div class="text-lg font-semibold text-white mb-2">Proyectos</div>
+              <div class="text-sm text-blue-200">Entregados en tiempo y forma</div>
+            </div>
+
+            <!-- Logro 2 -->
+            <div class="achievement-card text-center bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-500">
+              <div class="text-4xl lg:text-5xl font-bold text-yellow-400 mb-2">🤝</div>
+              <div class="text-lg font-semibold text-white mb-2">Alianzas</div>
+              <div class="text-sm text-blue-200">Internacionales para proyectos de gran escala</div>
+            </div>
+
+            <!-- Logro 3 -->
+            <div class="achievement-card text-center bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-500">
+              <div class="text-4xl lg:text-5xl font-bold text-yellow-400 mb-2">🚄</div>
+              <div class="text-lg font-semibold text-white mb-2">Ferroviario</div>
+              <div class="text-sm text-blue-200">Sistema nacional de infraestructura</div>
+            </div>
+
+            <!-- Logro 4 -->
+            <div class="achievement-card text-center bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-500">
+              <div class="text-4xl lg:text-5xl font-bold text-yellow-400 mb-2">🌊</div>
+              <div class="text-lg font-semibold text-white mb-2">Plantas</div>
+              <div class="text-sm text-blue-200">De tratamiento operando en múltiples estados</div>
+            </div>
+
+            <!-- Logro 5 -->
+            <div class="achievement-card text-center bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/20 transition-all duration-500">
+              <div class="text-4xl lg:text-5xl font-bold text-yellow-400 mb-2 counter" data-target="0">0</div>
+              <div class="text-lg font-semibold text-white mb-2">Demandas</div>
+              <div class="text-sm text-blue-200">Por incumplimiento en 21 años</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Certificaciones Section -->
+    <section class="py-20 lg:py-32 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+          <!-- Título -->
+          <div class="text-center mb-16">
+            <h2 class="certifications-title text-3xl lg:text-5xl font-heading font-bold text-gray-900 mb-6">
+              Certificaciones que <span class="text-primary-600">Garantizan Calidad</span>
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+              "No prometemos excelencia - la <strong>certificamos internacionalmente</strong>"
+            </p>
+          </div>
+
+          <!-- Grid de certificaciones -->
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- ISO 9001 -->
+            <div class="cert-card bg-gradient-to-br from-blue-50 to-primary-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-500 border-2 border-transparent hover:border-primary-200">
+              <div class="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-2xl font-bold text-primary-600">🏅</span>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">ISO 9001</h3>
+              <p class="text-gray-700 font-semibold mb-2">Gestión de Calidad Mundial</p>
+              <p class="text-sm text-gray-600">Sistemas certificados que garantizan la excelencia en cada proceso</p>
+            </div>
+
+            <!-- ISO 14001 -->
+            <div class="cert-card bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-500 border-2 border-transparent hover:border-green-200">
+              <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-2xl font-bold text-green-600">🌱</span>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">ISO 14001</h3>
+              <p class="text-gray-700 font-semibold mb-2">Compromiso Ambiental Real</p>
+              <p class="text-sm text-gray-600">Construcción sostenible que protege nuestro medio ambiente</p>
+            </div>
+
+            <!-- ISO 37001 -->
+            <div class="cert-card bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-500 border-2 border-transparent hover:border-purple-200">
+              <div class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-2xl font-bold text-purple-600">🛡️</span>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">ISO 37001</h3>
+              <p class="text-gray-700 font-semibold mb-2">Transparencia Empresarial</p>
+              <p class="text-sm text-gray-600">Sistemas anti-soborno que garantizan ética empresarial</p>
+            </div>
+
+            <!-- ISO 45001 -->
+            <div class="cert-card bg-gradient-to-br from-orange-50 to-yellow-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-500 border-2 border-transparent hover:border-orange-200">
+              <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-2xl font-bold text-orange-600">⚡</span>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">ISO 45001</h3>
+              <p class="text-gray-700 font-semibold mb-2">Seguridad Laboral Garantizada</p>
+              <p class="text-sm text-gray-600">Protección integral para todos nuestros colaboradores</p>
+            </div>
+
+            <!-- ACHILLES PEMEX -->
+            <div class="cert-card bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-500 border-2 border-transparent hover:border-red-200 sm:col-span-2 lg:col-span-1">
+              <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-2xl font-bold text-red-600">🛢️</span>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">ACHILLES PEMEX</h3>
+              <p class="text-gray-700 font-semibold mb-2">Estándar Petrolero Internacional</p>
+              <p class="text-sm text-gray-600">Certificación para proyectos de la industria energética</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Final Section -->
+    <section class="py-20 lg:py-32 bg-gradient-to-r from-primary-600 to-primary-800">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <h2 class="cta-title text-3xl lg:text-5xl font-heading font-bold text-white mb-6">
+            ¿Listo para Su Próximo <span class="text-yellow-400">Proyecto Extraordinario</span>?
+          </h2>
+          <p class="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+            Con 21 años de experiencia y certificaciones internacionales, estamos listos para convertir su visión en realidad rentable.
+          </p>
+          <div class="cta-buttons flex flex-col sm:flex-row gap-4 justify-center">
+            <a 
+              href="/contact" 
+              class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 text-lg"
+            >
+              Solicitar Cotización Gratuita
+            </a>
+            <a 
+              href="/projects" 
+              class="bg-transparent border-2 border-white/30 hover:bg-white/10 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 text-lg"
+            >
+              Ver Casos de Éxito
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<!-- Estilos y Animaciones -->
+<style>
+  /* Variables CSS para animaciones */
+  :root {
+    --about-animation-duration: 0.8s;
+    --about-animation-delay-base: 0.1s;
+    --about-animation-stagger: 0.1s;
+  }
+
+  /* Elementos animables */
+  .hero-badge,
+  .hero-title,
+  .hero-subtitle,
+  .hero-cta,
+  .section-title,
+  .mission-card,
+  .vision-card,
+  .achievements-title,
+  .achievement-card,
+  .certifications-title,
+  .cert-card,
+  .cta-title,
+  .cta-buttons {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  /* Clase para activar animaciones */
+  .animate {
+    animation: fadeInUp var(--about-animation-duration) ease-out forwards;
+  }
+
+  /* Keyframe para fade in up */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Counter animation */
+  .counter {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Grid background */
+  .bg-grid-white\/5 {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.05)'%3e%3cpath d='m0 .5h32m-32 32v-32'/%3e%3c/svg%3e");
+  }
+  
+  .bg-grid-white\/5.bg-grid-16 {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' width='16' height='16' fill='none' stroke='rgb(255 255 255 / 0.05)'%3e%3cpath d='m0 .5h16m-16 16v-16'/%3e%3c/svg%3e");
+  }
+
+  /* Respetamos reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-badge,
+    .hero-title,
+    .hero-subtitle,
+    .hero-cta,
+    .section-title,
+    .mission-card,
+    .vision-card,
+    .achievements-title,
+    .achievement-card,
+    .certifications-title,
+    .cert-card,
+    .cta-title,
+    .cta-buttons {
+      opacity: 1;
+      transform: none;
+    }
+
+    .animate {
+      animation: none;
+    }
+  }
+</style>
+
+<!-- JavaScript para animaciones e interacciones -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (prefersReducedMotion) {
+      // Si el usuario prefiere animaciones reducidas, mostrar todo inmediatamente
+      document.querySelectorAll('[class*="hero-"], [class*="section-"], [class*="mission-"], [class*="vision-"], [class*="achievements-"], [class*="achievement-"], [class*="certifications-"], [class*="cert-"], [class*="cta-"]').forEach(el => {
+        if (el instanceof HTMLElement) {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        }
+      });
+      return;
+    }
+
+    // Intersection Observer para animaciones scroll-triggered
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const element = entry.target;
+          
+          // Agregar clase animate con delay progresivo
+          setTimeout(() => {
+            element.classList.add('animate');
+          }, Math.random() * 200); // Delay aleatorio sutil
+          
+          observer.unobserve(element);
+        }
+      });
+    }, observerOptions);
+
+    // Observar elementos animables
+    document.querySelectorAll('.hero-badge, .hero-title, .hero-subtitle, .hero-cta, .section-title, .mission-card, .vision-card, .achievements-title, .achievement-card, .certifications-title, .cert-card, .cta-title, .cta-buttons').forEach(el => {
+      if (el instanceof Element) {
+        observer.observe(el);
+      }
+    });
+
+    // Counter animation para números
+    const animateCounters = () => {
+      document.querySelectorAll('.counter').forEach(counter => {
+        const targetAttr = counter.getAttribute('data-target');
+        if (!targetAttr) return;
+        
+        const target = parseInt(targetAttr);
+        const duration = 2000;
+        const increment = target / (duration / 16);
+        let current = 0;
+
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            counter.textContent = target.toLocaleString();
+            clearInterval(timer);
+          } else {
+            counter.textContent = Math.floor(current).toLocaleString();
+          }
+        }, 16);
+      });
+    };
+
+    // Observer para contadores
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounters();
+          counterObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    const achievementsSection = document.querySelector('.achievement-card');
+    if (achievementsSection && achievementsSection.parentElement) {
+      counterObserver.observe(achievementsSection.parentElement);
+    }
+
+    // Cleanup
+    window.addEventListener('beforeunload', () => {
+      observer.disconnect();
+      counterObserver.disconnect();
+    });
+  });
+</script>

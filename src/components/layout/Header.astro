@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+
 // Definir la interfaz de Props según documentación de Astro
 export interface Props {
   companyName: string;
@@ -7,6 +9,14 @@ export interface Props {
   phoneNumber?: string;
   backgroundColor?: 'blue' | 'primary' | 'white' | 'transparent';
   logoSrc?: string;
+  logoFile?: {
+    id: number;
+    url: string;
+    alternativeText?: string;
+    name: string;
+    width: number;
+    height: number;
+  };
   logoAlt?: string;
 }
 
@@ -18,8 +28,15 @@ const {
   phoneNumber,
   backgroundColor = 'primary',
   logoSrc,
+  logoFile,
   logoAlt = `Logo de ${companyName}`
 } = Astro.props;
+
+// Determinar cuál logo usar (prioridad: logoFile > logoSrc)
+const finalLogoSrc = logoFile?.url || logoSrc;
+const finalLogoAlt = logoFile?.alternativeText || logoAlt || `Logo de ${companyName}`;
+const logoWidth = logoFile?.width || 48;  // Default 48px (lg:w-12)
+const logoHeight = logoFile?.height || 48;
 
 // Definir clases de fondo según el color elegido
 const backgroundClasses = {
@@ -52,11 +69,15 @@ const buttonClasses = {
       
       <!-- Logo y nombre de la empresa -->
       <div class="flex items-center gap-3">
-        {logoSrc ? (
-          <img 
-            src={logoSrc} 
-            alt={logoAlt}
-            class="w-10 h-10 lg:w-12 lg:h-12"
+        {finalLogoSrc ? (
+          <Image 
+            src={finalLogoSrc} 
+            alt={finalLogoAlt}
+            width={logoWidth}
+            height={logoHeight}
+            class="w-10 h-10 lg:w-12 lg:h-12 object-contain"
+            format="webp"
+            quality="high"
             loading="lazy"
           />
         ) : (

@@ -219,3 +219,28 @@ export interface Service {
 
 export type ServicesResponse = StrapiResponse<StrapiEntity<Service>[]>;
 export type ServiceResponse = StrapiResponse<StrapiEntity<Service>>;
+
+// === HEADER TYPES ===
+export interface Header {
+  companyName: string;
+  subtitle?: string;
+  phoneNumber?: string;
+  buttonText: string;
+  buttonLink?: string;
+  backgroundColor: "blue" | "primary" | "white" | "transparent";
+  logoSrc?: string;
+  logoFile?: {
+    id: number;
+    url: string;
+    alternativeText?: string;
+    name: string;
+    width: number;
+    height: number;
+  };
+  logoAlt?: string;
+  slug?: string;
+  isActive: boolean;
+}
+
+export type HeadersResponse = StrapiResponse<StrapiEntity<Header>[]>;
+export type HeaderResponse = StrapiResponse<StrapiEntity<Header>>;

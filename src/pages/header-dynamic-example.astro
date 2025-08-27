@@ -1,0 +1,342 @@
+---
+import Layout from "../components/layout/Layout.astro";
+import Header from "../components/layout/Header.astro";
+import strapi from "../utils/strapi";
+import type { StrapiEntity, Header as HeaderType } from "../types/strapi";
+
+// Fetch Header data from Strapi
+let headerData: StrapiEntity<HeaderType> | null = null;
+
+try {
+  console.log("🔍 Fetching active header from Strapi...");
+  headerData = await strapi.getActiveHeader();
+  console.log("📊 Header data:", headerData ? "Found" : "Not found");
+} catch (error) {
+  console.warn("⚠️ Header loading failed, using fallback:", error);
+}
+
+// Static fallback data (English)
+const fallbackHeaderData: HeaderType = {
+  companyName: "SJT Contractors",
+  subtitle: "Construction & Infrastructure",
+  phoneNumber: "(555) 123-4567",
+  buttonText: "Get Quote",
+  buttonLink: "/contact",
+  backgroundColor: "primary",
+  logoSrc: "",
+  logoAlt: "SJT Contractors Logo",
+  slug: "main-header",
+  isActive: true,
+};
+
+// Use Strapi data or fallback
+const currentHeaderData = headerData || fallbackHeaderData;
+---
+
+<Layout title="Dynamic Header Example">
+  <!-- Dynamic Header from Strapi -->
+  <Header
+    companyName={currentHeaderData.companyName}
+    buttonText={currentHeaderData.buttonText}
+    buttonLink={currentHeaderData.buttonLink}
+    phoneNumber={currentHeaderData.phoneNumber}
+    backgroundColor={currentHeaderData.backgroundColor}
+    logoSrc={currentHeaderData.logoSrc}
+    logoFile={currentHeaderData.logoFile}
+    logoAlt={currentHeaderData.logoAlt}
+  >
+    <span slot="tagline">{currentHeaderData.subtitle}</span>
+
+    <!-- Navigation slot -->
+    <div slot="navigation" class="flex items-center gap-8">
+      <a href="/" class="hover:text-yellow-400 transition-colors">Home</a>
+      <a href="/services" class="hover:text-yellow-400 transition-colors"
+        >Services</a
+      >
+      <a href="/projects" class="hover:text-yellow-400 transition-colors"
+        >Projects</a
+      >
+      <a href="/about" class="hover:text-yellow-400 transition-colors">About</a>
+      <a href="/contact" class="hover:text-yellow-400 transition-colors"
+        >Contact</a
+      >
+    </div>
+
+    <!-- Mobile Navigation slot -->
+    <div slot="mobile-navigation" class="space-y-4">
+      <a href="/" class="block py-2 hover:text-yellow-400 transition-colors"
+        >Home</a
+      >
+      <a
+        href="/services"
+        class="block py-2 hover:text-yellow-400 transition-colors">Services</a
+      >
+      <a
+        href="/projects"
+        class="block py-2 hover:text-yellow-400 transition-colors">Projects</a
+      >
+      <a
+        href="/about"
+        class="block py-2 hover:text-yellow-400 transition-colors">About</a
+      >
+      <a
+        href="/contact"
+        class="block py-2 hover:text-yellow-400 transition-colors">Contact</a
+      >
+    </div>
+
+    <!-- Mobile Extra Content -->
+    <div slot="mobile-extra" class="pt-4 border-t border-white/20">
+      <p class="text-sm opacity-90">Available 24/7 for emergency services</p>
+    </div>
+  </Header>
+
+  <main class="pt-20">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-blue-50 to-blue-100 py-20">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <h1
+            class="text-4xl lg:text-6xl font-heading font-bold text-gray-900 mb-6"
+          >
+            Dynamic Header Example
+          </h1>
+          <p class="text-xl lg:text-2xl text-gray-700 mb-8">
+            This page demonstrates a Header component powered by Strapi Cloud
+          </p>
+
+          <!-- Header Status -->
+          <div class="bg-white rounded-lg shadow-lg p-8 mb-12">
+            <h2 class="text-2xl font-heading font-bold text-gray-900 mb-4">
+              Header Data Source
+            </h2>
+            <div class="flex items-center justify-center gap-4">
+              {
+                headerData ? (
+                  <div class="flex items-center gap-3 text-green-600">
+                    <svg
+                      class="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span class="font-semibold">Strapi Cloud Connected</span>
+                  </div>
+                ) : (
+                  <div class="flex items-center gap-3 text-orange-500">
+                    <svg
+                      class="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L5.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+                      />
+                    </svg>
+                    <span class="font-semibold">Using Static Fallback</span>
+                  </div>
+                )
+              }
+            </div>
+          </div>
+
+          <!-- Header Configuration -->
+          <div class="bg-white rounded-lg shadow-lg p-8">
+            <h2 class="text-2xl font-heading font-bold text-gray-900 mb-6">
+              Current Header Configuration
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6 text-left">
+              <div class="space-y-4">
+                <div>
+                  <span class="font-semibold text-gray-700">Company Name:</span>
+                  <p class="text-gray-900">{currentHeaderData.companyName}</p>
+                </div>
+                <div>
+                  <span class="font-semibold text-gray-700">Subtitle:</span>
+                  <p class="text-gray-900">
+                    {currentHeaderData.subtitle || "No subtitle"}
+                  </p>
+                </div>
+                <div>
+                  <span class="font-semibold text-gray-700">Phone Number:</span>
+                  <p class="text-gray-900">
+                    {currentHeaderData.phoneNumber || "No phone"}
+                  </p>
+                </div>
+                <div>
+                  <span class="font-semibold text-gray-700">Logo Source:</span>
+                  <p class="text-gray-900">
+                    {
+                      currentHeaderData.logoFile
+                        ? "📁 Uploaded File"
+                        : currentHeaderData.logoSrc
+                          ? "🔗 External URL"
+                          : "🎨 Default Icon"
+                    }
+                  </p>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <div>
+                  <span class="font-semibold text-gray-700">Button Text:</span>
+                  <p class="text-gray-900">{currentHeaderData.buttonText}</p>
+                </div>
+                <div>
+                  <span class="font-semibold text-gray-700">Button Link:</span>
+                  <p class="text-gray-900">
+                    {currentHeaderData.buttonLink || "No link"}
+                  </p>
+                </div>
+                <div>
+                  <span class="font-semibold text-gray-700">Background:</span>
+                  <p class="text-gray-900 capitalize">
+                    {currentHeaderData.backgroundColor}
+                  </p>
+                </div>
+                <div>
+                  <span class="font-semibold text-gray-700"
+                    >Logo Optimized:</span
+                  >
+                  <p class="text-gray-900">
+                    {
+                      currentHeaderData.logoFile || currentHeaderData.logoSrc
+                        ? "✅ Yes (WebP)"
+                        : "🎨 SVG Icon"
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Sections -->
+    <section class="py-20">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+          <h2
+            class="text-3xl lg:text-4xl font-heading font-bold text-gray-900 mb-8 text-center"
+          >
+            How It Works
+          </h2>
+
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="text-center">
+              <div
+                class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"
+              >
+                <svg
+                  class="w-8 h-8 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">
+                Strapi Backend
+              </h3>
+              <p class="text-gray-700">
+                Header Content-Type with all configuration fields
+              </p>
+            </div>
+
+            <div class="text-center">
+              <div
+                class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+              >
+                <svg
+                  class="w-8 h-8 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">
+                API Integration
+              </h3>
+              <p class="text-gray-700">
+                TypeScript client fetches data with fallback support
+              </p>
+            </div>
+
+            <div class="text-center">
+              <div
+                class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4"
+              >
+                <svg
+                  class="w-8 h-8 text-purple-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">
+                Astro Component
+              </h3>
+              <p class="text-gray-700">
+                Dynamic rendering with responsive design
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Large spacer for scroll demonstration -->
+    <section class="py-40 bg-gray-50">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-heading font-bold text-gray-900 mb-4">
+          Scroll to see Header behavior
+        </h2>
+        <p class="text-xl text-gray-700">
+          The Header remains sticky at the top as you scroll
+        </p>
+      </div>
+    </section>
+
+    <section class="py-40 bg-blue-50">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-heading font-bold text-gray-900 mb-4">
+          Test Mobile Menu
+        </h2>
+        <p class="text-xl text-gray-700">
+          On smaller screens, try the hamburger menu
+        </p>
+      </div>
+    </section>
+  </main>
+</Layout>

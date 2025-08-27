@@ -6,6 +6,9 @@ import type {
   Service,
   ServicesResponse,
   ServiceResponse,
+  Header,
+  HeadersResponse,
+  HeaderResponse,
 } from "../types/strapi";
 
 const STRAPI_URL = import.meta.env.STRAPI_URL || "http://localhost:1337";
@@ -305,6 +308,52 @@ class StrapiClient {
       pagination: {
         pageSize: limit,
       },
+    });
+  }
+
+  // === HEADER METHODS ===
+
+  // Obtener todos los headers
+  async getHeaders(options: StrapiOptions = {}) {
+    return this.request("headers", {
+      populate: ["logoFile"],
+      ...options,
+    });
+  }
+
+  // Obtener header activo (para navegación principal)
+  async getActiveHeader() {
+    try {
+      console.log("🔍 Obteniendo header activo");
+      const response = await this.request("headers", {
+        filters: { isActive: { $eq: true } },
+        populate: ["logoFile"],
+        sort: ["createdAt:desc"],
+      });
+      console.log(
+        `📊 Header activo obtenido: ${response?.data ? "Éxito" : "No encontrado"}`
+      );
+      return response?.data?.[0] || null;
+    } catch (error) {
+      console.warn("⚠️ Error obteniendo header activo:", error);
+      return null;
+    }
+  }
+
+  // Obtener header por slug
+  async getHeaderBySlug(slug: string) {
+    return this.request("headers", {
+      filters: { slug: { $eq: slug }, isActive: { $eq: true } },
+      populate: ["logoFile"],
+    });
+  }
+
+  // Obtener headers activos
+  async getActiveHeaders() {
+    return this.request("headers", {
+      filters: { isActive: { $eq: true } },
+      populate: ["logoFile"],
+      sort: ["createdAt:desc"],
     });
   }
 }

@@ -7,11 +7,12 @@ import StepsSection from "../components/ui/StepsSection.astro";
 import SectionInfo from "../components/ui/SectionInfo.astro";
 import ServicesSection from "../components/ui/ServicesSection.astro";
 import strapi from '../utils/strapi';
-import type { StrapiEntity, Hero as HeroType, SectionInfo as SectionInfoType } from '../types/strapi';
+import type { StrapiEntity, Hero as HeroType, SectionInfo as SectionInfoType, Header as HeaderType } from '../types/strapi';
 
-// Obtener contenido del hero desde Strapi
+// Obtener contenido dinámico desde Strapi
 let heroData: StrapiEntity<HeroType> | null = null;
 let sectionInfoData: StrapiEntity<SectionInfoType> | null = null;
+let headerData: StrapiEntity<HeaderType> | null = null;
 let error: string | null = null;
 
 try {
@@ -39,6 +40,13 @@ try {
   if (sectionInfoData) {
     console.log('📋 SectionInfo activa encontrada:', sectionInfoData.title);
   }
+
+  // Obtener Header desde Strapi
+  console.log('🔍 Obteniendo header activo');
+  headerData = await strapi.getActiveHeader();
+  if (headerData) {
+    console.log('🏠 Header activo encontrado:', headerData.companyName);
+  }
 } catch (e) {
   error = e instanceof Error ? e.message : 'Error loading content';
   console.warn('⚠️ Content loading failed, using fallbacks:', error);
@@ -62,15 +70,56 @@ try {
     />
   </head>
   <body class="min-h-screen bg-white">
-    <!-- Header principal -->
-    <Header
-      companyName="SJT Contratistas"
-      buttonText="Obtener cotización"
-      buttonLink="/contact"
-      phoneNumber="(555) 123-4567"
-      backgroundColor="primary"
-    >
-      <span slot="tagline">Construcción e Infraestructura</span>
+    <!-- Header principal - Contenido dinámico desde Strapi -->
+    {headerData ? (
+      <Header
+        companyName={headerData.companyName}
+        buttonText={headerData.buttonText}
+        buttonLink={headerData.buttonLink}
+        phoneNumber={headerData.phoneNumber}
+        backgroundColor={headerData.backgroundColor}
+        logoSrc={headerData.logoSrc}
+        logoFile={headerData.logoFile}
+        logoAlt={headerData.logoAlt}
+      >
+        <span slot="tagline">{headerData.subtitle}</span>
+        
+        <!-- Navegación Desktop -->
+        <div slot="navigation" class="flex items-center gap-6">
+          <a href="/" class="hover:text-yellow-400 transition-colors font-medium">Inicio</a>
+          <a href="/services" class="hover:text-yellow-400 transition-colors font-medium">Servicios</a>
+          <a href="/projects" class="hover:text-yellow-400 transition-colors font-medium">Proyectos</a>
+          <a href="/about" class="hover:text-yellow-400 transition-colors font-medium">Nosotros</a>
+          <a href="/contact" class="hover:text-yellow-400 transition-colors font-medium">Contacto</a>
+        </div>
+
+        <!-- Navegación Mobile -->
+        <div slot="mobile-navigation" class="space-y-3">
+          <a href="/" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Inicio</a>
+          <a href="/services" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Servicios</a>
+          <a href="/projects" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Proyectos</a>
+          <a href="/about" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Nosotros</a>
+          <a href="/contact" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Contacto</a>
+        </div>
+
+        <!-- Información adicional en mobile -->
+        <div slot="mobile-extra" class="border-t border-white/20 pt-4">
+          <div class="text-center">
+            <p class="text-sm opacity-90 mb-2">Emergencias 24/7</p>
+            <a href="tel:5551234567" class="text-yellow-400 font-semibold">Llamar ahora</a>
+          </div>
+        </div>
+      </Header>
+    ) : (
+      <!-- Fallback - Header estático si no hay contenido en Strapi -->
+      <Header
+        companyName="SJT Contratistas"
+        buttonText="Obtener cotización"
+        buttonLink="/contact"
+        phoneNumber="(555) 123-4567"
+        backgroundColor="primary"
+      >
+        <span slot="tagline">Construcción e Infraestructura</span>
 
       <!-- Navegación Desktop -->
       <div slot="navigation" class="flex items-center gap-6">
@@ -138,6 +187,7 @@ try {
         </div>
       </div>
     </Header>
+    )}
 
     <!-- Componente Hero - Contenido dinámico desde Strapi -->
     {heroData ? (
