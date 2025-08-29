@@ -13,21 +13,16 @@ export interface Props {
     width?: number;
     height?: number;
   };
-  rating?: {
-    stars: number;
-    count: string;
-  };
   backgroundColor?: 'blue' | 'primary' | 'accent';
 }
 
 // Extraer props con valores por defecto
-const { 
+const {
   title, 
   subtitle, 
   buttonText, 
   buttonLink = '#services',
   image,
-  rating,
   backgroundColor = 'primary'
 } = Astro.props;
 
