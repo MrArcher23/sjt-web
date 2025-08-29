@@ -15,6 +15,16 @@ import cert9001 from "../assets/images/certifications/9001Blue.png";
 import cert14001 from "../assets/images/certifications/14001Green.png";
 import cert45001 from "../assets/images/certifications/45001Red.png";
 
+// Importar imágenes de proyectos como assets optimizados
+import panoramica1 from "../assets/images/work/panoramica1.jpeg";
+import obra1 from "../assets/images/work/obra1.jpeg";
+import workImage1 from "../assets/images/work/WhatsApp Image 2025-07-08 at 9.49.18 AM.jpeg";
+import workImage2 from "../assets/images/work/WhatsApp Image 2025-07-08 at 9.49.17 AM.jpeg";
+import workImage3 from "../assets/images/work/WhatsApp Image 2025-07-08 at 3.05.36 PM.jpeg";
+import workImage4 from "../assets/images/work/WhatsApp Image 2025-07-08 at 9.19.38 AM.jpeg";
+import workImage5 from "../assets/images/work/WhatsApp Image 2025-07-08 at 8.14.44 AM.jpeg";
+import workImage6 from "../assets/images/work/WhatsApp Image 2025-07-08 at 8.14.43 AM.jpeg";
+
 // Obtener contenido dinámico desde Strapi
 let heroData: StrapiEntity<HeroType> | null = null;
 let headerData: StrapiEntity<HeaderType> | null = null;
@@ -257,23 +267,86 @@ try {
           var(--color-blue-dark) 100%
         );
       }
+
+      /* Estilos para galería tipo mosaico */
+      .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-auto-rows: 200px;
+        gap: 1rem;
+      }
+
+      .gallery-item {
+        overflow: hidden;
+        border-radius: 1rem;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .gallery-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Grid responsivo específico */
+      @media (min-width: 768px) {
+        .gallery-grid {
+          grid-template-columns: repeat(4, 1fr);
+          grid-auto-rows: 180px;
+        }
+
+        .gallery-item-large {
+          grid-column: span 2;
+          grid-row: span 2;
+        }
+
+        .gallery-item-wide {
+          grid-column: span 2;
+        }
+
+        .gallery-item-tall {
+          grid-row: span 2;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .gallery-grid {
+          grid-template-columns: repeat(6, 1fr);
+          grid-auto-rows: 200px;
+        }
+      }
+
+      /* Efectos zoom para imágenes */
+      .gallery-image {
+        transition: all 0.7s ease;
+        transform-origin: center center;
+      }
+
+      .gallery-item:hover .gallery-image {
+        transform: scale(1.1) rotate(0.5deg);
+        filter: brightness(1.1) contrast(1.05);
+      }
     </style>
   </head>
   <body class="min-h-screen bg-white font-primary">
     <!-- Header Industrial Limpio -->
-    <header
-      class="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50"
-    >
+    <header class="bg-white shadow-sm my-4">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-18 py-4">
+        <div class="flex justify-between items-center h-16">
           <!-- Logo y nombre de empresa -->
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-3">
             {
               headerData?.logoFile?.url ? (
-                <img
+                <Image
                   src={headerData.logoFile.url}
                   alt={headerData.logoAlt || headerData.companyName}
-                  class="h-12 w-auto object-contain"
+                  class="h-44 w-44 object-contain"
+                  width={176}
+                  height={176}
+                  loading="eager"
+                  format="webp"
+                  quality="high"
                 />
               ) : (
                 <div class="h-10 w-10 bg-primary-blue rounded-lg flex items-center justify-center shadow-md">
@@ -288,7 +361,7 @@ try {
                 </div>
               )
             }
-            <div class="hidden sm:block">
+            <!-- <div class="hidden sm:block">
               <h1
                 class="text-xl font-bold"
                 style="color: var(--color-text-primary);"
@@ -298,7 +371,7 @@ try {
               <p class="text-sm text-primary-blue font-medium">
                 Ingeniería & Construcción
               </p>
-            </div>
+            </div> -->
           </div>
 
           <!-- Navegación central -->
@@ -709,28 +782,79 @@ try {
 
             <!-- Elementos visuales -->
             <div class="space-y-6">
-              <div class="grid grid-cols-2 gap-4">
-                <div class="bg-blue-50 rounded-xl p-6 text-center">
-                  <div class="text-3xl font-bold text-primary-blue mb-2">
-                    XX+
+              <div
+                class="relative group cursor-pointer overflow-hidden rounded-2xl"
+              >
+                <!-- Imagen con efecto hover -->
+                <Image
+                  src={panoramica1}
+                  alt="Vista panorámica de instalaciones industriales SJT"
+                  width={600}
+                  height={400}
+                  class="rounded-2xl shadow-xl w-full h-80 object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:rotate-1 group-hover:brightness-110 group-hover:contrast-105"
+                  loading="lazy"
+                  format="webp"
+                  quality="high"
+                />
+
+                <!-- Overlay que aparece en hover -->
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out rounded-2xl"
+                >
+                  <!-- Tarjeta flotante glassmorphism -->
+                  <div
+                    class="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md border border-white/40 rounded-xl shadow-2xl transform translate-y-6 group-hover:translate-y-0 transition-all duration-700 ease-out p-6"
+                  >
+                    <!-- Efecto de brillo en la tarjeta -->
+                    <div
+                      class="absolute inset-0 bg-gradient-to-r from-transparent via-primary-blue/10 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    >
+                    </div>
+
+                    <!-- Contenido de la tarjeta -->
+                    <div class="relative z-10">
+                      <!-- Header con icono y badge -->
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="text-xs text-gray-400">2024</div>
+                      </div>
+
+                      <!-- Título y descripción -->
+                      <h4
+                        class="text-lg font-bold text-gray-800 mb-2 leading-tight"
+                      >
+                        Obra XXXXX
+                      </h4>
+                      <p class="text-sm text-gray-600 leading-relaxed">
+                        Descripion de la obra
+                      </p>
+
+                      <!-- Línea decorativa animada -->
+                      <div
+                        class="mt-4 w-0 group-hover:w-full transition-all duration-1000 ease-out h-0.5 bg-gradient-to-r from-primary-blue to-success rounded-full"
+                      >
+                      </div>
+                    </div>
                   </div>
-                  <p class="text-sm text-gray-600">Años de experiencia</p>
                 </div>
-                <div class="bg-green-50 rounded-xl p-6 text-center">
-                  <div class="text-3xl font-bold text-success mb-2">500+</div>
-                  <p class="text-sm text-gray-600">Proyectos completados</p>
+
+                <!-- Efecto de brillo que cruza la imagen -->
+                <div
+                  class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 group-hover:delay-200"
+                >
                 </div>
-                <div class="bg-purple-50 rounded-xl p-6 text-center">
-                  <div class="text-3xl font-bold text-purple-600 mb-2">
-                    100%
-                  </div>
-                  <p class="text-sm text-gray-600">Satisfacción cliente</p>
+
+                <!-- Partículas decorativas flotantes -->
+                <div
+                  class="absolute top-4 left-4 w-2 h-2 bg-white/60 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:animate-ping"
+                >
                 </div>
-                <div class="bg-orange-50 rounded-xl p-6 text-center">
-                  <div class="text-3xl font-bold text-orange-600 mb-2">
-                    24/7
-                  </div>
-                  <p class="text-sm text-gray-600">Soporte técnico</p>
+                <div
+                  class="absolute top-8 left-8 w-1 h-1 bg-primary-blue rounded-full opacity-0 group-hover:opacity-100 transition-all duration-700 delay-200 group-hover:animate-pulse"
+                >
+                </div>
+                <div
+                  class="absolute bottom-8 right-8 w-1.5 h-1.5 bg-white/40 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-600 delay-300 group-hover:animate-bounce"
+                >
                 </div>
               </div>
             </div>
@@ -739,99 +863,408 @@ try {
       </div>
     </section>
 
-    <!-- Vision Section - Imagen + Lista Professional -->
+    <!-- Vision Section - Imagen + Contenido (Layout Invertido) -->
     <section class="py-20 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid lg:grid-cols-2 gap-16 items-center">
-          <!-- Contenido de visión lado izquierdo -->
-          <div class="space-y-8">
-            <div>
-              <div
-                class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6"
-              >
-                Innovación y Desarrollo
-              </div>
-              <h2
-                class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-6"
-              >
-                Avanzando en la Construcción a Través de la Innovación
-              </h2>
-              <p class="text-xl text-gray-600 leading-relaxed">
-                La innovación está profundamente arraigada en nuestro ADN.
-                Nuestras instalaciones combinan experiencia técnica
-                especializada con conocimiento práctico de construcción para
-                crear soluciones que definen los estándares de la industria.
-              </p>
-            </div>
-
-            <!-- Lista de puntos de visión con checkmarks -->
-            <div class="space-y-4">
-              {
-                [
-                  "Mejora continua en la eficiencia de procesos y rendimiento",
-                  "Desarrollo de métodos de construcción eco-amigables",
-                  "Equipos multifuncionales dedicados a la innovación de proyectos",
-                  "Alianzas estratégicas con líderes tecnológicos globales",
-                ].map((point) => (
-                  <div class="flex items-start space-x-4">
-                    <div class="flex-shrink-0 mt-1">
-                      <svg
-                        class="w-6 h-6 text-success"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                    <p class="text-lg text-gray-700 leading-relaxed">{point}</p>
-                  </div>
-                ))
-              }
-            </div>
-
-            <!-- Contenido de visión SJT -->
-            <div class="bg-blue-50 rounded-2xl p-8">
-              <h3 class="text-2xl font-bold text-gray-900 mb-4">
-                Nuestra Visión SJT
-              </h3>
-              <p class="text-lg text-gray-700 leading-relaxed">
-                <strong class="text-primary-blue"
-                  >Ser reconocida como una empresa líder y dinámica</strong
-                >, comprometidos a romper esquemas, colocándonos a la vanguardia
-                en todos y cada uno de nuestros procesos para nuestros
-                proyectos, productos y servicios.
-              </p>
-            </div>
+        <!-- Encabezado de sección -->
+        <div class="text-center mb-16">
+          <div
+            class="inline-flex items-center px-4 py-2 bg-primary-blue/10 text-primary-blue rounded-full text-sm font-medium mb-4"
+          >
+            Nuestra Visión
           </div>
+          <h2
+            class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
+          >
+            Liderazgo, Innovación, Vanguardia
+          </h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Comprometidos a romper esquemas y posicionarnos como referente en la
+            industria de la construcción
+          </p>
+        </div>
 
-          <!-- Imagen profesional/industrial lado derecho -->
-          <div class="relative">
-            <img
-              src="https://images.unsplash.com/photo-1582719471384-894fbb16e074?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              alt="Investigación y desarrollo en laboratorio industrial"
-              class="rounded-2xl shadow-xl w-full h-96 object-cover"
-            />
-            <!-- Stats overlay -->
-            <div class="absolute bottom-6 left-6 right-6">
+        <!-- Contenido principal con imagen a la izquierda -->
+        <div
+          class="bg-white rounded-3xl p-8 md:p-12 shadow-lg border border-gray-100"
+        >
+          <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <!-- Imagen lado izquierdo con efectos -->
+            <div
+              class="relative group cursor-pointer overflow-hidden rounded-2xl"
+            >
+              <Image
+                src={obra1}
+                alt="Proyecto de construcción SJT - Obra completada"
+                width={600}
+                height={400}
+                class="rounded-2xl shadow-xl w-full h-80 object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:brightness-110"
+                loading="lazy"
+                format="webp"
+                quality="high"
+              />
+
+              <!-- Overlay con información del proyecto -->
               <div
-                class="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg"
+                class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out rounded-2xl"
               >
-                <div class="text-center">
-                  <p class="text-sm text-gray-600 mb-2">
-                    Algunas empresas para las que hemos brindado soluciones
+                <div
+                  class="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md border border-white/40 rounded-xl shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 ease-out p-4"
+                >
+                  <div class="flex items-center justify-between mb-2"></div>
+                  <h5 class="text-sm font-bold text-gray-800">
+                    Proyecto XXXXX SJT
+                  </h5>
+                  <p class="text-xs text-gray-600">
+                    Construcción con estándares de calidad internacional
                   </p>
-                  <div class="flex justify-center items-center space-x-4">
-                    <div class="w-8 h-8 bg-gray-200 rounded"></div>
-                    <div class="w-8 h-8 bg-gray-200 rounded"></div>
-                    <div class="w-8 h-8 bg-gray-200 rounded"></div>
-                    <span class="text-sm text-gray-500">+50 más</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contenido de visión lado derecho -->
+            <div class="space-y-6">
+              <div>
+                <div
+                  class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6"
+                >
+                  Nuestro Compromiso
+                </div>
+              </div>
+
+              <div class="text-lg text-gray-700 leading-relaxed space-y-4">
+                <p>
+                  <strong class="text-primary-blue">
+                    Ser reconocida como una empresa líder y dinámica</strong
+                  >, comprometidos a romper esquemas, colocándonos a la
+                  vanguardia en todos y cada uno de nuestros procesos.
+                </p>
+                <p>
+                  Para nuestros proyectos, productos y servicios, <strong
+                    class="text-primary-blue"
+                  >
+                    manteniendo siempre la excelencia y la innovación</strong
+                  >
+                  como pilares fundamentales de nuestra operación.
+                </p>
+                <p>
+                  Construyendo el futuro con tecnología de punta y metodologías
+                  innovadoras que nos posicionen como <strong
+                    class="text-primary-blue"
+                  >
+                    referente en la industria de la construcción</strong
+                  >.
+                </p>
+              </div>
+
+              <!-- Elementos visuales decorativos -->
+              <div class="pt-6">
+                <!-- Línea decorativa animada -->
+                <div
+                  class="w-full h-1 bg-gray-100 rounded-full overflow-hidden"
+                >
+                  <div
+                    class="h-full bg-gradient-to-r from-primary-blue to-success w-0 group-hover:w-full transition-all duration-2000 ease-out"
+                  >
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Galería de Proyectos Tipo Mosaico -->
+    <section class="py-20 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header de la Galería -->
+        <div class="text-center mb-16">
+          <div
+            class="inline-flex items-center px-4 py-2 bg-primary-blue/10 text-primary-blue rounded-full text-sm font-medium mb-4"
+          >
+            Nuestros Proyectos
+          </div>
+          <h2
+            class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
+          >
+            Galería de <span class="text-primary-blue">Obras Realizadas</span>
+          </h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Explora algunos de nuestros proyectos más destacados en construcción
+            industrial, residencial y comercial que demuestran nuestro
+            compromiso con la excelencia.
+          </p>
+          <div
+            class="w-24 h-1 bg-gradient-to-r from-primary-blue to-blue-dark rounded-full mx-auto mt-8"
+          >
+          </div>
+        </div>
+
+        <!-- Grid Mosaico Responsivo -->
+        <div class="gallery-grid">
+          <!-- Imagen Principal (Grande) -->
+          <div class="gallery-item gallery-item-large group">
+            <Image
+              src={panoramica1}
+              alt="Vista panorámica instalaciones industriales SJT"
+              width={800}
+              height={600}
+              class="gallery-image w-full h-full object-cover"
+              loading="lazy"
+              format="webp"
+              quality="high"
+            />
+            <!-- Overlay con información -->
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"
+            >
+              <div
+                class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
+              >
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                  <h3 class="text-xl font-bold mb-2">
+                    Instalaciones Principales
+                  </h3>
+                  <p class="text-sm opacity-90">
+                    Vista panorámica de nuestras modernas instalaciones
+                    industriales
+                  </p>
+                  <div class="mt-3 flex items-center space-x-2">
+                    <span class="w-2 h-2 bg-success rounded-full animate-pulse"
+                    ></span>
+                    <span class="text-xs font-medium">PROYECTO COMPLETADO</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Obra Industrial -->
+          <div class="gallery-item gallery-item-wide group">
+            <Image
+              src={obra1}
+              alt="Proyecto de construcción industrial SJT"
+              width={600}
+              height={400}
+              class="gallery-image w-full h-full object-cover"
+              loading="lazy"
+              format="webp"
+              quality="high"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            >
+              <div
+                class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
+              >
+                <h4 class="text-lg font-bold mb-1">Construcción Industrial</h4>
+                <p class="text-sm opacity-90">
+                  Infraestructura de alta resistencia
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Proyecto Especializado 1 -->
+          <div class="gallery-item group">
+            <Image
+              src={workImage1}
+              alt="Proyecto especializado de construcción SJT"
+              width={400}
+              height={300}
+              class="gallery-image w-full h-full object-cover"
+              loading="lazy"
+              format="webp"
+              quality="high"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            >
+              <div
+                class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
+              >
+                <h4 class="text-lg font-bold mb-1">Obra Especializada</h4>
+                <p class="text-sm opacity-90">Soluciones técnicas avanzadas</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Proyecto Comercial -->
+          <div class="gallery-item gallery-item-tall group">
+            <Image
+              src={workImage2}
+              alt="Desarrollo comercial SJT"
+              width={400}
+              height={600}
+              class="gallery-image w-full h-full object-cover"
+              loading="lazy"
+              format="webp"
+              quality="high"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            >
+              <div
+                class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
+              >
+                <h4 class="text-lg font-bold mb-1">Desarrollo Comercial</h4>
+                <p class="text-sm opacity-90">Espacios comerciales modernos</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Infraestructura Urbana -->
+          <div class="gallery-item group">
+            <Image
+              src={workImage3}
+              alt="Infraestructura urbana SJT"
+              width={400}
+              height={300}
+              class="gallery-image w-full h-full object-cover"
+              loading="lazy"
+              format="webp"
+              quality="high"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            >
+              <div
+                class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
+              >
+                <h4 class="text-lg font-bold mb-1">Infraestructura Urbana</h4>
+                <p class="text-sm opacity-90">Desarrollo de conectividad</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Construcción Residencial -->
+          <div class="gallery-item group">
+            <Image
+              src={workImage4}
+              alt="Proyecto residencial SJT"
+              width={400}
+              height={300}
+              class="gallery-image w-full h-full object-cover"
+              loading="lazy"
+              format="webp"
+              quality="high"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            >
+              <div
+                class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
+              >
+                <h4 class="text-lg font-bold mb-1">Construcción Residencial</h4>
+                <p class="text-sm opacity-90">
+                  Espacios habitacionales de calidad
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ingeniería Civil -->
+          <div class="gallery-item gallery-item-wide group">
+            <Image
+              src={workImage5}
+              alt="Proyecto de ingeniería civil SJT"
+              width={600}
+              height={400}
+              class="gallery-image w-full h-full object-cover"
+              loading="lazy"
+              format="webp"
+              quality="high"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            >
+              <div
+                class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
+              >
+                <h4 class="text-lg font-bold mb-1">Ingeniería Civil</h4>
+                <p class="text-sm opacity-90">
+                  Estructuras de alta complejidad
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Proyecto Final -->
+          <div class="gallery-item group">
+            <Image
+              src={workImage6}
+              alt="Proyecto de construcción integral SJT"
+              width={400}
+              height={300}
+              class="gallery-image w-full h-full object-cover"
+              loading="lazy"
+              format="webp"
+              quality="high"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            >
+              <div
+                class="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500"
+              >
+                <h4 class="text-lg font-bold mb-1">Construcción Integral</h4>
+                <p class="text-sm opacity-90">Proyectos llave en mano</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Call to Action de la Galería -->
+        <div class="text-center mt-16">
+          <div
+            class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100"
+          >
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">
+              ¿Tienes un proyecto en mente?
+            </h3>
+            <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+              Desde diseño hasta construcción, manejamos proyectos integrales
+              con los más altos estándares de calidad.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="#"
+                class="bg-primary-blue hover:bg-primary-blue-hover text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover-lift shadow-md inline-flex items-center justify-center space-x-2"
+              >
+                <span>Ver Más Proyectos</span>
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </a>
+              <a
+                href="#"
+                class="border-2 border-primary-blue text-primary-blue hover:bg-primary-blue hover:text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover-lift inline-flex items-center justify-center space-x-2"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  ></path>
+                </svg>
+                <span>Solicitar Cotización</span>
+              </a>
             </div>
           </div>
         </div>
@@ -914,13 +1347,12 @@ try {
           </div>
 
           <!-- Estadísticas rápidas -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-8 pt-16">
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-8 pt-16">
             {
               [
                 { number: "XX+", label: "Años de experiencia" },
-                { number: "500+", label: "Proyectos completados" },
-                { number: "50+", label: "Clientes satisfechos" },
-                { number: "24/7", label: "Soporte técnico" },
+                { number: "XXX+", label: "Proyectos completados" },
+                { number: "XX+", label: "Clientes satisfechos" },
               ].map((stat) => (
                 <div class="text-center">
                   <div class="text-3xl md:text-4xl font-bold text-white mb-2">
@@ -1016,6 +1448,65 @@ try {
           observer.observe(section);
         });
 
+        // Animaciones específicas para galería
+        const galleryItems = document.querySelectorAll(".gallery-item");
+        const galleryObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry, index) => {
+              if (entry.isIntersecting) {
+                setTimeout(() => {
+                  (entry.target as HTMLElement).style.opacity = "1";
+                  (entry.target as HTMLElement).style.transform =
+                    "translateY(0) scale(1)";
+                }, index * 100); // Animación escalonada
+              }
+            });
+          },
+          {
+            threshold: 0.2,
+            rootMargin: "0px 0px -100px 0px",
+          }
+        );
+
+        galleryItems.forEach((item) => {
+          const itemElement = item as HTMLElement;
+          itemElement.style.opacity = "0";
+          itemElement.style.transform = "translateY(30px) scale(0.95)";
+          itemElement.style.transition =
+            "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+          galleryObserver.observe(item);
+        });
+
+        // Efecto parallax suave en imágenes de galería
+        let ticking = false;
+        const parallaxImages = document.querySelectorAll(".gallery-image");
+
+        function updateParallax() {
+          const scrolled = window.pageYOffset;
+
+          parallaxImages.forEach((image) => {
+            const rect = image.getBoundingClientRect();
+            const speed = 0.05;
+
+            if (rect.bottom >= 0 && rect.top <= window.innerHeight) {
+              const yPos = -(rect.top * speed);
+              (image as HTMLElement).style.transform =
+                `translateY(${yPos}px) scale(1)`;
+            }
+          });
+
+          ticking = false;
+        }
+
+        function requestParallaxUpdate() {
+          if (!ticking) {
+            requestAnimationFrame(updateParallax);
+            ticking = true;
+          }
+        }
+
+        window.addEventListener("scroll", requestParallaxUpdate);
+
         // Hero section siempre visible
         const heroSection = document.querySelector("section");
         if (heroSection) {
@@ -1028,13 +1519,18 @@ try {
         console.log("✅ Todas las secciones implementadas:");
         console.log("   - Header Industrial");
         console.log("   - Hero Fullscreen + Overlay");
-        console.log("   - Services (Cards blancas + hover elevation)");
+        console.log("   - Certificaciones ISO (American Total Quality)");
         console.log("   - Values (Imagen + checkmarks verdes)");
-        console.log("   - Mission (Elementos visuales modernos)");
-        console.log("   - Vision (Imagen profesional + lista)");
-        console.log("   - Benefits (4 columnas + íconos)");
-        console.log("   - CTA Azul (Full-width)");
-        console.log("🚀 Propuesta 2 - Diseño Industrial COMPLETADA");
+        console.log(
+          "   - Mission (Elementos visuales modernos con panorámica1)"
+        );
+        console.log("   - Vision (Layout invertido con obra1)");
+        console.log("   - 🖼️ Galería Tipo Mosaico (8 imágenes optimizadas)");
+        console.log("   - CTA Azul (Full-width con estadísticas)");
+        console.log("🚀 Propuesta 2 - Diseño Industrial + Galería COMPLETADA");
+        console.log(
+          "📸 Galería con efectos zoom, parallax y animaciones escalonadas"
+        );
       });
     </script>
   </body>
