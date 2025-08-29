@@ -203,10 +203,6 @@ try {
           width: heroData.heroImage.width || 800,
           height: heroData.heroImage.height || 600
         } : undefined}
-        rating={heroData.rating ? {
-          stars: heroData.rating.stars,
-          count: heroData.rating.count
-        } : undefined}
       >
         <!-- Contenido adicional usando slots -->
         <div slot="additional-content">
@@ -222,10 +218,6 @@ try {
         buttonText="Explorar nuestros servicios"
         buttonLink="/services"
         backgroundColor="primary"
-        rating={{
-          stars: 5,
-          count: "2000+",
-        }}
       >
         <!-- Contenido adicional usando slots -->
         <div slot="additional-content">

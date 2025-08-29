@@ -127,12 +127,6 @@ export interface Testimonial {
   };
 }
 
-// Rating component para heroes y testimonios
-export interface Rating {
-  stars: number;
-  count: string;
-}
-
 // Hero Collection Type
 export interface Hero {
   title: string;
@@ -148,7 +142,6 @@ export interface Hero {
     width: number;
     height: number;
   };
-  rating?: Rating;
   slug?: string;
   isActive: boolean;
 }
