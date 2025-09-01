@@ -1,0 +1,1088 @@
+---
+// Importar CSS global con Tailwind
+import "../styles/globals.css";
+import strapi from "../utils/strapi";
+import type {
+  StrapiEntity,
+  Hero as HeroType,
+  Header as HeaderType,
+  Service,
+} from "../types/strapi";
+import { Image } from "astro:assets";
+
+// Importar video de fondo
+import oilVideo from "../assets/video/oil1.webm";
+
+// Importar imágenes de la galería como assets optimizados
+import workImage1 from "../assets/images/work/WhatsApp Image 2025-07-08 at 9.49.18 AM.jpeg";
+import workImage2 from "../assets/images/work/WhatsApp Image 2025-07-08 at 9.49.17 AM.jpeg";
+import workImage3 from "../assets/images/work/WhatsApp Image 2025-07-08 at 3.05.36 PM.jpeg";
+
+// Importar imágenes de servicios
+import servicio1 from "../assets/images/work/servicio1.jpeg";
+import servicio2 from "../assets/images/work/servicio2.jpeg";
+import servicio3 from "../assets/images/work/servicio3.jpeg";
+import servicio5 from "../assets/images/work/serviocio5.jpeg";
+
+// Importar imágenes de certificaciones ISO
+import cert9001 from "../assets/images/certifications/9001Blue.png";
+import cert14001 from "../assets/images/certifications/14001Green.png";
+import cert45001 from "../assets/images/certifications/45001Red.png";
+
+// Obtener contenido dinámico desde Strapi
+let heroData: StrapiEntity<HeroType> | null = null;
+let headerData: StrapiEntity<HeaderType> | null = null;
+let services: StrapiEntity<Service>[] = [];
+let error: string | null = null;
+
+try {
+  // Usar endpoint estándar con filtro para heroes activos
+  console.log("🔍 Obteniendo heroes activos");
+  const heroResponse = await strapi.getActiveHeroes();
+
+  // Tomar el primer hero activo (más reciente)
+  heroData = heroResponse.data?.[0] || null;
+
+  if (heroData) {
+    console.log("🦸 Hero activo encontrado:", heroData.title);
+  } else {
+    console.log("⚠️ No hay heroes activos, probando cualquier hero...");
+    const allHeroesResponse = await strapi.getHeroes();
+    heroData = allHeroesResponse.data?.[0] || null;
+    if (heroData) {
+      console.log("🦸 Usando hero más reciente:", heroData.title);
+    }
+  }
+
+  // Obtener Header desde Strapi
+  console.log("🔍 Obteniendo header activo");
+  headerData = await strapi.getActiveHeader();
+  if (headerData) {
+    console.log("🏠 Header activo encontrado:", headerData.companyName);
+  }
+
+  // Obtener servicios desde Strapi
+  console.log("🔍 Obteniendo servicios activos");
+  const servicesResponse = await strapi.getServices({
+    filters: { isActive: { $eq: true } },
+    sort: ["order:asc"],
+  });
+  services = servicesResponse.data || [];
+
+  // Limitar a 3 servicios para el diseño químico
+  if (services.length > 3) {
+    services = services.slice(0, 3);
+  }
+
+  if (services.length > 0) {
+    console.log(`✅ ${services.length} servicios encontrados`);
+  }
+} catch (e) {
+  error = e instanceof Error ? e.message : "Error loading content";
+  console.warn("⚠️ Content loading failed, using fallbacks:", error);
+}
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>
+      Propuesta 4 - Líderes en Construcción | SJT Contratistas S.A. de C.V.
+    </title>
+
+    <!-- Fuentes de Google Fonts - Bold e Impactante -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS Variables y Estilos Base - Paleta Azul/Amarillo Química -->
+    <style>
+      :root {
+        /* Colores Primarios - Paleta Química Azul/Amarillo */
+        --color-primary-blue: #2563eb;
+        --color-primary-blue-hover: #1d4ed8;
+        --color-primary-blue-light: #60a5fa;
+        --color-primary-blue-dark: #1e40af;
+        --color-chemical-blue: #3b82f6;
+        --color-chemical-blue-dark: #2563eb;
+
+        --color-primary-yellow: #fbbf24;
+        --color-primary-yellow-hover: #f59e0b;
+        --color-primary-yellow-light: #fcd34d;
+        --color-primary-yellow-dark: #d97706;
+
+        /* Colores Secundarios */
+        --color-dark: #1f2937;
+        --color-dark-light: #374151;
+        --color-text-primary: #111827;
+        --color-text-secondary: #4b5563;
+        --color-text-light: #6b7280;
+
+        /* Fondos */
+        --color-bg-primary: #ffffff;
+        --color-bg-light: #f9fafb;
+        --color-bg-blue: #eff6ff;
+        --color-bg-dark: #1f2937;
+
+        /* Overlays translúcidos */
+        --overlay-dark: rgba(31, 41, 55, 0.85);
+        --overlay-blue: rgba(37, 99, 235, 0.95);
+        --overlay-light: rgba(255, 255, 255, 0.95);
+
+        /* Sombras */
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        --shadow-blue: 0 10px 15px -3px rgb(37 99 235 / 0.3);
+        --shadow-yellow: 0 10px 15px -3px rgb(251 191 36 / 0.3);
+
+        /* Tipografía */
+        --font-primary:
+          "Montserrat", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        --font-secondary:
+          "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      }
+
+      /* CSS Base para smooth scroll */
+      html {
+        scroll-behavior: smooth;
+        font-family: var(--font-primary);
+      }
+
+      /* Offset para scroll con header fijo */
+      .scroll-mt-20 {
+        scroll-margin-top: 5rem;
+      }
+
+      /* Mejorar la experiencia de scroll */
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+
+      /* Utilidades custom para el diseño químico */
+      .text-primary-blue {
+        color: var(--color-primary-blue);
+      }
+
+      .bg-primary-blue {
+        background-color: var(--color-primary-blue);
+      }
+
+      .bg-primary-blue:hover {
+        background-color: var(--color-primary-blue-hover);
+      }
+
+      .border-primary-blue {
+        border-color: var(--color-primary-blue);
+      }
+
+      .text-chemical-yellow {
+        color: var(--color-primary-yellow);
+      }
+
+      .bg-chemical-yellow {
+        background-color: var(--color-primary-yellow);
+      }
+
+      /* Header transparente */
+      .header-transparent {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* Efectos de hover para química */
+      .hover-lift-strong {
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .hover-lift-strong:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-blue);
+      }
+
+      /* Video Hero Styles */
+      .video-hero-container {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .video-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
+      }
+
+      .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          rgba(37, 99, 235, 0.85) 0%,
+          rgba(29, 78, 216, 0.75) 30%,
+          rgba(0, 0, 0, 0.6) 70%,
+          rgba(31, 41, 55, 0.8) 100%
+        );
+        z-index: 2;
+      }
+
+      .video-content {
+        position: relative;
+        z-index: 3;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Ajustes para móvil */
+      @media (max-width: 768px) {
+        .video-hero-container {
+          height: 100vh;
+        }
+
+        .video-background {
+          object-position: center center;
+        }
+
+        .video-overlay {
+          background: linear-gradient(
+            135deg,
+            rgba(37, 99, 235, 0.9) 0%,
+            rgba(29, 78, 216, 0.85) 50%,
+            rgba(31, 41, 55, 0.9) 100%
+          );
+        }
+      }
+
+      /* Espaciado extra para móvil */
+      @media (max-width: 640px) {
+        .mobile-safe-area {
+          padding-top: 2rem;
+          padding-bottom: 1rem;
+        }
+      }
+
+      /* Texto con efecto químico */
+      .text-chemical-gradient {
+        background: linear-gradient(
+          135deg,
+          var(--color-primary-blue) 0%,
+          var(--color-primary-yellow) 50%,
+          var(--color-primary-blue-dark) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Bordes químicos */
+      .border-chemical {
+        border-color: var(--color-primary-blue);
+      }
+
+      /* Animación de pulso químico */
+      .pulse-chemical {
+        animation: pulse-chemical 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      @keyframes pulse-chemical {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+        }
+        50% {
+          box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-white font-primary">
+    <!-- Header Transparente Estilo Químico -->
+    <header class="fixed top-0 w-full z-50 header-transparent">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+          <!-- Logo y nombre de empresa -->
+          <div class="flex items-center space-x-4">
+            {
+              headerData?.logoFile?.url ? (
+                <img
+                  src={headerData.logoFile.url}
+                  alt={headerData.logoAlt || headerData.companyName}
+                  class="h-12 w-auto object-contain"
+                />
+              ) : (
+                <div class="h-12 w-12 bg-primary-blue rounded-lg flex items-center justify-center shadow-lg">
+                  <svg
+                    class="h-7 w-7 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              )
+            }
+            <div>
+              <h1 class="text-xl font-black text-white tracking-wide">
+                {headerData?.companyName || "EXPERTOS QUÍMICOS"}
+              </h1>
+              <p class="text-sm text-white font-bold uppercase tracking-wider">
+                SOLUCIONES PROFESIONALES
+              </p>
+            </div>
+          </div>
+
+          <!-- Navegación central -->
+          <nav class="hidden lg:flex space-x-8">
+            <a
+              href="/"
+              class="text-white hover:text-yellow-300 transition-colors duration-200 font-semibold text-sm uppercase tracking-wider px-3 py-2 rounded-md hover:bg-white/10"
+              >Inicio</a
+            >
+            <a
+              href="#servicios-section"
+              class="text-white hover:text-yellow-300 transition-colors duration-200 font-semibold text-sm uppercase tracking-wider px-3 py-2 rounded-md hover:bg-white/10"
+              >Servicios</a
+            >
+            <a
+              href="#proyectos-section"
+              class="text-white hover:text-yellow-300 transition-colors duration-200 font-semibold text-sm uppercase tracking-wider px-3 py-2 rounded-md hover:bg-white/10"
+              >Proyectos</a
+            >
+            <a
+              href="#nosotros-section"
+              class="text-white hover:text-yellow-300 transition-colors duration-200 font-semibold text-sm uppercase tracking-wider px-3 py-2 rounded-md hover:bg-white/10"
+              >Nosotros</a
+            >
+            <a
+              href="#contact"
+              class="text-white hover:text-yellow-300 transition-colors duration-200 font-semibold text-sm uppercase tracking-wider px-3 py-2 rounded-md hover:bg-white/10"
+              >Contacto</a
+            >
+          </nav>
+
+          <div class="flex items-center space-x-4">
+            <!-- Botón hamburguesa -->
+            <button
+              class="lg:hidden text-white hover:text-yellow-300 transition-colors"
+            >
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section con Video de Fondo -->
+    <section class="video-hero-container">
+      <!-- Video de fondo -->
+      <video
+        class="video-background"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        poster=""
+      >
+        <source src={oilVideo} type="video/webm" />
+        <!-- Fallback para navegadores que no soporten WebM -->
+        Tu navegador no soporta videos HTML5.
+      </video>
+
+      <!-- Contenido sobre el video -->
+      <div class="video-content">
+        <div class="container mx-auto px-4 text-center text-white">
+          <div class="max-w-6xl mx-auto">
+            <!-- Título Principal Gigante -->
+            <div class="space-y-4 mb-8">
+              <h1
+                class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white leading-none tracking-tight drop-shadow-2xl"
+              >
+                SJT
+              </h1>
+              <h1
+                class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white leading-none tracking-tight drop-shadow-2xl"
+              >
+                CONTRATISTAS
+              </h1>
+            </div>
+
+            <!-- Línea divisoria amarilla -->
+            <div
+              class="w-32 sm:w-40 h-1 bg-primary-blue mx-auto mb-8 drop-shadow-lg"
+            >
+            </div>
+
+            <!-- Subtítulo -->
+            <p
+              class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white uppercase tracking-wider mb-6 drop-shadow-lg"
+            >
+              Empresa Mexicana Líder
+            </p>
+
+            <!-- Descripción -->
+            <p
+              class="text-lg sm:text-xl md:text-2xl text-white leading-relaxed font-medium max-w-4xl mx-auto mb-12 drop-shadow-lg"
+            >
+              {
+                heroData?.subtitle ||
+                  "Líderes en tratamiento profesional de productos químicos y farmacéuticos con más de 20 años de experiencia"
+              }
+            </p>
+
+            <!-- Botones de Acción -->
+            <div
+              class="flex flex-col sm:flex-row gap-6 justify-center items-center"
+            >
+              <a
+                href="#servicios-section"
+                class="bg-white hover:bg-gray-100 text-primary-blue px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover-lift-strong shadow-2xl inline-flex items-center justify-center space-x-3 drop-shadow-lg"
+              >
+                <span>NUESTROS SERVICIOS</span>
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nueva Sección Quiénes Somos estilo imagen -->
+    <section class="bg-white py-16 lg:py-20 relative overflow-hidden">
+      <div class="mx-12 px-0">
+        <!-- Línea decorativa superior -->
+        <div class="text-center mb-16">
+          <div class="w-32 h-1 bg-primary-blue mx-auto mb-8"></div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <!-- Contenido izquierdo - Texto -->
+          <div class="space-y-6 relative">
+            <!-- Etiqueta "quiénes somos" -->
+            <div class="mb-6">
+              <span
+                class="text-primary-blue text-sm font-bold uppercase tracking-wider border-l-4 border-primary-blue pl-4"
+              >
+                quiénes somos
+              </span>
+            </div>
+
+            <!-- Título Principal -->
+            <div class="space-y-4">
+              <h2
+                class="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 leading-tight"
+              >
+                LÍDERES EN LA<br />
+                <span class="text-primary-blue">INDUSTRIA DE</span><br />
+                <span class="text-primary-blue">CONSTRUCCIÓN</span>
+              </h2>
+            </div>
+
+            <!-- Subtítulo -->
+            <h3 class="text-xl sm:text-2xl font-bold text-gray-700 mb-8">
+              SJT Contratistas S.A. de C.V.<br />
+              <span class="text-primary-blue"
+                >Comprometidos con la Calidad, Medio Ambiente y Seguridad</span
+              >
+            </h3>
+
+            <!-- Descripción -->
+            <div class="space-y-4">
+              <p class="text-base text-gray-700 leading-relaxed">
+                Somos una empresa tabasqueña y orgullosamente mexicana,
+                comprometida con la más alta calidad en nuestros productos así
+                como en nuestros servicios.
+              </p>
+
+              <p class="text-sm text-gray-600 leading-relaxed">
+                <strong class="text-primary-blue"
+                  >SJT Contratistas S.A. de C.V.</strong
+                > somos una empresa dedicada a los servicios de
+                <strong>obra civil, eléctrica y electromecánica</strong>,
+                comprometidos con la calidad, para lograr la satisfacción de
+                nuestros clientes y responsable del cuidado al medio ambiente,
+                la seguridad y la salud de todo nuestro personal, proveedores y
+                aliados comerciales en cada uno de nuestros procesos, cumpliendo
+                con los requisitos del cliente y los legales aplicables en
+                materia de la calidad, ambiental, seguridad y salud en el
+                trabajo estableciendo, comunicando y revisando objetivos a todos
+                nuestros colaboradores y partes interesadas para evitar la
+                contaminación de los recursos naturales y evitar incidentes o
+                daños a la salud en cada servicio, mejorando continuamente la
+                <em class="text-primary-blue font-semibold"
+                  >competencia laboral de nuestro recurso humano</em
+                >, los controles operacionales a través de una <strong
+                  class="text-primary-blue">cultura de prevención</strong
+                >.
+              </p>
+            </div>
+          </div>
+
+          <!-- Contenido derecho - Imagen -->
+          <div class="relative">
+            <div
+              class="w-full h-[500px] md:h-[600px] lg:h-[700px] rounded-2xl overflow-hidden shadow-2xl"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+                alt="Equipo de construcción SJT Contratistas trabajando en proyecto"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Elementos Flotantes con Estadísticas -->
+        <!-- Elemento 1: Proyectos Realizados -->
+        <div
+          class="absolute top-1/3 right-8 transform -translate-y-4 hidden lg:block z-10"
+        >
+          <div
+            class="bg-gray-900 text-white p-6 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-2"
+          >
+            <div class="flex items-center space-x-3">
+              <div class="bg-white/20 p-3 rounded-lg">
+                <svg
+                  class="w-8 h-8 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
+                  ></path>
+                </svg>
+              </div>
+              <div>
+                <div class="text-3xl font-black text-white">XX+</div>
+                <div class="text-sm text-gray-300 font-medium">
+                  Proyectos<br />Realizados
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Elemento 2: Certificaciones -->
+        <div
+          class="absolute bottom-8 right-1/3 transform translate-x-8 hidden lg:block z-10"
+        >
+          <div
+            class="bg-yellow-500 text-white p-6 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-2"
+          >
+            <div class="flex items-center space-x-3">
+              <div class="bg-white/20 p-3 rounded-lg">
+                <svg
+                  class="w-8 h-8 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="text-3xl font-black text-white">XX+</div>
+                <div class="text-sm text-white/90 font-medium">
+                  Certificaciones<br />Internacionales
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Galería de Servicios con Hover Effects -->
+    <section class="bg-gray-100 py-16 lg:py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+        <!-- Header de la sección -->
+        <div class="text-center">
+          <h2 class="text-3xl md:text-4xl font-black text-gray-800 mb-4">
+            Nuestros <span class="text-primary-blue">Servicios</span>
+          </h2>
+
+          <div
+            class="w-24 h-1 bg-gradient-to-r from-primary-blue to-yellow-400 rounded-full mx-auto"
+          >
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid de servicios fullwidth -->
+      <div class="flex flex-col md:flex-row w-full">
+        <!-- Servicio 1: Venta y renta de skid -->
+        <div
+          class="group relative overflow-hidden w-full h-[50vh] md:flex-1 md:h-[80vh] cursor-pointer transition-all duration-500 md:hover:flex-[1.2]"
+        >
+          <div class="absolute inset-0">
+            <Image
+              src={servicio1}
+              alt="Venta y renta de skid de inyección de químicos"
+              class="w-full h-full object-cover transition-all duration-500 filter grayscale group-hover:grayscale-0"
+              loading="lazy"
+            />
+          </div>
+
+          <!-- Overlay -->
+          <div
+            class="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-all duration-500"
+          >
+          </div>
+
+          <!-- Contenido -->
+          <div
+            class="absolute inset-0 flex flex-col justify-between p-6 text-white"
+          >
+            <div class="flex-1 flex items-center justify-center">
+              <h3
+                class="text-2xl md:text-4xl font-extrabold text-center leading-tight"
+              >
+                Servicio<br />
+                de<br />
+                construcción<br />
+                1
+              </h3>
+            </div>
+
+            <!-- Botón circular -->
+            <div class="flex justify-center">
+              <button
+                class="w-12 h-12 bg-yellow-500 hover:bg-yellow-400 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Servicio 2: Servicio integral de tratamientos -->
+        <div
+          class="group relative overflow-hidden w-full h-[50vh] md:flex-1 md:h-[80vh] cursor-pointer transition-all duration-500 md:hover:flex-[1.2]"
+        >
+          <div class="absolute inset-0">
+            <Image
+              src={servicio2}
+              alt="Servicio integral de tratamientos químicos"
+              class="w-full h-full object-cover transition-all duration-500 filter grayscale group-hover:grayscale-0"
+              loading="lazy"
+            />
+          </div>
+
+          <!-- Overlay -->
+          <div
+            class="absolute inset-0 bg-primary-blue/70 group-hover:bg-primary-blue/50 transition-all duration-500"
+          >
+          </div>
+
+          <!-- Contenido -->
+          <div
+            class="absolute inset-0 flex flex-col justify-between p-6 text-white"
+          >
+            <div class="flex-1 flex items-center justify-center">
+              <h3
+                class="text-2xl md:text-4xl font-extrabold text-center leading-tight"
+              >
+                Servicio<br />
+                de<br />
+                construcción<br />
+                2
+              </h3>
+            </div>
+
+            <!-- Botón circular -->
+            <div class="flex justify-center">
+              <button
+                class="w-12 h-12 bg-yellow-500 hover:bg-yellow-400 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Servicio 3: Servicio de muestreo y análisis -->
+        <div
+          class="group relative overflow-hidden w-full h-[50vh] md:flex-1 md:h-[80vh] cursor-pointer transition-all duration-500 md:hover:flex-[1.2]"
+        >
+          <div class="absolute inset-0">
+            <Image
+              src={servicio3}
+              alt="Servicio de muestreo y análisis físico químicos de hidrocarburos"
+              class="w-full h-full object-cover transition-all duration-500 filter grayscale group-hover:grayscale-0"
+              loading="lazy"
+            />
+          </div>
+
+          <!-- Overlay -->
+          <div
+            class="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-all duration-500"
+          >
+          </div>
+
+          <!-- Contenido -->
+          <div
+            class="absolute inset-0 flex flex-col justify-between p-6 text-white"
+          >
+            <div class="flex-1 flex items-center justify-center">
+              <h3
+                class="text-2xl md:text-4xl font-extrabold text-center leading-tight"
+              >
+                Servicio de<br />
+                construccion<br />
+                3<br />
+              </h3>
+            </div>
+
+            <!-- Botón circular -->
+            <div class="flex justify-center">
+              <button
+                class="w-12 h-12 bg-yellow-500 hover:bg-yellow-400 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Servicio 4: Venta de productos químicos -->
+        <div
+          class="group relative overflow-hidden w-full h-[50vh] md:flex-1 md:h-[80vh] cursor-pointer transition-all duration-500 md:hover:flex-[1.2]"
+        >
+          <div class="absolute inset-0">
+            <Image
+              src={servicio5}
+              alt="Venta de productos químicos"
+              class="w-full h-full object-cover transition-all duration-500 filter grayscale group-hover:grayscale-0"
+              loading="lazy"
+            />
+          </div>
+
+          <!-- Overlay -->
+          <div
+            class="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-all duration-500"
+          >
+          </div>
+
+          <!-- Contenido -->
+          <div
+            class="absolute inset-0 flex flex-col justify-between p-6 text-white"
+          >
+            <div class="flex-1 flex items-center justify-center">
+              <h3
+                class="text-2xl md:text-4xl font-extrabold text-center leading-tight"
+              >
+                Servicio de<br />
+                construccion<br />
+                4
+              </h3>
+            </div>
+
+            <!-- Botón circular -->
+            <div class="flex justify-center">
+              <button
+                class="w-12 h-12 bg-yellow-500 hover:bg-yellow-400 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Call to Action -->
+    </section>
+
+    <!-- Tira de Certificaciones ISO - American Total Quality -->
+    <section class="bg-white py-8 border-t-4 border-primary-blue shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="flex flex-col lg:flex-row items-center justify-center space-y-6 lg:space-y-0 lg:space-x-12"
+        >
+          <!-- Texto principal -->
+          <div class="text-center lg:text-left">
+            <h3
+              class="text-2xl lg:text-3xl font-black text-gray-800 tracking-wide"
+            >
+              AMERICAN TOTAL QUALITY
+            </h3>
+            <p
+              class="text-sm text-gray-600 font-semibold uppercase tracking-wider mt-1"
+            >
+              Certificaciones Internacionales
+            </p>
+          </div>
+
+          <!-- Separador vertical -->
+          <div class="hidden lg:block w-px h-16 bg-gray-300"></div>
+
+          <!-- Grid de Certificaciones ISO -->
+          <div class="flex items-center justify-center space-x-8">
+            <!-- ISO 9001 -->
+            <div class="group hover-lift-strong">
+              <Image
+                src={cert9001}
+                alt="ISO 9001 - Sistema de Gestión de Calidad"
+                width={80}
+                height={80}
+                class="h-20 w-20 object-contain transition-transform duration-300 group-hover:scale-110"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- ISO 14001 -->
+            <div class="group hover-lift-strong">
+              <Image
+                src={cert14001}
+                alt="ISO 14001 - Sistema de Gestión Ambiental"
+                width={80}
+                height={80}
+                class="h-20 w-20 object-contain transition-transform duration-300 group-hover:scale-110"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- ISO 45001 -->
+            <div class="group hover-lift-strong">
+              <Image
+                src={cert45001}
+                alt="ISO 45001 - Sistema de Gestión de Seguridad y Salud Ocupacional"
+                width={80}
+                height={80}
+                class="h-20 w-20 object-contain transition-transform duration-300 group-hover:scale-110"
+                loading="lazy"
+              />
+            </div>
+          </div>
+
+          <!-- Badge de calidad -->
+          <div class="hidden lg:flex items-center space-x-3">
+            <div class="w-2 h-2 rounded-full bg-primary-blue animate-pulse">
+            </div>
+            <span
+              class="text-xs text-gray-500 font-medium uppercase tracking-wider"
+            >
+              Certificado
+            </span>
+          </div>
+        </div>
+
+        <!-- Línea decorativa inferior -->
+        <div class="mt-6 flex justify-center">
+          <div
+            class="w-24 h-1 bg-gradient-to-r from-primary-blue to-chemical-yellow rounded-full"
+          >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Botón flotante para regresar -->
+    <div class="fixed bottom-6 right-6 z-50">
+      <a
+        href="/"
+        class="bg-primary-blue hover:bg-primary-blue-hover text-white px-4 py-3 rounded-full font-bold transition-all duration-300 shadow-blue hover-lift-strong flex items-center space-x-2"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        <span class="hidden sm:inline">Inicio</span>
+      </a>
+    </div>
+
+    <!-- JavaScript para interacciones -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("🔵 Propuesta 4 - Diseño Químico cargado");
+        console.log("🧪 Paleta azul/amarillo aplicada");
+
+        // Smooth scroll para enlaces anchor
+        const smoothScrollLinks = document.querySelectorAll('a[href^="#"]');
+
+        smoothScrollLinks.forEach((link) => {
+          link.addEventListener("click", (e: Event) => {
+            e.preventDefault();
+
+            const target = e.currentTarget as HTMLAnchorElement;
+            const targetId = target.getAttribute("href");
+            if (!targetId) return;
+
+            const targetSection = document.querySelector(targetId);
+
+            if (targetSection) {
+              targetSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+
+              // Actualizar URL sin hacer jump
+              if (targetId) {
+                history.replaceState({}, "", targetId);
+              }
+            }
+          });
+        });
+
+        // Video background optimization
+        const videoBackground = document.querySelector(
+          ".video-background"
+        ) as HTMLVideoElement;
+
+        if (videoBackground) {
+          // Asegurar que el video se reproduce en dispositivos móviles
+          videoBackground.addEventListener("loadeddata", () => {
+            console.log("📹 Video de fondo cargado correctamente");
+
+            // Intentar reproducir si no se está reproduciendo
+            if (videoBackground.paused) {
+              videoBackground.play().catch((error) => {
+                console.log(
+                  "⚠️ Autoplay bloqueado, esperando interacción del usuario"
+                );
+
+                // Reproducir al hacer click en cualquier parte
+                const playOnInteraction = () => {
+                  videoBackground.play();
+                  document.removeEventListener("click", playOnInteraction);
+                  document.removeEventListener("touchstart", playOnInteraction);
+                };
+
+                document.addEventListener("click", playOnInteraction, {
+                  once: true,
+                });
+                document.addEventListener("touchstart", playOnInteraction, {
+                  once: true,
+                });
+              });
+            }
+          });
+
+          // Optimizar para mobile
+          if (window.innerWidth <= 768) {
+            videoBackground.setAttribute("playsinline", "true");
+            videoBackground.setAttribute("webkit-playsinline", "true");
+          }
+        }
+
+        // Smooth scroll mejorado para el indicador
+        const scrollIndicator = document.querySelector(".animate-bounce");
+        if (scrollIndicator) {
+          scrollIndicator.addEventListener("click", () => {
+            const nextSection = document.querySelector(
+              "section:nth-of-type(2)"
+            );
+            if (nextSection) {
+              nextSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            }
+          });
+        }
+
+        console.log("✅ Hero con video de fondo implementado");
+        console.log("🎬 Video oil1.webm integrado correctamente");
+        console.log("🎯 Estilo Químico - Expertos Químicos completado");
+      });
+    </script>
+  </body>
+</html>
