@@ -1,0 +1,220 @@
+---
+// Componente HeaderNav - Navegación superior moderna
+// Basado en diseño con logo, links centrales y botón de acción
+
+export interface Props {
+  companyName?: string;
+  logoText?: string;
+  logoFile?: {
+    url: string;
+    alternativeText?: string;
+    name: string;
+    width?: number;
+    height?: number;
+  };
+  navLinks?: Array<{
+    href: string;
+    text: string;
+  }>;
+  ctaText?: string;
+  ctaHref?: string;
+  sticky?: boolean; // Controla si el header es fijo (sticky) o no
+  transparent?: boolean; // Controla si el header es transparente o no
+  class?: string;
+}
+
+const {
+  companyName = "Company Logo",
+  logoText,
+  logoFile,
+  navLinks = [
+    { href: "#home", text: "Home" },
+    { href: "#portfolio", text: "Portfolio" },
+    { href: "#about", text: "About" },
+    { href: "#contact", text: "Contact Us" },
+  ],
+  ctaText = "Sign Up",
+  ctaHref = "#signup",
+  sticky = true, // Por defecto sticky para mantener comportamiento actual
+  transparent = false, // Por defecto con fondo para mantener comportamiento actual
+  class: className = "",
+} = Astro.props;
+
+const displayName = logoText || companyName;
+
+// Clases CSS dinámicas basadas en props
+const stickyClass = sticky ? "header-nav-sticky" : "header-nav-static";
+const backgroundClass = transparent
+  ? "header-nav-transparent"
+  : "header-nav-with-background";
+const headerClasses = `${stickyClass} ${backgroundClass}`;
+---
+
+<nav class={`header-nav ${headerClasses} ${className}`}>
+  <div class="nav-container">
+    <!-- Logo -->
+    <div class="logo-section">
+      {
+        logoFile?.url ? (
+          <img
+            src={logoFile.url}
+            alt={logoFile.alternativeText || companyName}
+            class="logo-image"
+            width="96"
+            height="96"
+          />
+        ) : (
+          <div class="logo-circle" />
+        )
+      }
+      <span class="logo-text">{displayName}</span>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="nav-links">
+      {
+        navLinks.map((link) => (
+          <a href={link.href} class="nav-link">
+            {link.text}
+          </a>
+        ))
+      }
+    </div>
+
+    <!-- CTA Button -->
+    <a href={ctaHref} class="cta-button">
+      {ctaText}
+    </a>
+  </div>
+</nav>
+
+<style>
+  /* Estilos base compartidos */
+  .header-nav {
+    @apply w-full;
+    transition: all 0.3s ease;
+  }
+
+  /* Variante con fondo (por defecto) */
+  .header-nav-with-background {
+    /* Usar el mismo gradiente que el overlay del HeroSection */
+    background: linear-gradient(
+      135deg,
+      rgba(37, 99, 235, 0.8) 0%,
+      rgba(29, 78, 216, 0.7) 50%,
+      rgba(31, 41, 55, 0.8) 100%
+    );
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Variante transparente */
+  .header-nav-transparent {
+    background: transparent;
+    backdrop-filter: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Hover para transparente - añade un sutil fondo */
+  .header-nav-transparent:hover {
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+  }
+
+  /* Variante sticky (fijo) */
+  .header-nav-sticky {
+    @apply fixed top-0 left-0 z-50;
+  }
+
+  /* Variante static (no sticky) */
+  .header-nav-static {
+    @apply relative z-10;
+  }
+
+  .nav-container {
+    @apply flex justify-between items-center px-6 md:px-16 py-4 md:py-6;
+  }
+
+  .logo-section {
+    @apply flex items-center gap-3 font-bold text-xl text-white;
+  }
+
+  .logo-circle {
+    @apply w-6 h-6 border-2 border-white rounded-full flex-shrink-0;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  }
+
+  .logo-image {
+    @apply h-12 sm:h-16 md:h-20 lg:h-24 w-12 sm:w-16 md:w-20 lg:w-24 object-contain flex-shrink-0 transition-transform duration-200 hover:scale-105;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    background: white;
+    border-radius: 8px;
+    padding: 4px;
+  }
+
+  .logo-text {
+    @apply whitespace-nowrap;
+  }
+
+  .nav-links {
+    @apply hidden md:flex gap-8;
+  }
+
+  .nav-link {
+    @apply text-white text-base font-medium hover:text-gray-200 transition-colors duration-200 relative;
+  }
+
+  .nav-link:hover::after {
+    @apply absolute bottom-0 left-0 w-full h-0.5 transform scale-x-100;
+    content: "";
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.8) 0%,
+      rgba(37, 99, 235, 0.8) 100%
+    );
+  }
+
+  .nav-link::after {
+    @apply absolute bottom-0 left-0 w-full h-0.5 transform scale-x-0 transition-transform duration-200;
+    content: "";
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.8) 0%,
+      rgba(37, 99, 235, 0.8) 100%
+    );
+  }
+
+  .nav-link:hover {
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  }
+
+  .cta-button {
+    @apply bg-white/90 text-blue-700 px-6 py-2 rounded font-medium hover:bg-white hover:shadow-lg transition-all duration-200 whitespace-nowrap backdrop-blur-sm;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+  }
+
+  .cta-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 12px rgba(37, 99, 235, 0.3);
+  }
+
+  /* Mobile Navigation - Se puede expandir más adelante */
+  @media (max-width: 768px) {
+    .nav-container {
+      @apply px-4 py-4;
+    }
+
+    .logo-section {
+      @apply text-lg;
+    }
+
+    .cta-button {
+      @apply px-4 py-2 text-sm;
+    }
+  }
+
+  /* Usar animación de Tailwind */
+  .header-nav {
+    @apply animate-fade-in-down;
+  }
+</style>

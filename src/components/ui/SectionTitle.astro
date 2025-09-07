@@ -1,0 +1,139 @@
+---
+// Componente SectionTitle - Título de sección con texto resaltado
+// Basado en el patrón de diseño con subtitle destacado y título principal
+
+export interface Props {
+  highlightText?: string; // Texto pequeño resaltado (ej: "quiénes somos")
+  title: string; // Título principal en bold y negro
+  highlightColor?: "orange" | "red" | "blue" | "green" | "purple" | "custom";
+  customColor?: string; // Color personalizado si highlightColor es "custom"
+  alignment?: "left" | "center" | "right";
+  size?: "sm" | "md" | "lg" | "xl";
+  class?: string;
+}
+
+const {
+  highlightText,
+  title,
+  highlightColor = "orange",
+  customColor,
+  alignment = "left",
+  size = "lg",
+  class: className = "",
+} = Astro.props;
+
+// Clases dinámicas para el highlight
+const highlightColorClasses = {
+  orange: "text-orange-500",
+  red: "text-red-500",
+  blue: "text-blue-500",
+  green: "text-green-500",
+  purple: "text-purple-500",
+  custom: "",
+};
+
+const highlightColorClass =
+  highlightColor === "custom" ? "" : highlightColorClasses[highlightColor];
+
+// Clases para alineación
+const alignmentClasses = {
+  left: "text-left",
+  center: "text-center",
+  right: "text-right",
+};
+
+// Clases para tamaño
+const sizeClasses = {
+  sm: {
+    highlight: "text-sm",
+    title: "text-2xl md:text-3xl",
+  },
+  md: {
+    highlight: "text-base",
+    title: "text-3xl md:text-4xl",
+  },
+  lg: {
+    highlight: "text-lg",
+    title: "text-4xl md:text-5xl lg:text-6xl",
+  },
+  xl: {
+    highlight: "text-xl",
+    title: "text-5xl md:text-6xl lg:text-7xl",
+  },
+};
+
+const currentSize = sizeClasses[size];
+---
+
+<div class={`section-title ${alignmentClasses[alignment]} ${className}`}>
+  {
+    highlightText && (
+      <div
+        class={`highlight-text uppercase font-medium tracking-wider mb-2 ${currentSize.highlight} ${highlightColorClass}`}
+        style={
+          highlightColor === "custom" && customColor
+            ? `color: ${customColor}`
+            : undefined
+        }
+      >
+        {highlightText}
+      </div>
+    )
+  }
+
+  <h2
+    class={`main-title font-black text-gray-900 leading-tight tracking-tight ${currentSize.title}`}
+  >
+    {title}
+  </h2>
+</div>
+
+<style>
+  .section-title {
+    @apply block;
+  }
+
+  .highlight-text {
+    @apply relative;
+  }
+
+  /* Línea decorativa opcional para el highlight */
+  .highlight-text::before {
+    content: "";
+    @apply absolute left-0 bottom-0 w-8 h-0.5 bg-current opacity-60;
+    transform: translateY(8px);
+  }
+
+  /* Solo mostrar línea decorativa cuando está alineado a la izquierda */
+  .text-center .highlight-text::before,
+  .text-right .highlight-text::before {
+    display: none;
+  }
+
+  .main-title {
+    @apply relative;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      "Roboto",
+      sans-serif;
+  }
+
+  /* Efecto de hover sutil */
+  .section-title:hover .main-title {
+    @apply text-gray-800 transition-colors duration-200;
+  }
+
+  .section-title:hover .highlight-text {
+    @apply scale-105 transition-transform duration-200;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .main-title {
+      @apply leading-tight;
+    }
+  }
+</style>

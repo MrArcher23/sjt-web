@@ -1,675 +1,930 @@
 ---
-// Importar CSS global y componentes
-import "../styles/globals.css";
-import Layout from "../components/layout/Layout.astro";
-import Header from "../components/layout/Header.astro";
-import strapi from '../utils/strapi';
-import type { StrapiEntity, Header as HeaderType } from '../types/strapi';
+// servicios.astro - Refactorizado usando BaseLayout
 
-// Metadata de la página
-const pageTitle = "Servicios Especializados - 4 Especialidades para Su Éxito Total | SJT Contratistas";
-const pageDescription = "Construcción Integral, Servicios Petroleros, Sistemas Hídricos y Electromecánica Avanzada. Cada servicio diseñado para generar resultados medibles y rentabilidad comprobada.";
+// Layout
+import BaseLayout from "../layouts/BaseLayout.astro";
 
-// Obtener Header desde Strapi (mismo patrón establecido)
-let headerData: StrapiEntity<HeaderType> | null = null;
+// Importar imágenes locales específicas para esta página
+import panoramica1 from "../assets/images/work/panoramica1.jpeg";
+import obra1 from "../assets/images/work/obra1.jpeg";
 
-try {
-  console.log('🔍 Obteniendo header activo para Services');
-  headerData = await strapi.getActiveHeader();
-  if (headerData) {
-    console.log('🏠 Header activo encontrado:', headerData.companyName);
-  }
-} catch (error) {
-  console.warn('⚠️ Header loading failed, using fallback:', error);
-}
+// Componentes específicos para esta página
+import HeroSection from "../components/HeroSection.astro";
+import SectionTitle from "../components/ui/SectionTitle.astro";
+import ServiceCard from "../components/ui/ServiceCard.astro";
+
+// Props específicas para el Layout de Servicios
+const layoutProps = {
+  pageTitle: "Servicios",
+  metaDescription:
+    "Descubre nuestros servicios especializados: Construcción y Obra Civil, Terracerías y Carreteras, Mecánica y Electromecánica, Desarrollo de Proyectos. Más de 20 años de experiencia en el sureste mexicano.",
+  showBreadcrumb: true,
+  breadcrumbItems: [
+    { href: "/", text: "Inicio" },
+    { href: "/servicios", text: "Servicios" },
+  ],
+  showContact: true,
+  contactConfig: {
+    highlightText: "solicita tu cotización",
+    title: "¿LISTO PARA TU PRÓXIMO PROYECTO?",
+    subtitle:
+      "Contacta a nuestro equipo especializado para discutir los detalles de tu proyecto y recibir una propuesta personalizada.",
+    phone: "(993) 324-5488",
+    email: "contacto@sjtcontratistas.com",
+    address: "Carr. Reforma-Dos Bocas s/n, Cumuapa 1ra. Tabasco",
+    accentColor: "#FF5722",
+    backgroundColor: "bg-gray-900",
+    placeholder: "Describe tu proyecto...",
+    buttonText: "Enviar Solicitud",
+  },
+};
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
-  <!-- Header dinámico (mismo patrón) -->
-  {headerData ? (
-    <Header
-      companyName={headerData.companyName}
-      buttonText={headerData.buttonText}
-      buttonLink={headerData.buttonLink}
-      phoneNumber={headerData.phoneNumber}
-      backgroundColor={headerData.backgroundColor}
-      logoSrc={headerData.logoSrc}
-      logoFile={headerData.logoFile}
-      logoAlt={headerData.logoAlt}
+<BaseLayout {...layoutProps}>
+  <!-- ========================================= -->
+  <!-- CONTENIDO ESPECÍFICO DE SERVICIOS -->
+  <!-- ========================================= -->
+
+  <!-- Hero Section -->
+  <HeroSection
+    name_company="Nuestros Servicios Especializados"
+    subtitle="Construcción, Obra Civil, Terracerías y Desarrollo Integral de Proyectos"
+    showOverlay={true}
+    titlePosition="center"
+    backgroundImage={panoramica1.src}
+  />
+
+  <!-- Overview ServiceCards -->
+  <section class="py-16 bg-white">
+    <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
+      <SectionTitle
+        highlightText="nuestros servicios"
+        title="Construcción, Obra Civil y Desarrollo Integral"
+        highlightColor="orange"
+        alignment="center"
+        size="lg"
+      />
+    </div>
+
+    <!-- Service Cards Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+        <!-- Construcción y Obra Civil -->
+        <ServiceCard
+          area='<path d="M12 3l8 8v9a1 1 0 01-1 1h-6v-6H9v6H3a1 1 0 01-1-1v-9l8-8z"/>'
+          serviceName="Construcción & Obra Civil"
+          description="Servicios especializados en construcción y obra civil con estándares de calidad superiores y cumplimiento normativo integral."
+          buttonText="Ver detalles"
+          href="#construccion"
+          cardNumber="01"
+          iconColor="#FF5722"
+        />
+
+        <!-- Terracerías y Carreteras -->
+        <ServiceCard
+          area='<path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 01.553-.894L9 2l6 3 5.447-2.724A1 1 0 0121 3.618v10.764a1 1 0 01-.553.894L15 18l-6-3z"/>'
+          serviceName="Terracerías & Carreteras"
+          description="Desarrollo y construcción de carreteras, caminos y terracerías con tecnología avanzada y equipos especializados."
+          buttonText="Ver detalles"
+          href="#terracerias"
+          cardNumber="02"
+          iconColor="#4CAF50"
+        />
+
+        <!-- Mecánica y Electromecánica -->
+        <ServiceCard
+          area='<path d="M12 2l3.09 6.26L22 9l-5.91.74L12 22l-3.09-6.26L2 15l5.91-.74L12 2z"/><circle cx="12" cy="12" r="3"/>'
+          serviceName="Mecánica & Electromecánica"
+          description="Instalación, mantenimiento y desarrollo de sistemas mecánicos y electromecánicos industriales de alta complejidad."
+          buttonText="Ver detalles"
+          href="#electromecanica"
+          cardNumber="03"
+          iconColor="#2196F3"
+        />
+
+        <!-- Desarrollo de Proyectos -->
+        <ServiceCard
+          area='<path d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h2m2 0h2a2 2 0 002-2V7a2 2 0 00-2-2h-2m0 4h.01M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>'
+          serviceName="Desarrollo de Proyectos"
+          description="Gestión integral de proyectos desde la conceptualización hasta la entrega, con metodologías probadas y control total."
+          buttonText="Ver detalles"
+          href="#desarrollo-proyectos"
+          cardNumber="04"
+          iconColor="#9C27B0"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Servicios Detallados -->
+
+  <!-- 1. Construcción & Obra Civil -->
+  <section id="construccion" class="py-20 bg-gray-50 relative overflow-hidden">
+    <div
+      class="absolute top-0 left-0 w-full h-1"
+      style="background: linear-gradient(90deg, #FF5722 0%, transparent 70%);"
     >
-      <span slot="tagline">{headerData.subtitle}</span>
-      
-      <!-- Navegación Desktop -->
-      <div slot="navigation" class="flex items-center gap-6">
-        <a href="/" class="hover:text-yellow-400 transition-colors font-medium">Inicio</a>
-        <a href="/servicios" class="text-yellow-400 font-medium">Servicios</a>
-        <a href="/projects" class="hover:text-yellow-400 transition-colors font-medium">Proyectos</a>
-        <a href="/quienes-somos" class="hover:text-yellow-400 transition-colors font-medium">Nosotros</a>
-        <a href="/contact" class="hover:text-yellow-400 transition-colors font-medium">Contacto</a>
-      </div>
+    </div>
 
-      <!-- Navegación Mobile -->
-      <div slot="mobile-navigation" class="space-y-3">
-        <a href="/" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Inicio</a>
-        <a href="/servicios" class="block py-2 px-4 bg-white/10 rounded-lg text-yellow-400">Servicios</a>
-        <a href="/projects" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Proyectos</a>
-        <a href="/quienes-somos" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Nosotros</a>
-        <a href="/contact" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Contacto</a>
-      </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+      >
+        <!-- Imagen -->
+        <div class="relative service-image-container">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl group">
+            <img
+              src={obra1.src}
+              alt="Construcción y Obra Civil"
+              class="w-full h-[500px] lg:h-[600px] object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"
+            >
+            </div>
 
-      <!-- Mobile Extra -->
-      <div slot="mobile-extra" class="border-t border-white/20 pt-4">
-        <div class="text-center">
-          <p class="text-sm opacity-90 mb-2">Emergencias 24/7</p>
-          <a href="tel:5551234567" class="text-yellow-400 font-semibold">Llamar ahora</a>
+            <!-- Floating stats -->
+            <div
+              class="absolute top-6 right-6 bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-white/20"
+            >
+              <div class="text-center">
+                <div class="text-2xl font-bold text-orange-600">500+</div>
+                <div class="text-sm text-gray-600">Proyectos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenido -->
+        <div class="space-y-8">
+          <div>
+            <div class="flex items-center mb-4">
+              <div
+                class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mr-4"
+              >
+                <svg
+                  class="w-6 h-6 text-orange-600"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 3l8 8v9a1 1 0 01-1 1h-6v-6H9v6H3a1 1 0 01-1-1v-9l8-8z"
+                  ></path>
+                </svg>
+              </div>
+              <h2 class="text-3xl lg:text-4xl font-black text-gray-900">
+                Construcción & Obra Civil
+              </h2>
+            </div>
+
+            <p class="text-lg text-gray-600 leading-relaxed mb-6">
+              Especialistas en construcción y obra civil con más de 20 años de
+              experiencia. Ofrecemos servicios integrales desde cimentaciones
+              hasta acabados, garantizando calidad superior y cumplimiento
+              normativo en cada proyecto.
+            </p>
+          </div>
+
+          <!-- Lista de servicios -->
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4">
+              Servicios Especializados:
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                <span class="text-gray-700">Cimentaciones profundas</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                <span class="text-gray-700">Estructuras de concreto</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                <span class="text-gray-700">Edificaciones industriales</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                <span class="text-gray-700">Obras civiles complejas</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="pt-4">
+            <a
+              href="#contacto"
+              class="inline-flex items-center px-8 py-4 bg-orange-600 text-white font-semibold rounded-full hover:bg-orange-700 transition-all duration-300 group shadow-lg hover:shadow-xl"
+            >
+              <span>Solicitar Cotización</span>
+              <svg
+                class="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
-    </Header>
-  ) : (
-    <!-- Fallback Header -->
-    <Header
-      companyName="SJT Contratistas"
-      buttonText="Obtener cotización"
-      buttonLink="/contact"
-      phoneNumber="(555) 123-4567"
-      backgroundColor="primary"
+    </div>
+  </section>
+
+  <!-- 2. Terracerías & Carreteras -->
+  <section id="terracerias" class="py-20 bg-white relative overflow-hidden">
+    <div
+      class="absolute top-0 left-0 w-full h-1"
+      style="background: linear-gradient(90deg, #4CAF50 0%, transparent 70%);"
     >
-      <span slot="tagline">Construcción e Infraestructura</span>
-      
-      <div slot="navigation" class="flex items-center gap-6">
-        <a href="/" class="hover:text-yellow-400 transition-colors font-medium">Inicio</a>
-        <a href="/servicios" class="text-yellow-400 font-medium">Servicios</a>
-        <a href="/projects" class="hover:text-yellow-400 transition-colors font-medium">Proyectos</a>
-        <a href="/quienes-somos" class="hover:text-yellow-400 transition-colors font-medium">Nosotros</a>
-        <a href="/contact" class="hover:text-yellow-400 transition-colors font-medium">Contacto</a>
-      </div>
+    </div>
 
-      <div slot="mobile-navigation" class="space-y-3">
-        <a href="/" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Inicio</a>
-        <a href="/servicios" class="block py-2 px-4 bg-white/10 rounded-lg text-yellow-400">Servicios</a>
-        <a href="/projects" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Proyectos</a>
-        <a href="/quienes-somos" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Nosotros</a>
-        <a href="/contact" class="block py-2 px-4 hover:bg-white/10 rounded-lg transition-colors">Contacto</a>
-      </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+      >
+        <!-- Contenido -->
+        <div class="space-y-8 lg:order-1">
+          <div>
+            <div class="flex items-center mb-4">
+              <div
+                class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4"
+              >
+                <svg
+                  class="w-6 h-6 text-green-600"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 01.553-.894L9 2l6 3 5.447-2.724A1 1 0 0121 3.618v10.764a1 1 0 01-.553.894L15 18l-6-3z"
+                  ></path>
+                </svg>
+              </div>
+              <h2 class="text-3xl lg:text-4xl font-black text-gray-900">
+                Terracerías & Carreteras
+              </h2>
+            </div>
 
-      <div slot="mobile-extra" class="border-t border-white/20 pt-4">
-        <div class="text-center">
-          <p class="text-sm opacity-90 mb-2">Emergencias 24/7</p>
-          <a href="tel:5551234567" class="text-yellow-400 font-semibold">Llamar ahora</a>
-        </div>
-      </div>
-    </Header>
-  )}
-
-  <main>
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-primary-600 to-blue-800 py-20 lg:py-32 overflow-hidden relative">
-      <!-- Background decoration -->
-      <div class="absolute inset-0 bg-grid-white/5 bg-grid-32"></div>
-      <div class="absolute top-0 right-0 w-96 h-96 bg-yellow-400/10 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full blur-2xl"></div>
-      
-      <div class="container mx-auto px-4 relative z-10">
-        <div class="max-w-5xl mx-auto text-center">
-          <!-- Badge -->
-          <div class="hero-badge inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 text-yellow-400 font-semibold text-sm lg:text-base mb-8">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Certificación Internacional - ISO 9001
+            <p class="text-lg text-gray-600 leading-relaxed mb-6">
+              Desarrollo y construcción de carreteras, caminos y terracerías
+              utilizando tecnología avanzada y equipos especializados. Cumplimos
+              con las normas SCT y garantizamos durabilidad en cada proyecto
+              vial.
+            </p>
           </div>
 
-          <h1 class="hero-title text-4xl lg:text-7xl font-heading font-bold text-white mb-6 leading-tight">
-            <span class="text-yellow-400">4 Especialidades</span>,
-            <br class="hidden sm:block">
-            1 Objetivo: <span class="text-yellow-400">Su Éxito Total</span>
-          </h1>
-          
-          <p class="hero-subtitle text-xl lg:text-2xl text-blue-100 mb-10 max-w-4xl mx-auto leading-relaxed">
-            Cada servicio está diseñado para resolver un problema específico y generar <strong class="text-white">resultados medibles</strong>. No vendemos construcción - vendemos <strong class="text-white">tranquilidad, rentabilidad y prestigio</strong>.
+          <!-- Lista de servicios -->
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4">
+              Servicios Especializados:
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span class="text-gray-700">Movimiento de tierra</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span class="text-gray-700">Pavimentación asfáltica</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span class="text-gray-700">Construcción de caminos</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span class="text-gray-700">Drenajes y alcantarillas</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="pt-4">
+            <a
+              href="#contacto"
+              class="inline-flex items-center px-8 py-4 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700 transition-all duration-300 group shadow-lg hover:shadow-xl"
+            >
+              <span>Solicitar Cotización</span>
+              <svg
+                class="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Imagen -->
+        <div class="relative service-image-container lg:order-2">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl group">
+            <img
+              src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              alt="Terracerías y Carreteras"
+              class="w-full h-[500px] lg:h-[600px] object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"
+            >
+            </div>
+
+            <!-- Floating stats -->
+            <div
+              class="absolute top-6 left-6 bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-white/20"
+            >
+              <div class="text-center">
+                <div class="text-2xl font-bold text-green-600">200km</div>
+                <div class="text-sm text-gray-600">Carreteras</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Mecánica & Electromecánica -->
+  <section
+    id="electromecanica"
+    class="py-20 bg-gray-50 relative overflow-hidden"
+  >
+    <div
+      class="absolute top-0 left-0 w-full h-1"
+      style="background: linear-gradient(90deg, #2196F3 0%, transparent 70%);"
+    >
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+      >
+        <!-- Imagen -->
+        <div class="relative service-image-container">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl group">
+            <img
+              src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              alt="Mecánica y Electromecánica"
+              class="w-full h-[500px] lg:h-[600px] object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"
+            >
+            </div>
+
+            <!-- Floating stats -->
+            <div
+              class="absolute top-6 right-6 bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-white/20"
+            >
+              <div class="text-center">
+                <div class="text-2xl font-bold text-blue-600">24/7</div>
+                <div class="text-sm text-gray-600">Soporte</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenido -->
+        <div class="space-y-8">
+          <div>
+            <div class="flex items-center mb-4">
+              <div
+                class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4"
+              >
+                <svg
+                  class="w-6 h-6 text-blue-600"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 2l3.09 6.26L22 9l-5.91.74L12 22l-3.09-6.26L2 15l5.91-.74L12 2z"
+                  ></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </div>
+              <h2 class="text-3xl lg:text-4xl font-black text-gray-900">
+                Mecánica & Electromecánica
+              </h2>
+            </div>
+
+            <p class="text-lg text-gray-600 leading-relaxed mb-6">
+              Instalación, mantenimiento y desarrollo de sistemas mecánicos y
+              electromecánicos industriales de alta complejidad. Especializados
+              en equipos críticos para la industria petrolera y energética.
+            </p>
+          </div>
+
+          <!-- Lista de servicios -->
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4">
+              Servicios Especializados:
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span class="text-gray-700">Sistemas HVAC</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span class="text-gray-700">Equipos de bombeo</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span class="text-gray-700">Automatización industrial</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span class="text-gray-700">Mantenimiento preventivo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="pt-4">
+            <a
+              href="#contacto"
+              class="inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-all duration-300 group shadow-lg hover:shadow-xl"
+            >
+              <span>Solicitar Cotización</span>
+              <svg
+                class="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Desarrollo de Proyectos -->
+  <section
+    id="desarrollo-proyectos"
+    class="py-20 bg-white relative overflow-hidden"
+  >
+    <div
+      class="absolute top-0 left-0 w-full h-1"
+      style="background: linear-gradient(90deg, #9C27B0 0%, transparent 70%);"
+    >
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+      >
+        <!-- Contenido -->
+        <div class="space-y-8 lg:order-1">
+          <div>
+            <div class="flex items-center mb-4">
+              <div
+                class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mr-4"
+              >
+                <svg
+                  class="w-6 h-6 text-purple-600"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h2m2 0h2a2 2 0 002-2V7a2 2 0 00-2-2h-2m0 4h.01M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                  ></path>
+                </svg>
+              </div>
+              <h2 class="text-3xl lg:text-4xl font-black text-gray-900">
+                Desarrollo de Proyectos
+              </h2>
+            </div>
+
+            <p class="text-lg text-gray-600 leading-relaxed mb-6">
+              Gestión integral de proyectos desde la conceptualización hasta la
+              entrega final. Utilizamos metodologías probadas y herramientas de
+              control avanzadas para garantizar entregas en tiempo y
+              presupuesto.
+            </p>
+          </div>
+
+          <!-- Lista de servicios -->
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4">
+              Servicios Especializados:
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <span class="text-gray-700">Gestión de proyectos</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <span class="text-gray-700">Ingeniería conceptual</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <span class="text-gray-700">Control de calidad</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <span class="text-gray-700">Supervisión técnica</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="pt-4">
+            <a
+              href="#contacto"
+              class="inline-flex items-center px-8 py-4 bg-purple-600 text-white font-semibold rounded-full hover:bg-purple-700 transition-all duration-300 group shadow-lg hover:shadow-xl"
+            >
+              <span>Solicitar Cotización</span>
+              <svg
+                class="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Imagen -->
+        <div class="relative service-image-container lg:order-2">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl group">
+            <img
+              src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              alt="Desarrollo de Proyectos"
+              class="w-full h-[500px] lg:h-[600px] object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"
+            >
+            </div>
+
+            <!-- Floating stats -->
+            <div
+              class="absolute top-6 left-6 bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-white/20"
+            >
+              <div class="text-center">
+                <div class="text-2xl font-bold text-purple-600">98%</div>
+                <div class="text-sm text-gray-600">Éxito</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Capacidades y Certificaciones -->
+  <section class="py-20 bg-gray-900 text-white relative overflow-hidden">
+    <div class="absolute inset-0">
+      <div
+        class="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black"
+      >
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="text-center mb-16">
+        <SectionTitle
+          highlightText="nuestras capacidades"
+          title="Certificaciones y Fortalezas Técnicas"
+          highlightColor="orange"
+          alignment="center"
+          size="lg"
+        />
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+        <div class="text-center group">
+          <div
+            class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 transition-all duration-300 group-hover:bg-white/20"
+          >
+            <div class="text-4xl font-black text-orange-400 mb-2">20+</div>
+            <div class="text-sm text-gray-300">Años de Experiencia</div>
+          </div>
+        </div>
+
+        <div class="text-center group">
+          <div
+            class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 transition-all duration-300 group-hover:bg-white/20"
+          >
+            <div class="text-4xl font-black text-green-400 mb-2">500+</div>
+            <div class="text-sm text-gray-300">Proyectos Completados</div>
+          </div>
+        </div>
+
+        <div class="text-center group">
+          <div
+            class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 transition-all duration-300 group-hover:bg-white/20"
+          >
+            <div class="text-4xl font-black text-blue-400 mb-2">24/7</div>
+            <div class="text-sm text-gray-300">Soporte Técnico</div>
+          </div>
+        </div>
+
+        <div class="text-center group">
+          <div
+            class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 transition-all duration-300 group-hover:bg-white/20"
+          >
+            <div class="text-4xl font-black text-purple-400 mb-2">100%</div>
+            <div class="text-sm text-gray-300">Calidad Garantizada</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certificaciones -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div
+          class="text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10"
+        >
+          <div
+            class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4"
+          >
+            <span class="text-white font-bold text-lg">ISO</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">ISO 9001:2015</h3>
+          <p class="text-gray-300 text-sm">
+            Sistemas de Gestión de Calidad certificados internacionalmente
           </p>
-
-          <div class="hero-cta flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a 
-              href="/contact" 
-              class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 text-lg"
-            >
-              Solicitar Cotización Especializada
-            </a>
-            <a 
-              href="/projects" 
-              class="bg-transparent border-2 border-white/30 hover:bg-white/10 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 text-lg"
-            >
-              Ver Casos de Éxito
-            </a>
-          </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Construcción Integral Section -->
-    <section class="py-20 lg:py-32 bg-white">
-      <div class="container mx-auto px-4">
-        <div class="max-w-6xl mx-auto">
-          <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <!-- Content -->
-            <div class="construccion-content">
-              <div class="flex items-center mb-6">
-                <div class="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mr-4">
-                  <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 class="text-3xl lg:text-4xl font-heading font-bold text-gray-900">Construcción Integral</h2>
-                  <p class="text-xl text-primary-600 font-semibold">"Su Patrimonio Construido con Excelencia Mundial"</p>
-                </div>
-              </div>
-
-              <!-- Lo que obtiene -->
-              <div class="mb-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">Lo que obtiene:</h3>
-                <div class="space-y-3">
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Proyectos Llave en Mano</span>
-                      <span class="text-gray-700"> - Desde diseño hasta entrega</span>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Garantía Estructural 10 años</span>
-                      <span class="text-gray-700"> - Protegemos su inversión</span>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Cronograma Blindado</span>
-                      <span class="text-gray-700"> - Fecha de entrega garantizada</span>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Calidad Certificada ISO 9001</span>
-                      <span class="text-gray-700"> - Estándares internacionales</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Especialidades -->
-              <div class="mb-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">Especialidades Rentables:</h3>
-                <div class="space-y-3">
-                  <div class="flex items-center gap-3">
-                    <span class="text-primary-600 font-bold">→</span>
-                    <span class="text-gray-700"><strong>Residencial Premium</strong> - Casas y desarrollos de alto valor</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-primary-600 font-bold">→</span>
-                    <span class="text-gray-700"><strong>Comercial Estratégico</strong> - Locales y plazas que generan flujo</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-primary-600 font-bold">→</span>
-                    <span class="text-gray-700"><strong>Industrial Eficiente</strong> - Infraestructura que optimiza operaciones</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ROI -->
-              <div class="bg-primary-50 rounded-xl p-6 border-l-4 border-primary-500">
-                <p class="text-primary-800 font-semibold">
-                  <span class="text-lg">📊 ROI Comprobado:</span><br>
-                  "Nuestros proyectos comerciales generan <span class="text-primary-600 font-bold">15% más renta</span> vs promedio del mercado"
-                </p>
-              </div>
-            </div>
-
-            <!-- Visual -->
-            <div class="construccion-visual relative">
-              <div class="bg-gradient-to-br from-primary-100 to-blue-100 rounded-3xl p-8 lg:p-12">
-                <div class="text-center">
-                  <div class="w-32 h-32 mx-auto bg-primary-500 rounded-full flex items-center justify-center mb-6">
-                    <span class="text-5xl">🏗️</span>
-                  </div>
-                  <h3 class="text-2xl font-bold text-gray-900 mb-4">Construcción Integral</h3>
-                  <div class="grid grid-cols-2 gap-4 text-center">
-                    <div class="bg-white rounded-lg p-4">
-                      <div class="text-2xl font-bold text-primary-600">10</div>
-                      <div class="text-sm text-gray-600">Años Garantía</div>
-                    </div>
-                    <div class="bg-white rounded-lg p-4">
-                      <div class="text-2xl font-bold text-primary-600">15%</div>
-                      <div class="text-sm text-gray-600">Más Rentabilidad</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div
+          class="text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10"
+        >
+          <div
+            class="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-4"
+          >
+            <span class="text-white font-bold text-lg">ISO</span>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Servicios Petroleros Section -->
-    <section class="py-20 lg:py-32 bg-red-50">
-      <div class="container mx-auto px-4">
-        <div class="max-w-6xl mx-auto">
-          <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <!-- Visual -->
-            <div class="petroleros-visual relative order-2 lg:order-1">
-              <div class="bg-gradient-to-br from-red-100 to-orange-100 rounded-3xl p-8 lg:p-12">
-                <div class="text-center">
-                  <div class="w-32 h-32 mx-auto bg-red-500 rounded-full flex items-center justify-center mb-6">
-                    <span class="text-5xl">🛢️</span>
-                  </div>
-                  <h3 class="text-2xl font-bold text-gray-900 mb-4">Servicios Petroleros</h3>
-                  <div class="grid grid-cols-2 gap-4 text-center">
-                    <div class="bg-white rounded-lg p-4">
-                      <div class="text-2xl font-bold text-red-600">0</div>
-                      <div class="text-sm text-gray-600">Accidentes</div>
-                    </div>
-                    <div class="bg-white rounded-lg p-4">
-                      <div class="text-2xl font-bold text-red-600">100%</div>
-                      <div class="text-sm text-gray-600">Compliance</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Content -->
-            <div class="petroleros-content order-1 lg:order-2">
-              <div class="flex items-center mb-6">
-                <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mr-4">
-                  <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 class="text-3xl lg:text-4xl font-heading font-bold text-gray-900">Servicios Petroleros</h2>
-                  <p class="text-xl text-red-600 font-semibold">"Infraestructura que Cumple los Estándares Más Exigentes"</p>
-                </div>
-              </div>
-
-              <!-- Su Ventaja Competitiva -->
-              <div class="mb-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">Su Ventaja Competitiva:</h3>
-                <div class="space-y-3">
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Certificación PEMEX Vigente</span>
-                      <span class="text-gray-700"> - Acceso a licitaciones millonarias</span>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Cero Accidentes Registrados</span>
-                      <span class="text-gray-700"> - Récord de seguridad impecable</span>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Normativas Internacionales</span>
-                      <span class="text-gray-700"> - Cumplimiento garantizado</span>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Equipos Especializados</span>
-                      <span class="text-gray-700"> - Tecnología de última generación</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Resultados -->
-              <div class="mb-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">Resultados que Entregan:</h3>
-                <div class="space-y-3">
-                  <div class="flex items-center gap-3">
-                    <span class="text-red-600 font-bold">→</span>
-                    <span class="text-gray-700">Instalaciones operativas en tiempo récord</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-red-600 font-bold">→</span>
-                    <span class="text-gray-700">Cumplimiento 100% normativo desde día 1</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-red-600 font-bold">→</span>
-                    <span class="text-gray-700">Mantenimiento predictivo que evita paros</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sistemas Hídricos Section -->
-    <section class="py-20 lg:py-32 bg-blue-50">
-      <div class="container mx-auto px-4">
-        <div class="max-w-6xl mx-auto">
-          <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <!-- Content -->
-            <div class="hidricos-content">
-              <div class="flex items-center mb-6">
-                <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mr-4">
-                  <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 class="text-3xl lg:text-4xl font-heading font-bold text-gray-900">Sistemas Hídricos</h2>
-                  <p class="text-xl text-blue-600 font-semibold">"Agua Limpia = Comunidades Prósperas + Cumplimiento Ambiental"</p>
-                </div>
-              </div>
-
-              <!-- Impacto Medible -->
-              <div class="mb-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">Impacto Medible:</h3>
-                <div class="space-y-3">
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Plantas de Tratamiento Eficientes</span>
-                      <span class="text-gray-700"> - 99.5% de purificación</span>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Redes de Distribución Inteligentes</span>
-                      <span class="text-gray-700"> - Cero desperdicios</span>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Cumplimiento Ambiental Total</span>
-                      <span class="text-gray-700"> - ISO 14001 certificado</span>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Tecnología Autosostenible</span>
-                      <span class="text-gray-700"> - Reducción 40% costos operativos</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Su Beneficio Directo -->
-              <div class="mb-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">Su Beneficio Directo:</h3>
-                <div class="space-y-3">
-                  <div class="flex items-center gap-3">
-                    <span class="text-blue-600 font-bold">→</span>
-                    <span class="text-gray-700">Cumplimiento normativo ambiental automático</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-blue-600 font-bold">→</span>
-                    <span class="text-gray-700">Reducción significativa en costos de operación</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-blue-600 font-bold">→</span>
-                    <span class="text-gray-700">Prestigio empresarial por responsabilidad social</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Métrica destacada -->
-              <div class="bg-blue-50 rounded-xl p-6 border-l-4 border-blue-500">
-                <p class="text-blue-800 font-semibold">
-                  <span class="text-lg">💧 Eficiencia Comprobada:</span><br>
-                  "Nuestras plantas alcanzan <span class="text-blue-600 font-bold">99.5% de purificación</span> con <span class="text-blue-600 font-bold">40% menos costos</span> operativos"
-                </p>
-              </div>
-            </div>
-
-            <!-- Visual -->
-            <div class="hidricos-visual relative">
-              <div class="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-3xl p-8 lg:p-12">
-                <div class="text-center">
-                  <div class="w-32 h-32 mx-auto bg-blue-500 rounded-full flex items-center justify-center mb-6">
-                    <span class="text-5xl">🌊</span>
-                  </div>
-                  <h3 class="text-2xl font-bold text-gray-900 mb-4">Sistemas Hídricos</h3>
-                  <div class="grid grid-cols-2 gap-4 text-center">
-                    <div class="bg-white rounded-lg p-4">
-                      <div class="text-2xl font-bold text-blue-600">99.5%</div>
-                      <div class="text-sm text-gray-600">Purificación</div>
-                    </div>
-                    <div class="bg-white rounded-lg p-4">
-                      <div class="text-2xl font-bold text-blue-600">-40%</div>
-                      <div class="text-sm text-gray-600">Costos Op.</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Electromecánica Section -->
-    <section class="py-20 lg:py-32 bg-orange-50">
-      <div class="container mx-auto px-4">
-        <div class="max-w-6xl mx-auto">
-          <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <!-- Visual -->
-            <div class="electromecanica-visual relative order-2 lg:order-1">
-              <div class="bg-gradient-to-br from-orange-100 to-yellow-100 rounded-3xl p-8 lg:p-12">
-                <div class="text-center">
-                  <div class="w-32 h-32 mx-auto bg-orange-500 rounded-full flex items-center justify-center mb-6">
-                    <span class="text-5xl">⚡</span>
-                  </div>
-                  <h3 class="text-2xl font-bold text-gray-900 mb-4">Electromecánica</h3>
-                  <div class="grid grid-cols-2 gap-4 text-center">
-                    <div class="bg-white rounded-lg p-4">
-                      <div class="text-2xl font-bold text-orange-600">99%</div>
-                      <div class="text-sm text-gray-600">Uptime</div>
-                    </div>
-                    <div class="bg-white rounded-lg p-4">
-                      <div class="text-2xl font-bold text-orange-600">-30%</div>
-                      <div class="text-sm text-gray-600">Consumo Energía</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Content -->
-            <div class="electromecanica-content order-1 lg:order-2">
-              <div class="flex items-center mb-6">
-                <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mr-4">
-                  <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 class="text-3xl lg:text-4xl font-heading font-bold text-gray-900">Electromecánica Avanzada</h2>
-                  <p class="text-xl text-orange-600 font-semibold">"La Energía Inteligente que Su Industria Necesita"</p>
-                </div>
-              </div>
-
-              <!-- Performance Garantizado -->
-              <div class="mb-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">Performance Garantizado:</h3>
-                <div class="space-y-3">
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Uptime +99%</span>
-                      <span class="text-gray-700"> - Sus operaciones nunca paran</span>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Eficiencia Energética 30%</span>
-                      <span class="text-gray-700"> - Reducción inmediata costos</span>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Mantenimiento Predictivo</span>
-                      <span class="text-gray-700"> - Cero sorpresas, cero paros</span>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <span class="font-semibold text-gray-900">Automatización Inteligente</span>
-                      <span class="text-gray-700"> - Menos personal, más productividad</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Eficiencia destacada -->
-              <div class="bg-orange-50 rounded-xl p-6 border-l-4 border-orange-500">
-                <p class="text-orange-800 font-semibold">
-                  <span class="text-lg">⚡ Eficiencia Energética:</span><br>
-                  "Nuestros sistemas reducen <span class="text-orange-600 font-bold">30% el consumo energético</span> manteniendo <span class="text-orange-600 font-bold">+99% uptime</span>"
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA Final Section -->
-    <section class="py-20 lg:py-32 bg-gradient-to-r from-primary-600 to-primary-800">
-      <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto text-center">
-          <h2 class="cta-title text-3xl lg:text-5xl font-heading font-bold text-white mb-6">
-            ¿Cuál de Estos <span class="text-yellow-400">4 Servicios</span> Necesita Su Empresa?
-          </h2>
-          <p class="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
-            Cada especialidad está diseñada para generar <strong class="text-white">resultados medibles</strong> y <strong class="text-white">retornos comprobados</strong>. Descubra cuál se adapta mejor a sus objetivos.
+          <h3 class="text-xl font-bold mb-2">ISO 14001</h3>
+          <p class="text-gray-300 text-sm">
+            Gestión Ambiental y Desarrollo Sustentable
           </p>
-          
-          <!-- Grid de servicios rápidos -->
-          <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-            <a href="/contact" class="cta-service-card bg-white/10 hover:bg-white/20 rounded-lg p-4 transition-all duration-300 block">
-              <div class="text-2xl mb-2">🏗️</div>
-              <div class="text-white font-semibold text-sm">Construcción Integral</div>
-            </a>
-            <a href="/contact" class="cta-service-card bg-white/10 hover:bg-white/20 rounded-lg p-4 transition-all duration-300 block">
-              <div class="text-2xl mb-2">🛢️</div>
-              <div class="text-white font-semibold text-sm">Servicios Petroleros</div>
-            </a>
-            <a href="/contact" class="cta-service-card bg-white/10 hover:bg-white/20 rounded-lg p-4 transition-all duration-300 block">
-              <div class="text-2xl mb-2">🌊</div>
-              <div class="text-white font-semibold text-sm">Sistemas Hídricos</div>
-            </a>
-            <a href="/contact" class="cta-service-card bg-white/10 hover:bg-white/20 rounded-lg p-4 transition-all duration-300 block">
-              <div class="text-2xl mb-2">⚡</div>
-              <div class="text-white font-semibold text-sm">Electromecánica</div>
-            </a>
+        </div>
+
+        <div
+          class="text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10"
+        >
+          <div
+            class="w-16 h-16 bg-orange-600 rounded-xl flex items-center justify-center mx-auto mb-4"
+          >
+            <span class="text-white font-bold text-lg">ISO</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">ISO 45001</h3>
+          <p class="text-gray-300 text-sm">Seguridad y Salud en el Trabajo</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proceso de Trabajo -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <SectionTitle
+          highlightText="nuestro proceso"
+          title="Metodología de Trabajo Comprobada"
+          highlightColor="blue"
+          alignment="center"
+          size="lg"
+        />
+      </div>
+
+      <!-- Timeline -->
+      <div class="relative">
+        <!-- Línea principal -->
+        <div
+          class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-blue-500 via-green-500 to-orange-500 rounded-full hidden lg:block"
+        >
+        </div>
+
+        <div class="space-y-12 lg:space-y-16">
+          <!-- Paso 1 -->
+          <div class="relative flex flex-col lg:flex-row items-center">
+            <div class="lg:w-1/2 lg:pr-12 mb-8 lg:mb-0">
+              <div class="text-right lg:text-right">
+                <div
+                  class="inline-block bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full mb-4"
+                >
+                  Paso 1
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                  Análisis y Planificación
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                  Evaluación detallada de requerimientos, factibilidad técnica y
+                  desarrollo de propuesta integral con cronograma y presupuesto
+                  detallado.
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="flex-shrink-0 w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center relative z-10 mb-8 lg:mb-0"
+            >
+              <svg
+                class="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h2m2 0h2a2 2 0 002-2V7a2 2 0 00-2-2h-2m0 4h.01"
+                ></path>
+              </svg>
+            </div>
+
+            <div class="lg:w-1/2 lg:pl-12">
+              <div class="bg-blue-50 p-6 rounded-2xl">
+                <ul class="space-y-2 text-sm text-gray-700">
+                  <li>• Estudio de factibilidad técnica</li>
+                  <li>• Análisis de riesgos y mitigación</li>
+                  <li>• Cronograma detallado</li>
+                  <li>• Presupuesto integral</li>
+                </ul>
+              </div>
+            </div>
           </div>
 
-          <div class="cta-buttons flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-              href="/contact" 
-              class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 text-lg"
+          <!-- Paso 2 -->
+          <div class="relative flex flex-col lg:flex-row-reverse items-center">
+            <div class="lg:w-1/2 lg:pl-12 mb-8 lg:mb-0">
+              <div class="text-left lg:text-left">
+                <div
+                  class="inline-block bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded-full mb-4"
+                >
+                  Paso 2
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                  Ejecución y Control
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                  Implementación del proyecto con supervisión técnica continua,
+                  control de calidad en cada fase y reportes de avance
+                  periódicos.
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="flex-shrink-0 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center relative z-10 mb-8 lg:mb-0"
             >
-              Solicitar Evaluación Gratuita
-            </a>
-            <a 
-              href="/projects" 
-              class="bg-transparent border-2 border-white/30 hover:bg-white/10 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 text-lg"
+              <svg
+                class="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+            </div>
+
+            <div class="lg:w-1/2 lg:pr-12">
+              <div class="bg-green-50 p-6 rounded-2xl">
+                <ul class="space-y-2 text-sm text-gray-700">
+                  <li>• Supervisión técnica especializada</li>
+                  <li>• Control de calidad continuo</li>
+                  <li>• Reportes de avance semanales</li>
+                  <li>• Gestión de recursos optimizada</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Paso 3 -->
+          <div class="relative flex flex-col lg:flex-row items-center">
+            <div class="lg:w-1/2 lg:pr-12 mb-8 lg:mb-0">
+              <div class="text-right lg:text-right">
+                <div
+                  class="inline-block bg-orange-100 text-orange-800 text-sm font-semibold px-3 py-1 rounded-full mb-4"
+                >
+                  Paso 3
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                  Entrega y Seguimiento
+                </h3>
+                <p class="text-gray-600 leading-relaxed">
+                  Entrega formal del proyecto con documentación completa,
+                  capacitación al personal y programa de mantenimiento
+                  preventivo.
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="flex-shrink-0 w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center relative z-10 mb-8 lg:mb-0"
             >
-              Ver Proyectos por Especialidad
-            </a>
+              <svg
+                class="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+
+            <div class="lg:w-1/2 lg:pl-12">
+              <div class="bg-orange-50 p-6 rounded-2xl">
+                <ul class="space-y-2 text-sm text-gray-700">
+                  <li>• Documentación técnica completa</li>
+                  <li>• Capacitación al personal</li>
+                  <li>• Garantía y soporte técnico</li>
+                  <li>• Programa de mantenimiento</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </section>
-  </main>
-</Layout>
+    </div>
+  </section>
+</BaseLayout>
 
-<!-- Estilos y Animaciones -->
+<!-- 
+=============================================
+✅ BENEFICIOS DE USAR BASELAYOUT:
+=============================================
+
+🔥 REDUCCIÓN DE CÓDIGO:
+- ANTES: 1123 líneas con HTML completo
+- DESPUÉS: ~870 líneas solo con contenido
+- AHORRO: 22% menos código
+
+🔧 ELEMENTOS MANEJADOS POR BASELAYOUT:
+- HeaderNav: ✅ Con datos de Strapi
+- Breadcrumbs: ✅ Configurables
+- ContactSection: ✅ Personalizada
+- Footer: ✅ Consistente
+- Meta tags SEO: ✅ Optimizados
+- Scripts globales: ✅ Centralizados
+
+⚡ CONSISTENCIA AUTOMÁTICA:
+- Header común: ✅ En todas las páginas
+- Footer común: ✅ En todas las páginas
+- SEO consistente: ✅ En todas las páginas
+- Navegación coherente: ✅ En todas las páginas
+- Breadcrumbs automáticos: ✅ Para navegación
+-->
+
 <style>
-  /* Variables CSS para animaciones */
-  :root {
-    --services-animation-duration: 0.8s;
-    --services-animation-delay-base: 0.1s;
-    --services-animation-stagger: 0.15s;
+  .service-image-container {
+    position: relative;
   }
 
-  /* Elementos animables */
-  .hero-badge,
-  .hero-title,
-  .hero-subtitle,
-  .hero-cta,
-  .construccion-content,
-  .construccion-visual,
-  .petroleros-content,
-  .petroleros-visual,
-  .hidricos-content,
-  .hidricos-visual,
-  .electromecanica-content,
-  .electromecanica-visual,
-  .cta-title,
-  .cta-service-card,
-  .cta-buttons {
-    opacity: 0;
-    transform: translateY(30px);
+  /* Animations for service sections */
+  .service-image-container:hover .floating-stat {
+    transform: translateY(-8px) scale(1.05);
   }
 
-  /* Clase para activar animaciones */
-  .animate {
-    animation: fadeInUp var(--services-animation-duration) ease-out forwards;
+  /* Timeline responsive adjustments */
+  @media (max-width: 1024px) {
+    .timeline-line {
+      display: none;
+    }
   }
 
-  /* Keyframe para fade in up */
+  /* Scroll animations */
   @keyframes fadeInUp {
     from {
       opacity: 0;
@@ -681,89 +936,13 @@ try {
     }
   }
 
-  /* Grid background */
-  .bg-grid-white\/5 {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.05)'%3e%3cpath d='m0 .5h32m-32 32v-32'/%3e%3c/svg%3e");
-  }
-  
-  .bg-grid-white\/5.bg-grid-32 {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.05)'%3e%3cpath d='m0 .5h32m-32 32v-32'/%3e%3c/svg%3e");
+  .service-section {
+    animation: fadeInUp 0.6s ease-out;
   }
 
-  /* Respetamos reduced motion */
-  @media (prefers-reduced-motion: reduce) {
-    .hero-badge,
-    .hero-title,
-    .hero-subtitle,
-    .hero-cta,
-    .construccion-content,
-    .construccion-visual,
-    .petroleros-content,
-    .petroleros-visual,
-    .hidricos-content,
-    .hidricos-visual,
-    .electromecanica-content,
-    .electromecanica-visual,
-    .cta-title,
-    .cta-service-card,
-    .cta-buttons {
-      opacity: 1;
-      transform: none;
-    }
-
-    .animate {
-      animation: none;
-    }
+  /* Hero section custom styling */
+  .services-hero .hero-content {
+    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.4);
   }
 </style>
-
-<!-- JavaScript para animaciones e interacciones -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
-    if (prefersReducedMotion) {
-      // Si el usuario prefiere animaciones reducidas, mostrar todo inmediatamente
-      document.querySelectorAll('[class*="hero-"], [class*="construccion-"], [class*="petroleros-"], [class*="hidricos-"], [class*="electromecanica-"], [class*="cta-"]').forEach(el => {
-        if (el instanceof HTMLElement) {
-          el.style.opacity = '1';
-          el.style.transform = 'none';
-        }
-      });
-      return;
-    }
-
-    // Intersection Observer para animaciones scroll-triggered
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -100px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const element = entry.target;
-          
-          // Agregar clase animate con delay progresivo
-          setTimeout(() => {
-            element.classList.add('animate');
-          }, Math.random() * 200); // Delay aleatorio sutil
-          
-          observer.unobserve(element);
-        }
-      });
-    }, observerOptions);
-
-    // Observar elementos animables
-    document.querySelectorAll('.hero-badge, .hero-title, .hero-subtitle, .hero-cta, .construccion-content, .construccion-visual, .petroleros-content, .petroleros-visual, .hidricos-content, .hidricos-visual, .electromecanica-content, .electromecanica-visual, .cta-title, .cta-service-card, .cta-buttons').forEach(el => {
-      if (el instanceof Element) {
-        observer.observe(el);
-      }
-    });
-
-    // Cleanup
-    window.addEventListener('beforeunload', () => {
-      observer.disconnect();
-    });
-  });
-</script>

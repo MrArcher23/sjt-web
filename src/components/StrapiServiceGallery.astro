@@ -1,0 +1,133 @@
+---
+import ServiceGallery from "./ui/ServiceGallery.astro";
+import type { ServiceItem } from "./ui/ServiceGallery.astro";
+import strapi from "../utils/strapi";
+import type {
+  StrapiEntity,
+  ServiceGallery as ServiceGalleryType,
+} from "../types/strapi";
+
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  backgroundColor?: string;
+  buttonColor?: string;
+  containerClass?: string;
+  fallbackServices?: ServiceItem[];
+  overrideProps?: Partial<ServiceItem>[];
+}
+
+const {
+  title,
+  subtitle,
+  backgroundColor ,
+  buttonColor = "bg-yellow-500",
+  containerClass = "",
+  fallbackServices = [],
+  overrideProps = [],
+} = Astro.props;
+
+// Función para transformar datos de Strapi a formato del componente
+function transformServicesData(
+  strapiServices: StrapiEntity<ServiceGalleryType>[]
+): ServiceItem[] {
+  return strapiServices.map((service) => ({
+    service_name: service.name,
+    img:
+      service.image?.url ||
+      "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    link: service.link || undefined,
+    overlayColor: service.overlayColor || "black",
+    description: service.description || undefined,
+  }));
+}
+
+// Obtener servicios desde Strapi
+let services: ServiceItem[] = [];
+let error: string | null = null;
+
+try {
+  console.log("🔍 Obteniendo servicios activos desde Strapi Cloud");
+  console.log(`📡 Strapi URL: ${import.meta.env.STRAPI_URL}`);
+
+  // Intentar primero el endpoint personalizado, luego el estándar
+  let servicesResponse;
+  try {
+    console.log("🔍 Intentando endpoint personalizado: /api/services/active");
+    servicesResponse = await strapi.getActiveGalleryServices();
+  } catch (customError) {
+    console.log(
+      "⚠️ Endpoint personalizado falló, usando endpoint estándar con filtros"
+    );
+    servicesResponse = await strapi.getGalleryServices({
+      filters: { isActive: { $eq: true } },
+      sort: { order: "asc" },
+      pagination: { limit: 4 },
+    });
+  }
+  console.log(
+    "📋 Respuesta completa de Strapi:",
+    JSON.stringify(servicesResponse, null, 2)
+  );
+
+  if (servicesResponse.data && servicesResponse.data.length > 0) {
+    services = transformServicesData(servicesResponse.data);
+    console.log(`✅ ${services.length} servicios cargados desde Strapi Cloud`);
+    console.log("🎯 Servicios transformados:", services);
+
+    // Aplicar overrides si se proporcionan
+    if (overrideProps.length > 0) {
+      services = services.map((service, index) => ({
+        ...service,
+        ...(overrideProps[index] || {}),
+      }));
+      console.log("🔄 Overrides aplicados:", services);
+    }
+  } else {
+    console.log("⚠️ No se encontraron servicios activos en Strapi Cloud");
+    console.log("📊 Estructura de respuesta:", servicesResponse);
+
+    // Solo usar fallbacks si se proporcionan explícitamente
+    if (fallbackServices.length > 0) {
+      console.log("🔄 Usando fallbacks proporcionados");
+      services = fallbackServices;
+    } else {
+      console.log("❌ No hay servicios en Strapi ni fallbacks configurados");
+      services = [];
+    }
+  }
+} catch (e) {
+  error = e instanceof Error ? e.message : "Error loading services";
+  console.error("❌ Error detallado cargando servicios:", e);
+  console.error("🔍 Stack trace:", error);
+
+  // Solo usar fallbacks como último recurso
+  if (fallbackServices.length > 0) {
+    console.log("🔄 Usando fallbacks como último recurso");
+    services = fallbackServices;
+  } else {
+    console.log("❌ Sin servicios disponibles");
+    services = [];
+  }
+}
+
+// Debug información
+if (error) {
+  console.error("❌ StrapiServiceGallery Error:", error);
+}
+---
+
+
+
+<!-- Componente ServiceGallery con datos transformados -->
+<ServiceGallery
+  services={services}
+  title={title}
+  subtitle={subtitle}
+  backgroundColor={backgroundColor}
+  buttonColor={buttonColor}
+  containerClass={containerClass}
+>
+  <!-- Slot para contenido adicional -->
+  <slot />
+</ServiceGallery>

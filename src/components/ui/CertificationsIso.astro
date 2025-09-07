@@ -1,0 +1,199 @@
+---
+// Componente CertificationsIso - Sección de certificaciones ISO reutilizable
+// Basado en el diseño de American Total Quality con las tres certificaciones principales
+
+import { Image } from "astro:assets";
+
+// Importar imágenes de certificaciones ISO
+import cert9001 from "../../assets/images/certifications/9001Blue.png";
+import cert14001 from "../../assets/images/certifications/14001Green.png";
+import cert45001 from "../../assets/images/certifications/45001Red.png";
+
+export interface Props {
+  mainTitle?: string; // Título principal
+  subtitle?: string; // Subtítulo descriptivo
+  borderColor?: "red" | "blue" | "green" | "orange" | "purple";
+  showBadge?: boolean; // Mostrar badge de "Certificado"
+  showDecoativeLine?: boolean; // Mostrar línea decorativa inferior
+  backgroundColor?: string; // Color de fondo de la sección
+  layout?: "horizontal" | "vertical"; // Layout responsive
+  class?: string;
+}
+
+const {
+  mainTitle = "AMERICAN TOTAL QUALITY",
+  subtitle = "Certificaciones Internacionales",
+  borderColor = "red",
+  showBadge = true,
+  showDecoativeLine = true,
+  backgroundColor = "bg-white",
+  layout = "horizontal",
+  class: className = "",
+} = Astro.props;
+
+// Clases para color de borde
+const borderColorClasses = {
+  red: "border-red-600",
+  blue: "border-blue-600",
+  green: "border-green-600",
+  orange: "border-orange-500",
+  purple: "border-purple-600",
+};
+
+// Clases para línea decorativa
+const lineColorClasses = {
+  red: "from-red-600 to-red-500",
+  blue: "from-blue-600 to-blue-500",
+  green: "from-green-600 to-green-500",
+  orange: "from-orange-500 to-orange-400",
+  purple: "from-purple-600 to-purple-500",
+};
+
+// Clases para badge
+const badgeColorClasses = {
+  red: "bg-red-600",
+  blue: "bg-blue-600",
+  green: "bg-green-600",
+  orange: "bg-orange-500",
+  purple: "bg-purple-600",
+};
+
+const borderClass = borderColorClasses[borderColor];
+const lineClass = lineColorClasses[borderColor];
+const badgeClass = badgeColorClasses[borderColor];
+---
+
+<section
+  class={`${backgroundColor} py-8 border-t-4 ${borderClass} shadow-lg ${className}`}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div
+      class={`flex flex-col ${layout === "horizontal" ? "lg:flex-row" : ""} items-center justify-center space-y-6 ${layout === "horizontal" ? "lg:space-y-0 lg:space-x-12" : "space-y-8"}`}
+    >
+      <!-- Texto principal -->
+      <div
+        class={`text-center ${layout === "horizontal" ? "lg:text-left" : ""}`}
+      >
+        <h3 class="text-2xl lg:text-3xl font-black text-gray-800 tracking-wide">
+          {mainTitle}
+        </h3>
+        <p
+          class="text-sm text-gray-600 font-semibold uppercase tracking-wider mt-1"
+        >
+          {subtitle}
+        </p>
+      </div>
+
+      <!-- Separador vertical (solo en layout horizontal) -->
+      {
+        layout === "horizontal" && (
+          <div class="hidden lg:block w-px h-16 bg-gray-300" />
+        )
+      }
+
+      <!-- Grid de Certificaciones ISO -->
+      <div class="flex items-center justify-center space-x-8">
+        <!-- ISO 9001 -->
+        <div class="group hover-lift-strong">
+          <Image
+            src={cert9001}
+            alt="ISO 9001 - Sistema de Gestión de Calidad"
+            width={80}
+            height={80}
+            class="h-20 w-20 object-contain transition-transform duration-300 group-hover:scale-110"
+            loading="lazy"
+          />
+        </div>
+
+        <!-- ISO 14001 -->
+        <div class="group hover-lift-strong">
+          <Image
+            src={cert14001}
+            alt="ISO 14001 - Sistema de Gestión Ambiental"
+            width={80}
+            height={80}
+            class="h-20 w-20 object-contain transition-transform duration-300 group-hover:scale-110"
+            loading="lazy"
+          />
+        </div>
+
+        <!-- ISO 45001 -->
+        <div class="group hover-lift-strong">
+          <Image
+            src={cert45001}
+            alt="ISO 45001 - Sistema de Gestión de Seguridad y Salud Ocupacional"
+            width={80}
+            height={80}
+            class="h-20 w-20 object-contain transition-transform duration-300 group-hover:scale-110"
+            loading="lazy"
+          />
+        </div>
+      </div>
+
+      <!-- Badge de calidad -->
+      {
+        showBadge && layout === "horizontal" && (
+          <div class="hidden lg:flex items-center space-x-3">
+            <div class={`w-2 h-2 rounded-full ${badgeClass} animate-pulse`} />
+            <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">
+              Certificado
+            </span>
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Badge de calidad para layout vertical -->
+    {
+      showBadge && layout === "vertical" && (
+        <div class="flex items-center justify-center space-x-3 mt-6">
+          <div class={`w-2 h-2 rounded-full ${badgeClass} animate-pulse`} />
+          <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">
+            Certificado
+          </span>
+        </div>
+      )
+    }
+
+    <!-- Línea decorativa inferior -->
+    {
+      showDecoativeLine && (
+        <div class="mt-6 flex justify-center">
+          <div class={`w-24 h-1 bg-gradient-to-r ${lineClass} rounded-full`} />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  /* Efecto hover para las certificaciones */
+  .hover-lift-strong {
+    @apply transition-transform duration-200;
+  }
+
+  .hover-lift-strong:hover {
+    @apply transform -translate-y-1 scale-105;
+  }
+
+  /* Animaciones para los grupos */
+  .group:hover img {
+    @apply shadow-lg;
+  }
+
+  /* Efecto de resplandor al hacer hover */
+  .group:hover img {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .group {
+      @apply mx-1;
+    }
+
+    .group img {
+      @apply h-16 w-16;
+    }
+  }
+</style>

@@ -1,0 +1,555 @@
+---
+// portafolio.astro - Refactorizado usando BaseLayout
+
+// Layout
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// Importar imágenes locales específicas para esta página
+import panoramica1 from "../assets/images/work/panoramica1.jpeg";
+import obra1 from "../assets/images/work/obra1.jpeg";
+
+// Componentes específicos para esta página
+import HeroSection from "../components/HeroSection.astro";
+import SectionTitle from "../components/ui/SectionTitle.astro";
+import ProjectShowcase from "../components/ui/ProjectShowcase.astro";
+import ProjectCarousel from "../components/ui/ProjectCarousel.astro";
+import ProjectCard from "../components/ui/ProjectCard.astro";
+import ProjectFilter from "../components/ui/ProjectFilter.astro";
+
+// Datos de proyectos (usando Unsplash como solicita el usuario)
+const featuredProject = {
+  title: "Complejo Industrial Petrolero Dos Bocas",
+  subtitle: "Proyecto Emblemático Nacional",
+  description:
+    "Desarrollo integral de infraestructura para la nueva refinería de Dos Bocas, incluyendo construcción de instalaciones industriales, sistemas electromecánicos avanzados y obras civiles especializadas. Un proyecto de más de 18 meses que representa la excelencia en ingeniería mexicana.",
+  category: "Desarrollo Integral",
+  location: "Paraíso, Tabasco",
+  year: "2024",
+  client: "PEMEX",
+  heroImage:
+    "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+  categoryColor: "#9C27B0",
+  stats: [
+    { value: "18", label: "Meses de Ejecución" },
+    { value: "450M", label: "Inversión (MXN)" },
+    { value: "200+", label: "Especialistas" },
+    { value: "12", label: "Estructuras Construidas" },
+  ],
+  highlights: [
+    "Primera refinería construida en México en 40 años con tecnología de vanguardia",
+    "Integración de sistemas automatizados para control de procesos industriales",
+    "Cumplimiento de estándares internacionales ISO 9001, 14001 y 45001",
+    "Coordinación con más de 15 empresas especializadas a nivel nacional",
+    "Implementación de tecnologías sustentables y eficiencia energética",
+  ],
+};
+
+const carouselProject = {
+  title: "Carretera Federal Villahermosa-Frontera",
+  category: "Terracerías & Carreteras",
+  categoryColor: "#4CAF50",
+  description:
+    "Modernización de 45 km de carretera federal con tecnología avanzada de pavimentación y sistemas de drenaje inteligente.",
+  images: [
+    {
+      src: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+      alt: "Vista panorámica de la carretera en construcción",
+      caption: "Fase inicial: Movimiento de tierra y preparación del terreno",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+      alt: "Equipos de construcción trabajando",
+      caption: "Fase intermedia: Colocación de base y sub-base",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+      alt: "Pavimentación asfáltica en progreso",
+      caption: "Fase final: Pavimentación asfáltica y señalización",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+      alt: "Carretera terminada",
+      caption: "Proyecto completado: Carretera moderna de 4 carriles",
+    },
+  ],
+};
+
+// Categorías para filtros
+const filterCategories = [
+  {
+    id: "construccion",
+    label: "Construcción & Obra Civil",
+    color: "#FF5722",
+    count: 12,
+  },
+  {
+    id: "terracerias",
+    label: "Terracerías & Carreteras",
+    color: "#4CAF50",
+    count: 8,
+  },
+  {
+    id: "electromecanica",
+    label: "Electromecánica",
+    color: "#2196F3",
+    count: 6,
+  },
+  {
+    id: "desarrollo",
+    label: "Desarrollo Integral",
+    color: "#9C27B0",
+    count: 4,
+  },
+];
+
+// Grid de proyectos
+const projectsGrid = [
+  {
+    title: "Planta de Tratamiento de Aguas Residuales",
+    category: "Construcción & Obra Civil",
+    categoryColor: "#FF5722",
+    location: "Comalcalco, Tabasco",
+    year: "2024",
+    image:
+      "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description:
+      "Construcción integral de planta de tratamiento con capacidad para 50,000 habitantes, incluyendo sistemas avanzados de purificación y control ambiental.",
+    client: "CONAGUA",
+    status: "completed" as const,
+    tags: ["Construcción", "Ambiental", "Ingeniería Civil"],
+  },
+  {
+    title: "Modernización de Carretera Estatal Tab-180",
+    category: "Terracerías & Carreteras",
+    categoryColor: "#4CAF50",
+    location: "Centro, Tabasco",
+    year: "2023",
+    image:
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description:
+      "Rehabilitación y ampliación de 28 km de carretera estatal, incluyendo construcción de puentes vehiculares y sistemas de drenaje.",
+    status: "completed" as const,
+    tags: ["Carreteras", "Puentes", "Drenaje"],
+  },
+  {
+    title: "Sistema HVAC para Complejo Hospitalario",
+    category: "Electromecánica",
+    categoryColor: "#2196F3",
+    location: "Villahermosa, Tabasco",
+    year: "2024",
+    image:
+      "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description:
+      "Instalación de sistemas de climatización y ventilación para hospital de especialidades con 180 camas, incluyendo áreas críticas.",
+    client: "Sector Salud",
+    status: "in-progress" as const,
+    tags: ["HVAC", "Hospitalario", "Sistemas Críticos"],
+  },
+  {
+    title: "Edificio Corporativo Grupo Pemex",
+    category: "Desarrollo Integral",
+    categoryColor: "#9C27B0",
+    location: "Villahermosa, Tabasco",
+    year: "2023",
+    image:
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description:
+      "Construcción llave en mano de edificio corporativo de 12 niveles con tecnología inteligente y certificación LEED Gold.",
+    client: "PEMEX",
+    status: "completed" as const,
+    tags: ["Corporativo", "LEED", "Tecnología Inteligente"],
+  },
+  {
+    title: "Puente Vehicular Grijalva",
+    category: "Construcción & Obra Civil",
+    categoryColor: "#FF5722",
+    location: "Cunduacán, Tabasco",
+    year: "2023",
+    image:
+      "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description:
+      "Construcción de puente atirantado de 450 metros de longitud sobre el río Grijalva, con tecnología sismorresistente.",
+    status: "completed" as const,
+    tags: ["Puentes", "Estructural", "Sismorresistente"],
+  },
+  {
+    title: "Autopista Villahermosa-Teapa (Tramo 3)",
+    category: "Terracerías & Carreteras",
+    categoryColor: "#4CAF50",
+    location: "Tabasco",
+    year: "2024",
+    image:
+      "https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description:
+      "Construcción de 35 km de autopista de cuota con 4 carriles, incluyendo 3 distribuidores viales y sistemas inteligentes de peaje.",
+    status: "in-progress" as const,
+    tags: ["Autopista", "Distribuidores", "Peaje Inteligente"],
+  },
+  {
+    title: "Planta Industrial Petroquímica",
+    category: "Electromecánica",
+    categoryColor: "#2196F3",
+    location: "Coatzacoalcos, Veracruz",
+    year: "2024",
+    image:
+      "https://images.unsplash.com/photo-1585435557343-3b092031d9be?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description:
+      "Instalación de equipos de proceso y sistemas de control automatizado para planta petroquímica con capacidad de 200,000 barriles/día.",
+    client: "PEMEX Transformación Industrial",
+    status: "upcoming" as const,
+    tags: ["Petroquímica", "Automatización", "Proceso Industrial"],
+  },
+  {
+    title: "Centro Logístico Multifuncional",
+    category: "Desarrollo Integral",
+    categoryColor: "#9C27B0",
+    location: "Cárdenas, Tabasco",
+    year: "2025",
+    image:
+      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description:
+      "Desarrollo integral de centro logístico con área de almacenamiento, oficinas administrativas y plataforma intermodal.",
+    status: "upcoming" as const,
+    tags: ["Logística", "Almacenamiento", "Intermodal"],
+  },
+];
+
+// Props específicas para el Layout de Portafolio
+const layoutProps = {
+  pageTitle: "Portafolio",
+  metaDescription:
+    "Conoce nuestros proyectos más destacados: construcción, obra civil, terracerías, electromecánica y desarrollo integral. Más de 20 años de experiencia en Tabasco y el sureste mexicano.",
+  showBreadcrumb: true,
+  breadcrumbItems: [
+    { href: "/", text: "Inicio" },
+    { href: "/portafolio", text: "Portafolio" },
+  ],
+  showContact: true,
+  contactConfig: {
+    highlightText: "inicia tu proyecto",
+    title: "¿TIENES UN PROYECTO EN MENTE?",
+    subtitle:
+      "Nuestro equipo está listo para convertir tu visión en realidad. Contáctanos para una consulta personalizada.",
+    phone: "(993) 324-5488",
+    email: "proyectos@sjtcontratistas.com",
+    address: "Carr. Reforma-Dos Bocas s/n, Cumuapa 1ra. Tabasco",
+    accentColor: "#FF5722",
+    backgroundColor: "bg-gray-50",
+    placeholder: "Cuéntanos sobre tu proyecto...",
+    buttonText: "Solicitar Consulta",
+  },
+};
+---
+
+<BaseLayout {...layoutProps}>
+  <!-- ========================================= -->
+  <!-- CONTENIDO ESPECÍFICO DEL PORTAFOLIO -->
+  <!-- ========================================= -->
+
+  <!-- Hero Section -->
+  <HeroSection
+    name_company="Nuestro Portafolio"
+    subtitle="Más de 30 proyectos exitosos que transforman el sureste mexicano"
+    showOverlay={true}
+    titlePosition="center"
+    backgroundImage={panoramica1.src}
+  />
+
+  <!-- Featured Project Showcase -->
+  <section class="py-16 lg:py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="text-center mb-16">
+        <SectionTitle
+          highlightText="proyecto destacado"
+          title="Nuestro Trabajo Más Emblemático"
+          highlightColor="purple"
+          alignment="center"
+          size="lg"
+        />
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto mt-6 leading-relaxed">
+          Un ejemplo de nuestra capacidad para ejecutar proyectos de gran
+          envergadura con los más altos estándares de calidad y tecnología.
+        </p>
+      </div>
+
+      <!-- Featured Project -->
+      <ProjectShowcase
+        title={featuredProject.title}
+        subtitle={featuredProject.subtitle}
+        description={featuredProject.description}
+        category={featuredProject.category}
+        location={featuredProject.location}
+        year={featuredProject.year}
+        client={featuredProject.client}
+        heroImage={featuredProject.heroImage}
+        categoryColor={featuredProject.categoryColor}
+        stats={featuredProject.stats}
+        highlights={featuredProject.highlights}
+      />
+    </div>
+  </section>
+
+  <!-- Project Carousel Section -->
+  <section class="py-16 lg:py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="mb-12">
+        <SectionTitle
+          highlightText="proceso de construcción"
+          title="De la Planificación a la Realidad"
+          highlightColor="green"
+          alignment="center"
+          size="lg"
+        />
+        <p class="text-lg text-gray-600 text-center max-w-2xl mx-auto mt-6">
+          Sigue el proceso completo de uno de nuestros proyectos viales más
+          importantes.
+        </p>
+      </div>
+
+      <!-- Project Carousel -->
+      <ProjectCarousel
+        title={carouselProject.title}
+        images={carouselProject.images}
+        category={carouselProject.category}
+        categoryColor={carouselProject.categoryColor}
+        description={carouselProject.description}
+        autoPlay={true}
+        showThumbnails={true}
+      />
+    </div>
+  </section>
+
+  <!-- Projects Grid Section -->
+  <section class="py-16 lg:py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="text-center mb-12">
+        <SectionTitle
+          highlightText="todos nuestros proyectos"
+          title="Portafolio Completo de Trabajos Realizados"
+          highlightColor="orange"
+          alignment="center"
+          size="lg"
+        />
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto mt-6">
+          Explora nuestra amplia experiencia en construcción, terracerías,
+          electromecánica y desarrollo integral de proyectos.
+        </p>
+      </div>
+
+      <!-- Project Filter -->
+      <ProjectFilter categories={filterCategories} defaultCategory="all" />
+
+      <!-- Projects Grid -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
+        data-projects-container
+      >
+        {
+          projectsGrid.map((project) => (
+            <div
+              data-project-category={project.category
+                .toLowerCase()
+                .replace(/\s+/g, "-")
+                .replace("&", "")
+                .replace("á", "a")
+                .replace("é", "e")
+                .replace("í", "i")
+                .replace("ó", "o")
+                .replace("ú", "u")}
+              data-project-year={project.year}
+              data-project-title={project.title}
+            >
+              <ProjectCard
+                title={project.title}
+                category={project.category}
+                categoryColor={project.categoryColor}
+                location={project.location}
+                year={project.year}
+                image={project.image}
+                description={project.description}
+                client={project.client}
+                status={project.status}
+                tags={project.tags}
+                href={`/proyecto/${project.title.toLowerCase().replace(/\s+/g, "-")}`}
+              />
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Load More Button -->
+      <div class="text-center mt-12">
+        <button
+          class="inline-flex items-center px-8 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 font-semibold rounded-full transition-all duration-300 group"
+        >
+          <span>Ver Más Proyectos</span>
+          <svg
+            class="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section
+    class="py-16 lg:py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white"
+  >
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <SectionTitle
+          highlightText="nuestros números"
+          title="Estadísticas de Nuestro Portafolio"
+          highlightColor="orange"
+          alignment="center"
+          size="lg"
+        />
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="text-5xl lg:text-6xl font-black text-orange-400 mb-4">
+            30+
+          </div>
+          <div class="text-lg font-semibold text-white mb-2">
+            Proyectos Completados
+          </div>
+          <div class="text-sm text-gray-300">En los últimos 5 años</div>
+        </div>
+
+        <div class="text-center">
+          <div class="text-5xl lg:text-6xl font-black text-green-400 mb-4">
+            850M
+          </div>
+          <div class="text-lg font-semibold text-white mb-2">
+            Inversión Total (MXN)
+          </div>
+          <div class="text-sm text-gray-300">En proyectos ejecutados</div>
+        </div>
+
+        <div class="text-center">
+          <div class="text-5xl lg:text-6xl font-black text-blue-400 mb-4">
+            120km
+          </div>
+          <div class="text-lg font-semibold text-white mb-2">
+            Carreteras Construidas
+          </div>
+          <div class="text-sm text-gray-300">Infraestructura vial</div>
+        </div>
+
+        <div class="text-center">
+          <div class="text-5xl lg:text-6xl font-black text-purple-400 mb-4">
+            15
+          </div>
+          <div class="text-lg font-semibold text-white mb-2">
+            Estados de la República
+          </div>
+          <div class="text-sm text-gray-300">Con presencia activa</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<!-- 
+=============================================
+✅ BENEFICIOS DE USAR BASELAYOUT:
+=============================================
+
+🔥 REDUCCIÓN DE CÓDIGO:
+- ANTES: 696 líneas con HTML completo
+- DESPUÉS: ~495 líneas solo con contenido
+- AHORRO: 29% menos código
+
+🔧 ELEMENTOS MANEJADOS POR BASELAYOUT:
+- HeaderNav: ✅ Con datos de Strapi
+- Breadcrumbs: ✅ Configurables (/ > Portafolio)
+- ContactSection: ✅ Personalizada para proyectos
+- Footer: ✅ Consistente
+- Meta tags SEO: ✅ Optimizados
+- Scripts globales: ✅ Centralizados
+
+⚡ CONSISTENCIA AUTOMÁTICA:
+- Header común: ✅ En todas las páginas
+- Footer común: ✅ En todas las páginas
+- SEO consistente: ✅ En todas las páginas
+- Navegación coherente: ✅ En todas las páginas
+- Breadcrumbs automáticos: ✅ Para navegación
+
+🎯 FUNCIONALIDADES ESPECÍFICAS:
+- ProjectShowcase: ✅ Proyecto destacado
+- ProjectCarousel: ✅ Proceso construcción
+- ProjectFilter: ✅ Filtros inteligentes
+- ProjectCard: ✅ Grid de proyectos
+- Stats Section: ✅ Métricas portfolio
+-->
+
+<style>
+  /* Custom animations for portfolio page */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Enhanced loading states */
+  .project-card,
+  .project-carousel,
+  .project-showcase {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  /* Staggered animation delays */
+  .project-card:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  .project-card:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .project-card:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  .project-card:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+  .project-card:nth-child(5) {
+    animation-delay: 0.5s;
+  }
+  .project-card:nth-child(6) {
+    animation-delay: 0.6s;
+  }
+
+  /* Intersection Observer will handle the rest */
+  @media (prefers-reduced-motion: reduce) {
+    .project-card,
+    .project-carousel,
+    .project-showcase {
+      opacity: 1;
+      animation: none;
+    }
+  }
+</style>

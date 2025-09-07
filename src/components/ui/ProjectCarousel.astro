@@ -1,0 +1,276 @@
+---
+export interface CarouselImage {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
+export interface Props {
+  title: string;
+  images: CarouselImage[];
+  category: string;
+  categoryColor: string;
+  description?: string;
+  autoPlay?: boolean;
+  showThumbnails?: boolean;
+}
+
+const { 
+  title, 
+  images, 
+  category, 
+  categoryColor,
+  description,
+  autoPlay = false,
+  showThumbnails = true 
+} = Astro.props;
+
+// Generate unique ID for this carousel instance
+const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class="project-carousel bg-white rounded-3xl shadow-xl overflow-hidden">
+  <!-- Header -->
+  <div class="p-6 lg:p-8 border-b border-gray-100">
+    <div class="flex items-center justify-between">
+      <div>
+        <div 
+          class="inline-block px-3 py-1 rounded-full text-xs font-semibold text-white mb-3"
+          style={`background: ${categoryColor}`}
+        >
+          {category}
+        </div>
+        <h3 class="text-2xl lg:text-3xl font-bold text-gray-900">{title}</h3>
+        {description && (
+          <p class="text-gray-600 mt-2 text-sm lg:text-base">{description}</p>
+        )}
+      </div>
+      
+      <!-- Navigation Controls -->
+      <div class="flex space-x-2">
+        <button 
+          class={`carousel-btn prev-btn-${carouselId} w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors duration-200`}
+          aria-label="Imagen anterior"
+        >
+          <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <button 
+          class={`carousel-btn next-btn-${carouselId} w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors duration-200`}
+          aria-label="Siguiente imagen"
+        >
+          <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Main Carousel -->
+  <div class="relative">
+    <div class={`carousel-container-${carouselId} overflow-hidden`}>
+      <div class={`carousel-track-${carouselId} flex transition-transform duration-500 ease-in-out`}>
+        {images.map((image, index) => (
+          <div class="w-full flex-shrink-0 relative">
+            <div class="aspect-video lg:aspect-[21/9]">
+              <img 
+                src={image.src}
+                alt={image.alt}
+                class="w-full h-full object-cover"
+                loading={index === 0 ? "eager" : "lazy"}
+              />
+              
+              <!-- Image Overlay with Caption -->
+              {image.caption && (
+                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                  <p class="text-white text-sm lg:text-base font-medium">
+                    {image.caption}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    
+    <!-- Progress Indicators -->
+    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+      {images.map((_, index) => (
+        <button 
+          class={`indicator-${carouselId} w-2 h-2 rounded-full transition-all duration-300`}
+          data-index={index}
+          style={`background: ${index === 0 ? categoryColor : 'rgba(255,255,255,0.5)'}`}
+          aria-label={`Ir a imagen ${index + 1}`}
+        />
+      ))}
+    </div>
+  </div>
+  
+  <!-- Thumbnails -->
+  {showThumbnails && images.length > 1 && (
+    <div class="p-4 lg:p-6 bg-gray-50">
+      <div class="flex space-x-3 overflow-x-auto scrollbar-hide">
+        {images.map((image, index) => (
+          <button 
+            class={`thumbnail-${carouselId} flex-shrink-0 w-20 h-14 lg:w-24 lg:h-16 rounded-xl overflow-hidden border-2 transition-all duration-300`}
+            data-index={index}
+            style={`border-color: ${index === 0 ? categoryColor : 'transparent'}`}
+          >
+            <img 
+              src={image.src}
+              alt={image.alt}
+              class="w-full h-full object-cover transition-opacity duration-300 hover:opacity-75"
+            />
+          </button>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
+<script define:vars={{ carouselId, categoryColor, autoPlay }}>
+  const carouselTrack = document.querySelector(`.carousel-track-${carouselId}`);
+  const prevBtn = document.querySelector(`.prev-btn-${carouselId}`);
+  const nextBtn = document.querySelector(`.next-btn-${carouselId}`);
+  const indicators = document.querySelectorAll(`.indicator-${carouselId}`);
+  const thumbnails = document.querySelectorAll(`.thumbnail-${carouselId}`);
+  
+  let currentIndex = 0;
+  const totalImages = indicators.length;
+  let autoPlayInterval;
+  
+  function updateCarousel() {
+    if (!carouselTrack) return;
+    
+    const translateX = -currentIndex * 100;
+    carouselTrack.style.transform = `translateX(${translateX}%)`;
+    
+    // Update indicators
+    indicators.forEach((indicator, index) => {
+      indicator.style.background = index === currentIndex ? categoryColor : 'rgba(255,255,255,0.5)';
+    });
+    
+    // Update thumbnails
+    thumbnails.forEach((thumbnail, index) => {
+      thumbnail.style.borderColor = index === currentIndex ? categoryColor : 'transparent';
+    });
+  }
+  
+  function nextImage() {
+    currentIndex = (currentIndex + 1) % totalImages;
+    updateCarousel();
+  }
+  
+  function prevImage() {
+    currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+    updateCarousel();
+  }
+  
+  function goToImage(index) {
+    currentIndex = index;
+    updateCarousel();
+  }
+  
+  // Event listeners
+  if (nextBtn) nextBtn.addEventListener('click', nextImage);
+  if (prevBtn) prevBtn.addEventListener('click', prevImage);
+  
+  indicators.forEach((indicator, index) => {
+    indicator.addEventListener('click', () => goToImage(index));
+  });
+  
+  thumbnails.forEach((thumbnail, index) => {
+    thumbnail.addEventListener('click', () => goToImage(index));
+  });
+  
+  // Auto-play functionality
+  if (autoPlay) {
+    autoPlayInterval = setInterval(nextImage, 5000);
+    
+    // Pause on hover
+    const carousel = document.querySelector(`.carousel-container-${carouselId}`);
+    if (carousel) {
+      carousel.addEventListener('mouseenter', () => {
+        if (autoPlayInterval) {
+          clearInterval(autoPlayInterval);
+        }
+      });
+      
+      carousel.addEventListener('mouseleave', () => {
+        autoPlayInterval = setInterval(nextImage, 5000);
+      });
+    }
+  }
+  
+  // Touch/swipe support for mobile
+  let startX = 0;
+  let isDragging = false;
+  
+  if (carouselTrack) {
+    carouselTrack.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      isDragging = true;
+    });
+    
+    carouselTrack.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+    });
+    
+    carouselTrack.addEventListener('touchend', (e) => {
+      if (!isDragging) return;
+      
+      const endX = e.changedTouches[0].clientX;
+      const diffX = startX - endX;
+      
+      if (Math.abs(diffX) > 50) { // Minimum swipe distance
+        if (diffX > 0) {
+          nextImage();
+        } else {
+          prevImage();
+        }
+      }
+      
+      isDragging = false;
+    });
+  }
+</script>
+
+<style>
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Smooth hover effects */
+  .carousel-btn:hover {
+    transform: scale(1.05);
+  }
+  
+  .carousel-btn:active {
+    transform: scale(0.95);
+  }
+  
+  /* Loading state for images */
+  .project-carousel img {
+    transition: opacity 0.3s ease;
+  }
+  
+  .project-carousel img[loading="lazy"] {
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+  }
+  
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+</style>

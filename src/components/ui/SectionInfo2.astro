@@ -1,0 +1,256 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  image: string;
+  imagePosition?: "left" | "right";
+  buttonText?: string;
+  buttonLink?: string;
+  floatingElement1?: {
+    number: string;
+    title: string;
+    subtitle?: string;
+    icon?: string;
+    bgColor?: string;
+    textColor?: string;
+  };
+  floatingElement2?: {
+    number: string;
+    title: string;
+    subtitle?: string;
+    icon?: string;
+    bgColor?: string;
+    textColor?: string;
+  };
+  backgroundColor?: string;
+  containerClass?: string;
+}
+
+const {
+  title,
+  description,
+  image,
+  imagePosition = "right",
+  buttonText = "Más información",
+  buttonLink = "#",
+  floatingElement1,
+  floatingElement2,
+  backgroundColor = "bg-white",
+  containerClass = "",
+} = Astro.props;
+
+// Solo usar elementos flotantes si se proporcionan explícitamente
+const float1 = floatingElement1 || null;
+const float2 = floatingElement2 || null;
+---
+
+<section
+  class={`section-info-2 ${backgroundColor} py-16 lg:py-4 relative overflow-hidden ${containerClass}`}
+>
+  <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0">
+    <!-- Container principal con flex responsive -->
+    <div
+      class={`flex flex-col lg:flex-row items-center gap-8 lg:gap-16 ${
+        imagePosition === "left" ? "lg:flex-row-reverse" : ""
+      }`}
+    >
+      <!-- Contenido de texto -->
+      <div class="flex-1 space-y-6 lg:space-y-8">
+        <!-- Título destacado -->
+        <h2
+          class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 leading-tight"
+        >
+          {title}
+        </h2>
+
+        <!-- Descripción -->
+        <div class="space-y-4">
+          <p
+            class="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed"
+          >
+            {description}
+          </p>
+        </div>
+
+        <!-- Botón de acción -->
+        {
+          buttonText && buttonLink && (
+            <div class="pt-4">
+              <a
+                href={buttonLink}
+                class="inline-flex items-center gap-3 px-6 py-3 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-all duration-300 group"
+              >
+                <span>{buttonText}</span>
+                <svg
+                  class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </a>
+            </div>
+          )
+        }
+      </div>
+
+      <!-- Contenedor de imagen con elementos flotantes -->
+      <div class="flex-1 relative">
+        <!-- Imagen principal -->
+        <div
+          class="relative rounded-2xl lg:rounded-3xl overflow-hidden shadow-2xl"
+        >
+          <img
+            src={image}
+            alt="Section Image"
+            class="w-full h-[450px] sm:h-[550px] lg:h-[650px] xl:h-[750px] object-cover"
+            loading="lazy"
+          />
+
+          <!-- Overlay sutil para mejor contraste -->
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"
+          >
+          </div>
+        </div>
+
+        <!-- Elementos flotantes para desktop -->
+        <div class="hidden lg:block">
+          <!-- Elemento flotante 1 -->
+          {
+            float1 && (
+              <div
+                class={`absolute top-4 right-4 xl:top-8 xl:right-8 ${float1.bgColor} ${float1.textColor} p-4 xl:p-6 rounded-2xl shadow-xl backdrop-blur-sm border border-white/10`}
+              >
+                <div class="flex items-center gap-3">
+                  <div class="text-2xl xl:text-3xl">{float1.icon}</div>
+                  <div>
+                    <div class="text-2xl xl:text-3xl font-bold">
+                      {float1.number}
+                    </div>
+                    <div class="text-sm xl:text-base font-medium opacity-90">
+                      {float1.title}
+                    </div>
+                    {float1.subtitle && (
+                      <div class="text-xs xl:text-sm opacity-80">
+                        {float1.subtitle}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          }
+
+          <!-- Elemento flotante 2 -->
+          {
+            float2 && (
+              <div
+                class={`absolute bottom-4 left-4 xl:bottom-8 xl:left-8 ${float2.bgColor} ${float2.textColor} p-4 xl:p-6 rounded-2xl shadow-xl backdrop-blur-sm border border-white/10`}
+              >
+                <div class="flex items-center gap-3">
+                  <div class="text-2xl xl:text-3xl">{float2.icon}</div>
+                  <div>
+                    <div class="text-2xl xl:text-3xl font-bold">
+                      {float2.number}
+                    </div>
+                    <div class="text-sm xl:text-base font-medium opacity-90">
+                      {float2.title}
+                    </div>
+                    {float2.subtitle && (
+                      <div class="text-xs xl:text-sm opacity-80">
+                        {float2.subtitle}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Elementos flotantes para mobile - tira horizontal debajo de la imagen -->
+    <div class="lg:hidden mt-8">
+      <div class="flex flex-col sm:flex-row gap-4">
+        <!-- Elemento flotante 1 mobile -->
+        {
+          float1 && (
+            <div
+              class={`flex-1 ${float1.bgColor} ${float1.textColor} p-4 rounded-xl shadow-lg`}
+            >
+              <div class="flex items-center gap-3">
+                <div class="text-xl">{float1.icon}</div>
+                <div>
+                  <div class="text-xl font-bold">{float1.number}</div>
+                  <div class="text-sm font-medium opacity-90">
+                    {float1.title}
+                  </div>
+                  {float1.subtitle && (
+                    <div class="text-xs opacity-80">{float1.subtitle}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        }
+
+        <!-- Elemento flotante 2 mobile -->
+        {
+          float2 && (
+            <div
+              class={`flex-1 ${float2.bgColor} ${float2.textColor} p-4 rounded-xl shadow-lg`}
+            >
+              <div class="flex items-center gap-3">
+                <div class="text-xl">{float2.icon}</div>
+                <div>
+                  <div class="text-xl font-bold">{float2.number}</div>
+                  <div class="text-sm font-medium opacity-90">
+                    {float2.title}
+                  </div>
+                  {float2.subtitle && (
+                    <div class="text-xs opacity-80">{float2.subtitle}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section-info-2 {
+    position: relative;
+  }
+
+  /* Animaciones de entrada */
+  .section-info-2 img {
+    transition: transform 0.3s ease;
+  }
+
+  .section-info-2:hover img {
+    transform: scale(1.02);
+  }
+
+  /* Efectos de hover para elementos flotantes */
+  .section-info-2 [class*="absolute"] {
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .section-info-2:hover [class*="absolute"] {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+</style>

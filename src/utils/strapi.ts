@@ -36,6 +36,8 @@ class StrapiClient {
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`❌ Strapi Error Response:`, errorText);
       throw new Error(`Strapi request failed: ${response.statusText}`);
     }
 
@@ -116,7 +118,7 @@ class StrapiClient {
   // Obtener todos los heroes
   async getHeroes(options: StrapiOptions = {}) {
     return this.request("heroes", {
-      populate: ["heroImage", "rating"],
+      populate: ["backgroundVideo", "backgroundImage"],
       sort: ["createdAt:desc"],
       ...options,
     });
@@ -124,13 +126,27 @@ class StrapiClient {
 
   // Obtener hero activo (el que se muestra actualmente)
   async getActiveHero() {
-    return this.request("heroes/active");
+    try {
+      console.log("🔍 Obteniendo hero activo (primero de los activos)");
+      const response = await this.request("heroes", {
+        filters: { isActive: { $eq: true } },
+        populate: ["backgroundVideo", "backgroundImage"],
+        sort: ["createdAt:desc"],
+      });
+      console.log(
+        `📊 Hero activo obtenido: ${response?.data?.[0] ? "Éxito" : "No encontrado"}`
+      );
+      return response?.data?.[0] || null;
+    } catch (error) {
+      console.warn("⚠️ Error obteniendo hero activo:", error);
+      return null;
+    }
   }
 
   // Obtener un hero por slug
   async getHeroBySlug(slug: string) {
     return this.request("heroes", {
-      populate: ["heroImage", "rating"],
+      populate: ["backgroundVideo", "backgroundImage"],
       filters: { slug: { $eq: slug } },
     });
   }
@@ -138,7 +154,7 @@ class StrapiClient {
   // Obtener heroes activos solamente
   async getActiveHeroes() {
     return this.request("heroes", {
-      populate: ["heroImage", "rating"],
+      populate: ["backgroundVideo", "backgroundImage"],
       filters: { isActive: { $eq: true } },
       sort: ["createdAt:desc"],
     });
@@ -343,6 +359,34 @@ class StrapiClient {
       filters: { isActive: { $eq: true } },
       populate: ["logoFile"],
       sort: ["createdAt:desc"],
+    });
+  }
+
+  // ===== SERVICE GALLERY =====
+  // Obtener servicios de galería (4 servicios para la galería visual)
+  async getGalleryServices(options: StrapiOptions = {}) {
+    return this.request("services", {
+      populate: ["image"],
+      ...options,
+    });
+  }
+
+  // Obtener servicios activos para galería (endpoint personalizado)
+  async getActiveGalleryServices() {
+    return this.request("services/active");
+  }
+
+  // Obtener servicio por orden específico
+  async getGalleryServiceByOrder(order: number) {
+    return this.request(`services/order/${order}`);
+  }
+
+  // Obtener servicio de galería por slug
+  async getGalleryServiceBySlug(slug: string, options: StrapiOptions = {}) {
+    return this.request("services", {
+      filters: { slug: { $eq: slug } },
+      populate: ["image"],
+      ...options,
     });
   }
 }

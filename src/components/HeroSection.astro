@@ -1,0 +1,412 @@
+---
+// Importaciones necesarias
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+
+// Interface para definir las props del componente según mejores prácticas de Astro
+export interface Props {
+  name_company: string;
+  subtitle?: string;
+  // Soporte para video de fondo
+  backgroundVideo?: {
+    src: string;
+    poster?: string;
+    type?: string;
+  };
+  // Soporte para imagen de fondo
+  backgroundImage?: string | ImageMetadata;
+  // Control del overlay para mejorar legibilidad
+  showOverlay?: boolean;
+  // Control de posición del nombre de empresa
+  titlePosition?: 'bottom' | 'center';
+  // Clases adicionales para personalización
+  class?: string;
+}
+
+// Destructuración de props con valores por defecto
+const {
+  name_company,
+  subtitle = "Empresa Mexicana Líder",
+  backgroundVideo,
+  backgroundImage,
+  showOverlay = true,
+  titlePosition = 'bottom',
+  class: className = "",
+} = Astro.props;
+
+// Determinar si usar video o imagen
+const useVideo = !!backgroundVideo;
+const useImage = !!backgroundImage && !useVideo;
+---
+
+<!-- Hero Section con Background Media -->
+<section class={`video-hero-container ${className}`}>
+  <!-- Background Media (Video o Imagen) -->
+  {useVideo && backgroundVideo && (
+    <video
+      class="video-background"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster={backgroundVideo.poster}
+    >
+      <source src={backgroundVideo.src} type={backgroundVideo.type || "video/webm"} />
+      <!-- Fallback para navegadores que no soporten el formato -->
+      Tu navegador no soporta videos HTML5.
+    </video>
+  )}
+
+  {useImage && backgroundImage && (
+    <div class="video-background background-image">
+      {typeof backgroundImage === "string" ? (
+        <img 
+          src={backgroundImage} 
+          alt={`Imagen de fondo de ${name_company}`}
+          class="background-img"
+          loading="lazy"
+        />
+      ) : (
+        <Image
+          src={backgroundImage}
+          alt={`Imagen de fondo de ${name_company}`}
+          class="background-img"
+          format="webp"
+          quality="high"
+        />
+      )}
+    </div>
+  )}
+
+  <!-- Overlay para mejorar legibilidad (opcional) -->
+  {showOverlay ? (
+    <div class="video-overlay"></div>
+  ) : null}
+
+  {titlePosition === 'center' ? (
+    
+    <div class="video-content">
+      <div class="container mx-auto px-4 text-center text-white">
+        <div class="max-w-6xl mx-auto">
+          
+          <div class="space-y-4 mb-8">
+            <h1 class="company-name text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white leading-none tracking-tight drop-shadow-2xl">
+              {name_company}
+            </h1>
+          </div>
+
+         
+          <div class="w-32 sm:w-40 h-1 bg-primary-600 mx-auto mb-8 drop-shadow-lg"></div>
+
+         
+          {subtitle ? (
+            <p class="hero-subtitle text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white uppercase tracking-wider mb-6 drop-shadow-lg">
+              {subtitle}
+            </p>
+          ) : null}
+
+          
+        </div>
+      </div>
+    </div>
+  ) : (     
+      <div class="video-content-bottom">
+        <div class="container mx-auto px-4 text-left text-white">
+          <div class="max-w-6xl mx-auto">
+            
+            <h1 class="company-name text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-white leading-none tracking-tight">
+              {name_company}
+            </h1>
+
+           
+            <div class="w-20 sm:w-24 h-1 bg-primary-600 mt-4 mb-4" style="filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));"></div>
+
+          
+            {subtitle ? (
+              <p class="hero-subtitle text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white uppercase tracking-wider">
+                {subtitle}
+              </p>  
+            ) : null}
+          </div>
+        </div>
+      </div>
+    
+  )}
+</section>
+
+<style>
+  /* Video Hero Styles - Optimizado para viewport */
+  .video-hero-container {
+    position: relative;
+    width: 100%;
+    /* Uso de unidades de viewport modernas con fallbacks */
+    height: 100vh; /* Fallback para navegadores antiguos */
+    height: 100dvh; /* Dynamic Viewport Height - se ajusta con UI móvil */
+    min-height: 100svh; /* Small Viewport Height - altura mínima estable */
+    overflow: hidden;
+  }
+
+  .video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  /* Para imágenes de fondo */
+  .background-image {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .background-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      135deg,
+      rgba(37, 99, 235, 0.6) 0%,
+      rgba(29, 78, 216, 0.5) 50%,
+      rgba(31, 41, 55, 0.4) 100%
+    );
+    z-index: 2;
+  }
+
+  .video-content {
+    position: relative;
+    z-index: 40; /* Por debajo del header nav (50) */
+    /* Viewport optimizado */
+    height: 100vh; /* Fallback */
+    height: 100dvh; /* Dynamic height */
+    min-height: 100svh; /* Small viewport fallback */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .video-content-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40; /* Por debajo del header nav (50) */
+    /* Viewport optimizado */
+    height: 100vh; /* Fallback */
+    height: 100dvh; /* Dynamic height */
+    min-height: 100svh; /* Small viewport fallback */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none; /* Permite interactuar con elementos debajo */
+  }
+
+  .video-content-top > * {
+    pointer-events: auto; /* Restaura interactividad para el contenido */
+  }
+
+  .video-content-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40; /* Z-index por debajo del header (50) pero alto para visibilidad */
+    padding: 2rem 0 3rem 0; /* Espacio desde el bottom */
+    /* Añadir fondo semi-transparente para mejor legibilidad */
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.8) 0%,
+      rgba(0, 0, 0, 0.6) 50%,
+      rgba(0, 0, 0, 0.2) 80%,
+      transparent 100%
+    );
+  }
+
+  /* Animaciones de entrada y sombras mejoradas */
+  .company-name,
+  .hero-subtitle,
+  .hero-description,
+  .hero-button {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: heroFadeInUp 0.8s ease-out forwards;
+  }
+
+  /* Estilos mejorados para mejor visibilidad del texto */
+  .company-name {
+    text-shadow: 
+      0 0 20px rgba(0, 0, 0, 0.9),
+      0 0 40px rgba(0, 0, 0, 0.8),
+      2px 2px 4px rgba(0, 0, 0, 0.9),
+      4px 4px 8px rgba(0, 0, 0, 0.7);
+    /* Añadir outline sutil para mejor definición */
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.3);
+    animation-delay: 0.2s;
+  }
+
+  .hero-subtitle {
+    text-shadow: 
+      0 0 15px rgba(0, 0, 0, 0.9),
+      0 0 30px rgba(0, 0, 0, 0.8),
+      2px 2px 4px rgba(0, 0, 0, 0.9),
+      3px 3px 6px rgba(0, 0, 0, 0.7);
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.3);
+    animation-delay: 0.4s;
+  }
+
+
+  .hero-description {
+    animation-delay: 0.6s;
+  }
+
+  .hero-button {
+    animation-delay: 0.8s;
+  }
+
+  @keyframes heroFadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Efecto hover para el botón */
+  .hover-lift-strong:hover {
+    transform: translateY(-3px) scale(1.02);
+  }
+
+  /* Ajustes para móvil - Viewport optimizado */
+  @media (max-width: 768px) {
+    .video-hero-container {
+      /* Móvil: priorizar dynamic viewport height */
+      height: 100dvh; 
+      min-height: 100svh;
+    }
+
+    .video-content {
+      height: 100dvh;
+      min-height: 100svh;
+    }
+
+    .video-background {
+      object-position: center center;
+    }
+
+    .video-overlay {
+      background: linear-gradient(
+        135deg,
+        rgba(37, 99, 235, 0.9) 0%,
+        rgba(29, 78, 216, 0.85) 50%,
+        rgba(31, 41, 55, 0.9) 100%
+      );
+    }
+
+    .video-content-bottom {
+      padding: 1rem 0 2rem 0; /* Menos padding en móvil */
+      /* Asegurar que no se corte en pantallas pequeñas */
+      padding-bottom: env(safe-area-inset-bottom, 2rem);
+    }
+
+    .company-name {
+      font-size: 2.5rem; /* Más pequeño en móvil */
+      line-height: 1;
+    }
+
+    .hero-subtitle {
+      font-size: 1rem; /* Más pequeño en móvil para el bottom */
+    }
+
+    .company-name,
+    .hero-subtitle,
+    .hero-description,
+    .hero-button {
+      animation-duration: 0.6s;
+    }
+  }
+
+  /* Ajustes para orientación horizontal en móviles */
+  @media (max-width: 768px) and (orientation: landscape) {
+    .video-hero-container {
+      height: 100lvh; /* Large viewport height para landscape */
+      min-height: 100svh;
+    }
+
+    .video-content {
+      height: 100lvh;
+      min-height: 100svh;
+    }
+
+    .video-content-bottom {
+      padding: 0.5rem 0 1rem 0; /* Menor padding en landscape */
+    }
+
+    .company-name {
+      font-size: 2rem; /* Aún más pequeño en landscape */
+    }
+
+    .hero-subtitle {
+      font-size: 0.9rem;
+    }
+  }
+
+  /* Soporte para dispositivos con notch/island */
+  @supports (padding: max(0px)) {
+    .video-content-bottom {
+      padding-left: max(1rem, env(safe-area-inset-left));
+      padding-right: max(1rem, env(safe-area-inset-right));
+      padding-bottom: max(2rem, env(safe-area-inset-bottom));
+    }
+  }
+
+  /* Respeto por prefer-reduced-motion (accesibilidad) */
+  @media (prefers-reduced-motion: reduce) {
+    .company-name,
+    .hero-subtitle,
+    .hero-description,
+    .hero-button {
+      animation: heroFadeIn 0.5s ease-out forwards;
+      transform: none;
+    }
+
+    @keyframes heroFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .hover-lift-strong:hover {
+      transform: none;
+    }
+  }
+
+  /* Modo alto contraste - sin animaciones */
+  @media (prefers-contrast: high) {
+    .company-name,
+    .hero-subtitle,
+    .hero-description,
+    .hero-button {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    .video-overlay {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  }
+</style>

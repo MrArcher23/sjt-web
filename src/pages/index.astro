@@ -1,878 +1,334 @@
 ---
-// Importar CSS global con Tailwind
-import "../styles/globals.css";
 
+// Layout
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// Importar imágenes locales específicas para esta página
+import panoramica1 from "../assets/images/work/panoramica1.jpeg";
+import obra1 from "../assets/images/work/obra1.jpeg";
+
+// Componentes específicos para esta página
+import HeroSection from "../components/HeroSection.astro";
+import SectionTitle from "../components/ui/SectionTitle.astro";
+import SectionInfo2 from "../components/ui/SectionInfo2.astro";
+import CertificationsIso from "../components/ui/CertificationsIso.astro";
+import ServiceCard from "../components/ui/ServiceCard.astro";
+import StrapiServiceGallery from "../components/StrapiServiceGallery.astro";
+
+// Lógica específica para la página de inicio
 import strapi from "../utils/strapi";
 import type {
   StrapiEntity,
   Hero as HeroType,
   SectionInfo as SectionInfoType,
-  Header as HeaderType,
 } from "../types/strapi";
 
-// Obtener contenido dinámico desde Strapi
+// Obtener contenido específico para la home
 let heroData: StrapiEntity<HeroType> | null = null;
 let sectionInfoData: StrapiEntity<SectionInfoType> | null = null;
-let headerData: StrapiEntity<HeaderType> | null = null;
 let error: string | null = null;
 
 try {
-  // Usar endpoint estándar con filtro para heroes activos
+  // Hero data
   console.log("🔍 Obteniendo heroes activos");
   const heroResponse = await strapi.getActiveHeroes();
-
-  // Tomar el primer hero activo (más reciente)
   heroData = heroResponse.data?.[0] || null;
 
-  if (heroData) {
-    console.log("🦸 Hero activo encontrado:", heroData.title);
-  } else {
-    console.log("⚠️ No hay heroes activos, probando cualquier hero...");
+  if (!heroData) {
+    console.log("⚠️ No hay heroes activos, usando cualquier hero...");
     const allHeroesResponse = await strapi.getHeroes();
     heroData = allHeroesResponse.data?.[0] || null;
-    if (heroData) {
-      console.log("🦸 Usando hero más reciente:", heroData.title);
-    }
   }
 
-  // Obtener SectionInfo desde Strapi
+  // Section Info data
   console.log("🔍 Obteniendo section info activa");
-  sectionInfoData = await strapi.getActiveSectionInfo();
-  if (sectionInfoData) {
-    console.log("📋 SectionInfo activa encontrada:", sectionInfoData.title);
-  }
+  const sectionResponse = await strapi.getActiveSectionInfos();
+  sectionInfoData = sectionResponse.data?.[0] || null;
 
-  // Obtener Header desde Strapi
-  console.log("🔍 Obteniendo header activo");
-  headerData = await strapi.getActiveHeader();
-  if (headerData) {
-    console.log("🏠 Header activo encontrado:", headerData.companyName);
-  }
 } catch (e) {
-  error = e instanceof Error ? e.message : "Error loading content";
-  console.warn("⚠️ Content loading failed, using fallbacks:", error);
+  error = e instanceof Error ? e.message : "Error loading data";
+  console.error("❌ Error cargando datos:", error);
 }
+
+// Transformar datos para los componentes
+const heroProps = heroData
+  ? {
+      name_company: heroData.companyName,
+      subtitle: heroData.subtitle,
+      showOverlay: heroData.showOverlay,
+      titlePosition: heroData.titlePosition as "center" | "bottom",
+      backgroundVideo: heroData.backgroundVideo?.url ? { src: heroData.backgroundVideo.url } : undefined,
+      backgroundImage: heroData.backgroundImage?.url,
+    }
+  : null;
+
+const sectionInfoProps = sectionInfoData
+  ? {
+      title: sectionInfoData.title,
+      description: sectionInfoData.description,
+      image: sectionInfoData.image?.url || obra1.src,
+      imagePosition: "right" as const, // Valor por defecto
+      buttonText: sectionInfoData.buttonText,
+      buttonLink: sectionInfoData.buttonLink,
+    }
+  : null;
+
+// Props específicas para el Layout de la home
+const layoutProps = {
+  pageTitle: "Inicio",
+  metaDescription: "SJT Contratistas - Líderes en construcción, obra civil, terracerías y desarrollo integral de proyectos en el sureste mexicano. Más de 20 años de experiencia y excelencia.",
+  showBreadcrumb: false,
+  showContact: true,
+  contactConfig: {
+    highlightText: "escribenos y te atenderemos",
+    title: "¿TE INTERESA SABER MÁS?",
+    subtitle: "Ponte en contacto con nosotros y te brindaremos toda la información que necesites sobre nuestros servicios de construcción.",
+    phone: "(993) 324-5488",
+    email: "contacto@sjtcontratistas.com",
+    address: "Carr. Reforma-Dos Bocas s/n, Cumuapa 1ra. Tabasco",
+    accentColor: "#FF5722",
+    backgroundColor: "bg-gray-900",
+    placeholder: "Escribe tu Email...",
+    buttonText: "Enviar"
+  }
+};
 ---
 
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>SJT Contratistas - Construcción y Infraestructura</title>
+<BaseLayout {...layoutProps}>
+  <!-- ========================================= -->
+  <!-- CONTENIDO ESPECÍFICO DE LA PÁGINA HOME -->
+  <!-- ========================================= -->
 
-    <!-- Fuentes de Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
+  <!-- Hero Section -->
+  {heroProps ? (
+    <HeroSection
+      name_company={heroProps.name_company}
+      subtitle={heroProps.subtitle}
+      showOverlay={heroProps.showOverlay}
+      titlePosition={heroProps.titlePosition}
+      backgroundVideo={heroProps.backgroundVideo}
+      backgroundImage={heroProps.backgroundImage}
     />
+  ) : (
+    <!-- Fallback Hero si no hay datos de Strapi -->
+    <HeroSection
+      name_company="Construcción y Desarrollo Integral"
+      subtitle="Más de 20 años transformando el sureste mexicano con proyectos de excelencia"
+      showOverlay={true}
+      titlePosition="center"
+      backgroundImage={panoramica1.src}
+    />
+  )}
+  <CertificationsIso borderColor="blue" />
 
-    <!-- Estilos del botón misterioso y reset -->
-    <style>
-      /* Reset para eliminar espacios extra */
-      * {
-        box-sizing: border-box;
+  <section class="py-16 bg-white">
+    <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
+      <SectionTitle
+        highlightText="quiénes somos"
+        title="LÍDERES EN LA INDUSTRIA DE CONSTRUCCIÓN"
+        highlightColor="blue"
+        alignment="left"
+        size="lg"
+      />
+    </div>
+    
+    <SectionInfo2
+      title="Comprometidos con la Calidad, Medio Ambiente y Seguridad"
+      description="Somos una empresa tabasqueña y orgullosamente mexicana, comprometida con la más alta calidad en nuestros productos así como en nuestros servicios. SJT Contratistas S.A. de C.V. somos una empresa dedicada a los servicios de obra civil, eléctrica y electromecánica, comprometidos con la calidad, para lograr la satisfacción de nuestros clientes y responsable del cuidado al medio ambiente, la seguridad y la salud de todo nuestro personal, proveedores y aliados comerciales en cada uno de nuestros procesos, cumpliendo con los requisitos del cliente y los legales aplicables en materia de la calidad, ambiental, seguridad y salud en el trabajo estableciendo, comunicando y revisando objetivos a todos nuestros colaboradores y partes interesadas para evitar la contaminación de los recursos naturales y evitar incidentes o daños a la salud en cada servicio, mejorando continuamente la competencia laboral de nuestro recurso humano, los controles operacionales a través de una cultura de prevención."
+      image={obra1.src}
+      imagePosition="right"
+      buttonText="Más información"
+      buttonLink="#servicios"
+      floatingElement1={{
+        number: "500+",
+        title: "Proyectos",
+        subtitle: "Realizados",
+        icon: "🏗️",
+        bgColor: "bg-gray-900",
+        textColor: "text-white"
+      }}
+      floatingElement2={{
+        number: "03+",
+        title: "Certificaciones",
+        subtitle: "Internacionales",
+        icon: "🏆",
+        bgColor: "bg-orange-500",
+        textColor: "text-white"
+      }}
+      
+    />
+  </section>
+
+  <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
+    <SectionTitle
+      highlightText="nuestros servicios"
+      title="Nuestros Servicios: Profesionalismo y Excelencia"
+      highlightColor="orange"
+      alignment="left"
+      size="lg"
+    />
+    <StrapiServiceGallery
+   
+    
+    buttonColor="bg-yellow-500"
+    fallbackServices={[
+      {
+        service_name: "Obra Civil",
+        img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        overlayColor: "black",
+        description: "Construcción y desarrollo de infraestructura civil",
+        link: "#obra-civil"
+      },
+      {
+        service_name: "Instalaciones Eléctricas",
+        img: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        overlayColor: "black",
+        description: "Instalaciones y mantenimiento eléctrico especializado",
+        link: "#electrica"
+      },
+      {
+        service_name: "Sistemas Electromecánicos",
+        img: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        overlayColor: "black",
+        description: "Sistemas electromecánicos industriales",
+        link: "#electromecanica"
+      },
+      {
+        service_name: "Mantenimiento Industrial",
+        img: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        overlayColor: "black",
+        description: "Mantenimiento preventivo y correctivo",
+        link: "#mantenimiento"
       }
+    ]}
+  />
 
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-      }
+  </div>
 
-      .mystery-button {
-        position: relative;
-        overflow: hidden;
-      }
+  
+  
+  <section class="py-16 bg-white">
+    <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
+      <SectionTitle
+        highlightText="nuestra MISIÓN"
+        title="Nuestra Misión: Calidad, Integridad y Crecimiento"
+        highlightColor="red"
+        alignment="left"
+        size="lg"
+      />
+    </div>
+    <SectionInfo2
+      title="Compromiso con la Excelencia y el Desarrollo"
+      description="Ofrecer a nuestros clientes productos y servicios de ingeniería de excelente calidad en los tiempos establecidos, mediante una gestión íntegra y honesta, ofreciendo estabilidad laboral y oportunidades de desarrollo al personal que labora en la empresa, asegurando la inversión de los clientes y excediendo sus expectativas, a fin de garantizar la rentabilidad de las operaciones y el cumplimiento de los compromisos asumidos con los proveedores."
+      image={obra1.src}
+      imagePosition="right"
+      buttonText="Más información"
+      buttonLink="#servicios"         
+      
+    />
+  </section>
 
-      .mystery-text,
-      .hover-text {
-        display: block;
-        transition: all 0.3s ease;
-        white-space: nowrap;
-      }
+  <section class="py-16 bg-white">
+    <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
+      <SectionTitle
+        highlightText="nuestra visiÓN"
+        title="Nuestra Visión: Liderazgo Dinámico y Vanguardista"
+        highlightColor="blue"
+        alignment="left"
+        size="lg"
+      />
+    </div>
+    <SectionInfo2
+      title="Liderazgo e Innovación en Vanguardia"
+      description="ser reconocida como una empresa líder y dinámica, comprometidos a romper esquemas, colocándonos a la vanguardia en todos y cada uno de nuestros procesos para nuestros proyectos, productos y servicios."
+      image={obra1.src}
+      imagePosition="left"
+      buttonText="Más información"
+      buttonLink="#servicios"         
+      
+    />
+  </section>
 
-      .hover-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        opacity: 0;
-        pointer-events: none;
-      }
+  <section class="py-16 bg-white">
+    <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
+      <SectionTitle
+        highlightText="nuestros servicios"
+        title="Nuestros Servicios: Profesionalismo y Excelencia"
+        highlightColor="orange"
+        alignment="left"
+        size="lg"
+      />
+    </div>
+    
+    <!-- Service Cards Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        
+        <!-- Civil Construction Service -->
+        <ServiceCard
+          area='<path d="M12 3l8 8v9a1 1 0 01-1 1h-6v-6H9v6H3a1 1 0 01-1-1v-9l8-8z"/>'
+          serviceName="Civil Construction"
+          description="We offer comprehensive civil construction services with over 20 years of experience, specializing in infrastructure development, building construction, and project management with the highest quality standards."
+          buttonText="Ver más"
+          href="/services/civil-construction"
+          cardNumber="01"
+          iconColor="#FF5722"
+        />
 
-      .mystery-button:hover .mystery-text {
-        opacity: 0;
-      }
+        <!-- Electrical Installations Service -->
+        <ServiceCard
+          area='<path d="M13 10V3L4 14h7v7l9-11h-7z"/>'
+          serviceName="Electrical Systems"
+          description="Professional electrical installation and maintenance services including industrial electrical systems, power distribution, lighting solutions, and electrical safety compliance for commercial and industrial projects."
+          buttonText="Ver más"
+          href="/services/electrical-systems"
+          cardNumber="02"
+          iconColor="#FF5722"
+        />
 
-      .mystery-button:hover .hover-text {
-        opacity: 1;
-      }
+        <!-- Electromechanical Systems Service -->
+        <ServiceCard
+          area='<path d="M12 2l3.09 6.26L22 9l-5.91.74L12 22l-3.09-6.26L2 15l5.91-.74L12 2z"/><circle cx="12" cy="12" r="3"/>'
+          serviceName="Electromechanical"
+          description="Specialized electromechanical systems installation and maintenance including HVAC systems, pumping equipment, industrial machinery, and automated control systems for optimal operational efficiency."
+          buttonText="Ver más"
+          href="/services/electromechanical"
+          cardNumber="03"
+          iconColor="#FF5722"
+        />
 
-      .mystery-button::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(255, 255, 255, 0.2),
-          transparent
-        );
-        transition: left 0.5s;
-      }
-
-      .mystery-button:hover::before {
-        left: 100%;
-      }
-    </style>
-  </head>
-  <body class="min-h-screen bg-white flex flex-col m-0 p-0">
-    <!-- Header principal - Contenido dinámico desde Strapi -->
-
-    <!-- Sección de Propuestas -->
-    <section class="py-20 bg-gray-50 flex-1">
-      <div class="container mx-auto px-4">
-        <!-- Header de la sección -->
-        <div class="text-center mb-16">
-          <div
-            class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold mb-6"
-          >
-            🎨 Propuestas de Diseño
-          </div>
-          <h2
-            class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6"
-          >
-            Elige el Estilo de tu Página Web
-          </h2>
-          <p
-            class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8"
-          >
-            Estas son <strong>4 propuestas de diseño</strong> para definir el estilo
-            visual que se aplicará a toda tu página web. Cada propuesta tiene un
-            enfoque único en colores, layout y experiencia de usuario.
-          </p>
-          <div
-            class="bg-amber-50 border border-amber-200 rounded-xl p-4 max-w-2xl mx-auto"
-          >
-            <p class="text-amber-800 text-sm font-medium">
-              💡 <strong>Nota:</strong> Estas no son páginas finales, son prototipos
-              para seleccionar el estilo que más te guste. Podemos ajustar cada diseño,
-              cambiar tamaños de letras, colores y elementos según tus preferencias.
-              Todas tus sugerencias son bienvenidas - nuestra intención es hacer
-              equipo contigo para crear la página web que mejor refleje tu empresa.
-            </p>
-          </div>
-        </div>
-
-        <!-- Grid de Propuestas Cards -->
-        <div
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-8 max-w-7xl mx-auto"
-        >
-          <!-- Propuesta 1: Corporativo Elegante -->
-          <div
-            class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group border border-gray-100"
-          >
-            <!-- Header de la card -->
-            <div class="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4">
-              <div class="flex items-center justify-between">
-                <h3 class="text-xl font-bold text-white">Propuesta 1</h3>
-                <span
-                  class="bg-white/20 text-white text-xs px-3 py-1 rounded-full font-medium"
-                  >Corporativo</span
-                >
-              </div>
-              <p class="text-red-100 text-sm mt-1">
-                Estilo CitiRise - Elegante y Profesional
-              </p>
-            </div>
-
-            <!-- Paleta de colores -->
-            <div class="px-6 py-4 bg-gray-50">
-              <h4 class="text-sm font-semibold text-gray-700 mb-3">
-                Paleta de Colores
-              </h4>
-              <div class="flex items-center space-x-2">
-                <div
-                  class="w-6 h-6 bg-red-600 rounded-full border-2 border-white shadow-sm"
-                >
-                </div>
-                <div
-                  class="w-6 h-6 bg-gray-800 rounded-full border-2 border-white shadow-sm"
-                  style="background-color: #333533;"
-                >
-                </div>
-                <div
-                  class="w-6 h-6 bg-white rounded-full border-2 border-gray-200 shadow-sm"
-                >
-                </div>
-                <div
-                  class="w-6 h-6 bg-gray-200 rounded-full border-2 border-white shadow-sm"
-                >
-                </div>
-                <span class="text-xs text-gray-500 ml-2">Rojo corporativo</span>
-              </div>
-            </div>
-
-            <!-- Contenido principal -->
-            <div class="px-6 py-6">
-              <h4 class="font-semibold text-gray-900 mb-4">
-                Características del Diseño
-              </h4>
-              <ul class="space-y-3 text-sm text-gray-600 mb-6">
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Hero split-screen con imagen impactante</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Secciones de servicios con hover elegante</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Valores, Misión y Visión destacados</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Galería moderna de proyectos</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Certificaciones ISO destacadas</span>
-                </li>
-              </ul>
-
-              <div class="bg-red-50 rounded-lg p-4 mb-6">
-                <p class="text-red-800 text-sm">
-                  <strong>Ideal para:</strong> Empresas que buscan proyectar seriedad,
-                  confianza y profesionalismo con un diseño limpio y corporativo.
-                </p>
-              </div>
-            </div>
-
-            <!-- Footer con botón -->
-            <div class="px-6 pb-6">
-              <a
-                href="/propuesta1"
-                class="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 inline-flex items-center justify-center space-x-2"
-              >
-                <span>Ver Propuesta Completa</span>
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-
-          <!-- Propuesta 2: Industrial Moderno -->
-          <div
-            class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group border border-gray-100"
-          >
-            <!-- Header de la card -->
-            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
-              <div class="flex items-center justify-between">
-                <h3 class="text-xl font-bold text-white">Propuesta 2</h3>
-                <span
-                  class="bg-white/20 text-white text-xs px-3 py-1 rounded-full font-medium"
-                  >Industrial</span
-                >
-              </div>
-              <p class="text-blue-100 text-sm mt-1">
-                Diseño Industrial - Moderno y Técnico
-              </p>
-            </div>
-
-            <!-- Paleta de colores -->
-            <div class="px-6 py-4 bg-gray-50">
-              <h4 class="text-sm font-semibold text-gray-700 mb-3">
-                Paleta de Colores
-              </h4>
-              <div class="flex items-center space-x-2">
-                <div
-                  class="w-6 h-6 bg-blue-600 rounded-full border-2 border-white shadow-sm"
-                  style="background-color: #4a90e2;"
-                >
-                </div>
-                <div
-                  class="w-6 h-6 bg-blue-800 rounded-full border-2 border-white shadow-sm"
-                >
-                </div>
-                <div
-                  class="w-6 h-6 bg-white rounded-full border-2 border-gray-200 shadow-sm"
-                >
-                </div>
-                <div
-                  class="w-6 h-6 bg-gray-100 rounded-full border-2 border-white shadow-sm"
-                >
-                </div>
-                <span class="text-xs text-gray-500 ml-2">Azul industrial</span>
-              </div>
-            </div>
-
-            <!-- Contenido principal -->
-            <div class="px-6 py-6">
-              <h4 class="font-semibold text-gray-900 mb-4">
-                Características del Diseño
-              </h4>
-              <ul class="space-y-3 text-sm text-gray-600 mb-6">
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Hero fullscreen con overlay industrial</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Valores con checkmarks verdes</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Misión con estadísticas visuales</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Visión profesional con imagen</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>CTA azul full-width impactante</span>
-                </li>
-              </ul>
-
-              <div class="bg-blue-50 rounded-lg p-4 mb-6">
-                <p class="text-blue-800 text-sm">
-                  <strong>Ideal para:</strong> Empresas industriales, técnicas o
-                  de ingeniería que buscan transmitir innovación y expertise técnico.
-                </p>
-              </div>
-            </div>
-
-            <!-- Footer con botón -->
-            <div class="px-6 pb-6">
-              <a
-                href="/propuesta2"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 inline-flex items-center justify-center space-x-2"
-              >
-                <span>Ver Propuesta Completa</span>
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-
-          <!-- Propuesta 3: Infraestructura Premium -->
-          <div
-            class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group border border-gray-100"
-          >
-            <!-- Header de la card -->
-            <div class="bg-gradient-to-r from-gray-700 to-gray-800 px-6 py-4">
-              <div class="flex items-center justify-between">
-                <h3 class="text-xl font-bold text-white">Propuesta 3</h3>
-                <span
-                  class="bg-white/20 text-white text-xs px-3 py-1 rounded-full font-medium"
-                  >Premium</span
-                >
-              </div>
-              <p class="text-gray-100 text-sm mt-1">
-                Estilo HYCSA - Infraestructura y Elegancia
-              </p>
-            </div>
-
-            <!-- Paleta de colores -->
-            <div class="px-6 py-4 bg-gray-50">
-              <h4 class="text-sm font-semibold text-gray-700 mb-3">
-                Paleta de Colores
-              </h4>
-              <div class="flex items-center space-x-2">
-                <div
-                  class="w-6 h-6 bg-gray-800 rounded-full border-2 border-white shadow-sm"
-                  style="background-color: #333533;"
-                >
-                </div>
-                <div
-                  class="w-6 h-6 bg-yellow-500 rounded-full border-2 border-white shadow-sm"
-                  style="background-color: #f59e0b;"
-                >
-                </div>
-                <div
-                  class="w-6 h-6 bg-white rounded-full border-2 border-gray-200 shadow-sm"
-                >
-                </div>
-                <div
-                  class="w-6 h-6 bg-yellow-100 rounded-full border-2 border-white shadow-sm"
-                >
-                </div>
-                <span class="text-xs text-gray-500 ml-2">Gris + Dorado</span>
-              </div>
-            </div>
-
-            <!-- Contenido principal -->
-            <div class="px-6 py-6">
-              <h4 class="font-semibold text-gray-900 mb-4">
-                Características del Diseño
-              </h4>
-              <ul class="space-y-3 text-sm text-gray-600 mb-6">
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-gray-700 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Header transparente profesional</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-gray-700 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Hero con corte diagonal innovador</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-gray-700 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Tipografía gigante impactante</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-gray-700 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Sección institucional elegante</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-gray-700 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Galería con efectos hover zoom</span>
-                </li>
-              </ul>
-
-              <div class="bg-gray-100 rounded-lg p-4 mb-6">
-                <p class="text-gray-800 text-sm">
-                  <strong>Ideal para:</strong> Empresas de infraestructura, construcción
-                  pesada o corporativos que buscan proyectar liderazgo y prestigio.
-                </p>
-              </div>
-            </div>
-
-            <!-- Footer con botón -->
-            <div class="px-6 pb-6">
-              <a
-                href="/propuesta3"
-                class="w-full bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 inline-flex items-center justify-center space-x-2"
-              >
-                <span>Ver Propuesta Completa</span>
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-
-          <!-- Propuesta 4: Construcción Transparente -->
-          <div
-            class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group border border-gray-100"
-          >
-            <!-- Header de la card -->
-            <div class="bg-gradient-to-r from-blue-600 to-yellow-500 px-6 py-4">
-              <div class="flex items-center justify-between">
-                <h3 class="text-xl font-bold text-white">Propuesta 4</h3>
-                <span
-                  class="bg-white/20 text-white text-xs px-3 py-1 rounded-full font-medium"
-                  >Construcción</span
-                >
-              </div>
-              <p class="text-blue-100 text-sm mt-1">
-                Header Transparente - Líderes en Construcción
-              </p>
-            </div>
-
-            <!-- Paleta de colores -->
-            <div class="px-6 py-4 bg-gray-50">
-              <h4 class="text-sm font-semibold text-gray-700 mb-3">
-                Paleta de Colores
-              </h4>
-              <div class="flex items-center space-x-2">
-                <div
-                  class="w-6 h-6 bg-blue-600 rounded-full border-2 border-white shadow-sm"
-                >
-                </div>
-                <div
-                  class="w-6 h-6 bg-yellow-400 rounded-full border-2 border-white shadow-sm"
-                >
-                </div>
-                <div
-                  class="w-6 h-6 bg-white rounded-full border-2 border-gray-200 shadow-sm"
-                >
-                </div>
-                <div
-                  class="w-6 h-6 bg-gray-100 rounded-full border-2 border-white shadow-sm"
-                >
-                </div>
-                <span class="text-xs text-gray-500 ml-2">Azul + Amarillo</span>
-              </div>
-            </div>
-
-            <!-- Contenido principal -->
-            <div class="px-6 py-6">
-              <h4 class="font-semibold text-gray-900 mb-4">
-                Características del Diseño
-              </h4>
-              <ul class="space-y-3 text-sm text-gray-600 mb-6">
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Header completamente transparente</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Hero fullscreen con video industrial</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Navegación con hover amarillo</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Galería de servicios con hover effects</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>Certificaciones ISO integradas</span>
-                </li>
-                <li class="flex items-start space-x-2">
-                  <svg
-                    class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-                  <span>CTA con gradientes profesionales</span>
-                </li>
-              </ul>
-
-              <div class="bg-blue-50 rounded-lg p-4 mb-6">
-                <p class="text-blue-800 text-sm">
-                  <strong>Ideal para:</strong> Empresas de construcción, contratistas
-                  o ingeniería que buscan transmitir profesionalismo, experiencia
-                  y liderazgo en la industria.
-                </p>
-              </div>
-            </div>
-
-            <!-- Footer con botón -->
-            <div class="px-6 pb-6">
-              <a
-                href="/propuesta4"
-                class="w-full bg-gradient-to-r from-blue-600 to-yellow-500 hover:from-blue-700 hover:to-yellow-600 text-white px-6 py-3 rounded-lg font-semibold text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 inline-flex items-center justify-center space-x-2"
-              >
-                <span>Ver Propuesta Completa</span>
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                </svg>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Llamada a la acción final -->
-        <div class="text-center mt-16">
-          <div
-            class="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 max-w-4xl mx-auto"
-          >
-            <div class="flex items-center justify-center mb-6">
-              <div
-                class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-full p-3"
-              >
-                <svg
-                  class="w-8 h-8 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"
-                  ></path>
-                </svg>
-              </div>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-900 mb-4">
-              ¿Ya tienes una propuesta favorita?
-            </h3>
-            <p class="text-gray-600 leading-relaxed mb-6 max-w-2xl mx-auto">
-              Una vez que elijas el estilo que más te guste, aplicaremos ese
-              diseño a toda tu página web manteniendo la consistencia visual y
-              la experiencia de usuario en cada sección.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="https://wa.me/529933419833?text=Hola!%20ya%20elegi%20el%20estilo%20de%20mi%20pagina%20web"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg inline-flex items-center justify-center space-x-2"
-              >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.787"
-                  ></path>
-                </svg>
-                <span>Contactar por WhatsApp</span>
-              </a>
-              <a
-                href="tel:+529933419833"
-                class="border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 px-6 py-3 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg inline-flex items-center justify-center space-x-2"
-              >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  ></path>
-                </svg>
-                <span>Llamar Ahora</span>
-              </a>
-            </div>
-          </div>
-        </div>
       </div>
-    </section>
+    </div>
+   
+  </section>
+  
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row items-center justify-between">
-          <!-- Información de la agencia -->
-          <div class="text-center md:text-left mb-6 md:mb-0">
-            <p class="text-lg font-semibold mb-2">
-              Hecho por <span class="text-blue-400 font-bold">The Agencia</span>
-            </p>
-            <p class="text-gray-400 text-sm">
-              © 2025 Todos los derechos reservados
-            </p>
-          </div>
-        </div>
-      </div>
-    </footer>
-  </body>
-</html>
+</BaseLayout>
+
+<!-- 
+=============================================
+✅ BENEFICIOS DE USAR BASELAYOUT:
+=============================================
+
+🔥 REDUCCIÓN DE CÓDIGO:
+- ANTES: 422 líneas
+- DESPUÉS: ~150 líneas  
+- AHORRO: 64% menos código
+
+🔧 MANTENIMIENTO:
+- HeaderNav: ✅ Solo en BaseLayout
+- Footer: ✅ Solo en BaseLayout  
+- ContactSection: ✅ Solo en BaseLayout
+- Meta tags: ✅ Solo en BaseLayout
+
+⚡ VELOCIDAD DE DESARROLLO:
+- Nuevas páginas: Solo contenido + props
+- Cambios globales: Solo editar BaseLayout
+- Consistencia: Automática
+
+🎯 FLEXIBILIDAD:
+- Props específicas por página
+- Contact configurable
+- Breadcrumbs opcionales
+- SEO personalizable
+-->

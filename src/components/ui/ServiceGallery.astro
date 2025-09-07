@@ -1,0 +1,160 @@
+---
+export interface ServiceItem {
+  service_name: string;
+  img: string;
+  link?: string;
+  overlayColor?: 'black' | 'blue' | 'green' | 'purple' | 'red' | 'yellow';
+  description?: string;
+}
+
+export interface Props {
+  services: ServiceItem[];
+  title?: string;
+  subtitle?: string;
+  backgroundColor?: string;
+  buttonColor?: string;
+  containerClass?: string;
+}
+
+const {
+  services,
+  title ,
+  subtitle,
+  backgroundColor,
+  buttonColor = "bg-yellow-500",
+  containerClass = ""
+} = Astro.props;
+
+// Validar que tenemos exactamente 4 servicios
+const displayServices = services.slice(0, 4);
+while (displayServices.length < 4) {
+  displayServices.push({
+    service_name: `Servicio ${displayServices.length + 1}`,
+    img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    overlayColor: "black"
+  });
+}
+
+// Mapear colores de overlay
+const getOverlayClass = (color?: string) => {
+  switch (color) {
+    case 'blue': return 'bg-blue-600/70 group-hover:bg-blue-600/50';
+    case 'green': return 'bg-green-600/70 group-hover:bg-green-600/50';
+    case 'purple': return 'bg-purple-600/70 group-hover:bg-purple-600/50';
+    case 'red': return 'bg-red-600/70 group-hover:bg-red-600/50';
+    case 'yellow': return 'bg-yellow-600/70 group-hover:bg-yellow-600/50';
+    default: return 'bg-black/60 group-hover:bg-black/40';
+  }
+};
+---
+
+<!-- Galería de Servicios con Hover Effects -->
+<section class={`service-gallery ${backgroundColor} py-16 lg:py-20 ${containerClass}`}>
+  {title && (
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+      <!-- Header de la sección -->
+      <div class="text-center">
+        <h2 class="text-3xl md:text-4xl font-black text-gray-800 mb-4">
+          {title.includes(' ') ? (
+            <Fragment>
+              {title.split(' ').slice(0, -1).join(' ')} <span class="text-blue-600">{title.split(' ').slice(-1)}</span>
+            </Fragment>
+          ) : title}
+        </h2>
+
+        {subtitle && (
+          <p class="text-lg text-gray-600 mb-6">{subtitle}</p>
+        )}
+
+        <div class="w-24 h-1 bg-gradient-to-r from-blue-600 to-yellow-400 rounded-full mx-auto"></div>
+      </div>
+    </div>
+  )}
+
+  <!-- Grid de servicios fullwidth -->
+  <div class="flex flex-col md:flex-row w-full">
+    {displayServices.map((service, index) => (
+      <div class="group relative overflow-hidden w-full h-[50vh] md:flex-1 md:h-[80vh] cursor-pointer transition-all duration-500 md:hover:flex-[1.2]">
+        <!-- Imagen de fondo -->
+        <div class="absolute inset-0">
+          <img
+            src={service.img}
+            alt={service.service_name}
+            class="w-full h-full object-cover transition-all duration-500 filter grayscale group-hover:grayscale-0"
+            loading="lazy"
+          />
+        </div>
+
+        <!-- Overlay con color personalizable -->
+        <div class={`absolute inset-0 transition-all duration-500 ${getOverlayClass(service.overlayColor)}`}>
+        </div>
+
+        <!-- Contenido -->
+        <div class="absolute inset-0 flex flex-col justify-between p-6 text-white">
+          <!-- Título centrado -->
+          <div class="flex-1 flex items-center justify-center">
+            <h3 class="text-2xl md:text-4xl font-extrabold text-center leading-tight">
+              {service.service_name.split(' ').map((word, i) => (
+                <Fragment>
+                  {word}
+                  {i < service.service_name.split(' ').length - 1 && <br />}
+                </Fragment>
+              ))}
+            </h3>
+          </div>
+
+          <!-- Botón circular -->
+          <div class="flex justify-center">
+            {service.link ? (
+              <a 
+                href={service.link}
+                class={`w-12 h-12 ${buttonColor} hover:bg-yellow-400 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg`}
+              >
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </a>
+            ) : (
+              <button class={`w-12 h-12 ${buttonColor} hover:bg-yellow-400 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg`}>
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .service-gallery {
+    position: relative;
+  }
+
+  /* Asegurar smooth transitions */
+  .service-gallery .group {
+    will-change: flex-basis, transform;
+  }
+
+  /* Optimizar las transiciones en mobile */
+  @media (max-width: 768px) {
+    .service-gallery .group:hover {
+      transform: scale(1.02);
+    }
+  }
+
+  /* Efectos adicionales para desktop */
+  @media (min-width: 769px) {
+    .service-gallery .group {
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05));
+    }
+  }
+
+  /* Animación sutil para el botón */
+  .service-gallery button:hover,
+  .service-gallery a:hover {
+    box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4);
+  }
+</style>

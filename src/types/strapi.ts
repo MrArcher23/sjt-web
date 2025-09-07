@@ -1,20 +1,29 @@
-// Tipos base de Strapi
+// Tipos base de Strapi v5 (estructura directa, sin attributes wrapper)
 export interface StrapiMedia {
   id: number;
-  attributes: {
-    name: string;
-    alternativeText?: string;
-    caption?: string;
-    width: number;
-    height: number;
-    formats?: {
-      thumbnail?: StrapiImageFormat;
-      small?: StrapiImageFormat;
-      medium?: StrapiImageFormat;
-      large?: StrapiImageFormat;
-    };
-    url: string;
+  documentId: string;
+  name: string;
+  alternativeText?: string;
+  caption?: string;
+  width: number;
+  height: number;
+  formats?: {
+    thumbnail?: StrapiImageFormat;
+    small?: StrapiImageFormat;
+    medium?: StrapiImageFormat;
+    large?: StrapiImageFormat;
   };
+  hash: string;
+  ext: string;
+  mime: string;
+  size: number;
+  url: string; // ← URL directa en la raíz
+  previewUrl?: string;
+  provider: string;
+  provider_metadata?: any;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
 }
 
 export interface StrapiImageFormat {
@@ -56,17 +65,6 @@ export type StrapiEntity<T> = T & {
 };
 
 // Content Types específicos
-export interface Article {
-  title: string;
-  slug: string;
-  description: string;
-  cover: {
-    data: StrapiMedia;
-  };
-  author: string;
-  category: string;
-  blocks: any; // Para contenido rich text
-}
 
 export interface Company {
   name: string;
@@ -127,21 +125,21 @@ export interface Testimonial {
   };
 }
 
-// Hero Collection Type
+// Hero Collection Type (actualizado para HeroSection)
 export interface Hero {
-  title: string;
-  subtitle: string;
-  buttonText: string;
-  buttonLink?: string;
-  backgroundColor?: "blue" | "primary" | "accent";
-  heroImage?: {
-    id: number;
-    url: string;
-    alternativeText?: string;
-    name: string;
-    width: number;
-    height: number;
-  };
+  // Contenido principal
+  companyName: string; // se mapea a name_company en el componente
+  subtitle?: string;
+
+  // Configuración visual
+  showOverlay: boolean; // Control del overlay
+  titlePosition: "bottom" | "center"; // Posición del título
+
+  // Media de fondo (solo uno activo a la vez) - Estructura v5: ambos directos
+  backgroundVideo?: StrapiMedia; // Estructura corregida: directa, sin .data wrapper
+  backgroundImage?: StrapiMedia; // Estructura corregida: directa, sin .data wrapper
+
+  // Configuración adicional
   slug?: string;
   isActive: boolean;
 }
@@ -158,8 +156,6 @@ export interface Step {
 }
 
 // Tipos de respuesta de API
-export type ArticlesResponse = StrapiResponse<StrapiEntity<Article>[]>;
-export type ArticleResponse = StrapiResponse<StrapiEntity<Article>[]>;
 export type CompanyResponse = StrapiResponse<Company>;
 // Movido abajo - ver SERVICE TYPES moderno
 export type ProjectsResponse = StrapiResponse<StrapiEntity<Project>[]>;
@@ -197,21 +193,6 @@ export interface SectionInfo {
 
 export type SectionInfosResponse = StrapiResponse<StrapiEntity<SectionInfo>[]>;
 export type SectionInfoResponse = StrapiResponse<StrapiEntity<SectionInfo>>;
-
-// === SERVICE TYPES (MODERNO) ===
-export interface Service {
-  title: string;
-  description: string;
-  svgIcon?: string;
-  iconColor: "blue" | "green" | "yellow" | "purple" | "orange" | "red";
-  order: number;
-  slug?: string;
-  isActive: boolean;
-  featured: boolean;
-}
-
-export type ServicesResponse = StrapiResponse<StrapiEntity<Service>[]>;
-export type ServiceResponse = StrapiResponse<StrapiEntity<Service>>;
 
 // === HEADER TYPES ===
 export interface Header {

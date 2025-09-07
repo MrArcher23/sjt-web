@@ -1,0 +1,416 @@
+---
+// BaseLayout.astro - Layout base siguiendo mejores prácticas de Astro
+// Basado en: https://docs.astro.build/es/basics/layouts/
+
+import "../styles/globals.css";
+
+// Componentes comunes
+import HeaderNav from "../components/HeaderNav.astro";
+import ContactSection from "../components/ui/ContactSection.astro";
+
+// Strapi integration
+import strapi from "../utils/strapi";
+import type { StrapiEntity, Header as HeaderType } from "../types/strapi";
+
+// Props interface con TypeScript para type safety
+export interface Props {
+  pageTitle: string;
+  metaDescription?: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  showBreadcrumb?: boolean;
+  breadcrumbItems?: Array<{ href: string; text: string }>;
+  showContact?: boolean;
+  contactConfig?: {
+    highlightText?: string;
+    title?: string;
+    subtitle?: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+    accentColor?: string;
+    backgroundColor?: string;
+    placeholder?: string;
+    buttonText?: string;
+  };
+}
+
+// Destructurar props con valores por defecto
+const {
+  pageTitle,
+  metaDescription = "SJT Contratistas - Más de 20 años especializados en construcción, obra civil, terracerías y desarrollo integral de proyectos en el sureste mexicano.",
+  canonicalUrl,
+  ogImage,
+  showBreadcrumb = false,
+  breadcrumbItems = [],
+  showContact = true,
+  contactConfig = {
+    highlightText: "contáctanos hoy",
+    title: "¿LISTO PARA TU PRÓXIMO PROYECTO?",
+    subtitle:
+      "Nuestro equipo está preparado para hacer realidad tus ideas. Contactános para una consulta personalizada sin compromiso.",
+    phone: "(993) 324-5488",
+    email: "contacto@sjtcontratistas.com",
+    address: "Carr. Reforma-Dos Bocas s/n, Cumuapa 1ra. Tabasco",
+    accentColor: "#FF5722",
+    backgroundColor: "bg-gray-50",
+    placeholder: "Cuéntanos sobre tu proyecto...",
+    buttonText: "Solicitar Consulta",
+  },
+} = Astro.props;
+
+// Obtener datos del header desde Strapi (común para todas las páginas)
+let headerData: StrapiEntity<HeaderType> | null = null;
+let headerError: string | null = null;
+
+try {
+  // getActiveHeader() devuelve el objeto directamente o null
+  headerData = await strapi.getActiveHeader();
+  if (headerData) {
+    console.log(
+      "🏠 Header activo encontrado en BaseLayout:",
+      headerData.companyName
+    );
+  } else {
+    console.log("⚠️ No se encontró header activo en BaseLayout");
+  }
+} catch (e) {
+  headerError = e instanceof Error ? e.message : "Error loading header";
+  console.warn("⚠️ Header Strapi error:", headerError);
+}
+
+// Transformar datos del header para el componente
+const headerProps = headerData
+  ? {
+      companyName: headerData.companyName,
+      logoFile: headerData.logoFile
+        ? {
+            url: headerData.logoFile.url,
+            alternativeText: headerData.logoFile.alternativeText,
+            name: headerData.logoFile.name,
+            width: headerData.logoFile.width,
+            height: headerData.logoFile.height,
+          }
+        : null,
+    }
+  : null;
+
+// URLs canónicas y página actual
+const currentUrl = Astro.url.pathname;
+const siteUrl = Astro.site || "https://sjtcontratistas.com"; // Fallback por si no está configurado
+const fullCanonicalUrl = canonicalUrl || new URL(currentUrl, siteUrl).href;
+
+// Navegación principal (configurable por página si es necesario)
+const mainNavLinks = [
+  { href: "/", text: "Inicio" },
+  { href: "/quienes-somos", text: "Quiénes Somos" },
+  { href: "/servicios", text: "Servicios" },
+  { href: "/portafolio", text: "Portafolio" },
+  { href: "/contacto", text: "Contacto" },
+];
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <!-- Meta tags esenciales -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO básico -->
+    <title>{pageTitle} - SJT Contratistas</title>
+    <meta name="description" content={metaDescription} />
+    <link rel="canonical" href={fullCanonicalUrl} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={fullCanonicalUrl} />
+    <meta property="og:title" content={`${pageTitle} - SJT Contratistas`} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:image" content={ogImage || `${siteUrl}/og-image.jpg`} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={fullCanonicalUrl} />
+    <meta name="twitter:title" content={`${pageTitle} - SJT Contratistas`} />
+    <meta name="twitter:description" content={metaDescription} />
+    <meta name="twitter:image" content={ogImage || `${siteUrl}/og-image.jpg`} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Preconnect para performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+
+  <body>
+    <!-- Header Navigation (común en todas las páginas) -->
+    {
+      headerProps ? (
+        <HeaderNav
+          companyName={headerProps.companyName}
+          logoFile={headerProps.logoFile}
+          sticky={true}
+          transparent={currentUrl === "/" ? true : false}
+          navLinks={mainNavLinks}
+          ctaText="Solicitar Cotización"
+          ctaHref="#contacto"
+        />
+      ) : (
+        <HeaderNav
+          companyName="SJT Contratistas"
+          sticky={true}
+          transparent={currentUrl === "/" ? true : false}
+          navLinks={mainNavLinks}
+          ctaText="Solicitar Cotización"
+          ctaHref="#contacto"
+        />
+      )
+    }
+
+    <!-- Breadcrumb Navigation (opcional) -->
+    {
+      showBreadcrumb && breadcrumbItems.length > 0 && (
+        <section class="bg-gray-50 py-4">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav
+              class="flex text-sm font-medium text-gray-600"
+              aria-label="Breadcrumb"
+            >
+              {breadcrumbItems.map((item, index) => (
+                <Fragment>
+                  {index === breadcrumbItems.length - 1 ? (
+                    <span class="text-orange-600" aria-current="page">
+                      {item.text}
+                    </span>
+                  ) : (
+                    <>
+                      <a
+                        href={item.href}
+                        class="hover:text-orange-600 transition-colors"
+                      >
+                        {item.text}
+                      </a>
+                      <span class="mx-2">/</span>
+                    </>
+                  )}
+                </Fragment>
+              ))}
+            </nav>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- Main Content (aquí se inyecta el contenido específico de cada página) -->
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <!-- Contact Section (opcional, común en la mayoría de páginas) -->
+    {
+      showContact && (
+        <section id="contacto">
+          <ContactSection
+            highlightText={contactConfig.highlightText!}
+            title={contactConfig.title!}
+            subtitle={contactConfig.subtitle!}
+            phone={contactConfig.phone!}
+            email={contactConfig.email!}
+            address={contactConfig.address!}
+            accentColor={contactConfig.accentColor!}
+            backgroundColor={contactConfig.backgroundColor!}
+            placeholder={contactConfig.placeholder!}
+            buttonText={contactConfig.buttonText!}
+          />
+        </section>
+      )
+    }
+
+    <!-- Footer (común en todas las páginas) -->
+    <footer class="bg-gray-900 text-white py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <!-- Company Information -->
+          <div class="space-y-4">
+            <h3 class="text-xl font-bold text-white mb-4">
+              {headerProps?.companyName || "SJT Contratistas S.A. de C.V."}
+            </h3>
+            <p class="text-gray-300 text-sm leading-relaxed">
+              Más de 20 años especializados en construcción, obra civil,
+              terracerías y desarrollo integral de proyectos en el sureste
+              mexicano.
+            </p>
+
+            <!-- Social Links (si los hay) -->
+            <div class="flex space-x-4 mt-4">
+              <!-- Espacio para íconos sociales -->
+            </div>
+          </div>
+
+          <!-- Services -->
+          <div class="space-y-4">
+            <h4 class="text-lg font-semibold text-white mb-4">
+              Nuestros Servicios
+            </h4>
+            <ul class="space-y-2 text-sm text-gray-300">
+              <li>
+                <a
+                  href="/servicios#construccion"
+                  class="hover:text-orange-400 transition-colors"
+                  >• Construcción & Obra Civil</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/servicios#terracerias"
+                  class="hover:text-green-400 transition-colors"
+                  >• Terracerías & Carreteras</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/servicios#electromecanica"
+                  class="hover:text-blue-400 transition-colors"
+                  >• Electromecánica</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/servicios#desarrollo-proyectos"
+                  class="hover:text-purple-400 transition-colors"
+                  >• Desarrollo de Proyectos</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="space-y-4">
+            <h4 class="text-lg font-semibold text-white mb-4">
+              Enlaces Rápidos
+            </h4>
+            <ul class="space-y-2 text-sm text-gray-300">
+              {
+                mainNavLinks
+                  .filter((link) => link.href !== "#contacto")
+                  .map((link) => (
+                    <li>
+                      <a
+                        href={link.href}
+                        class="hover:text-white transition-colors"
+                      >
+                        • {link.text}
+                      </a>
+                    </li>
+                  ))
+              }
+              <li>
+                <a href="/portafolio" class="hover:text-white transition-colors"
+                  >• Portafolio</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contact Information -->
+          <div class="space-y-4">
+            <h4 class="text-lg font-semibold text-white mb-4">Contacto</h4>
+            <div class="space-y-2 text-sm text-gray-300">
+              <p><strong>General:</strong> {contactConfig.email}</p>
+              <p><strong>Teléfono:</strong> {contactConfig.phone}</p>
+              <p><strong>Dirección:</strong> {contactConfig.address}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+          <p class="text-gray-400 text-sm">
+            © {new Date().getFullYear()} SJT Contratistas S.A. de C.V. - Todos los
+            derechos reservados
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts globales si los necesitas -->
+    <script>
+      // Scripts comunes para todas las páginas
+
+      // Smooth scrolling para enlaces internos
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      });
+
+      // Analytics o tracking (si los tienes)
+      // GTM, Google Analytics, etc.
+    </script>
+  </body>
+</html>
+
+<style>
+  /* Estilos globales para el layout */
+
+  /* Smooth scrolling global */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Mejoras de accesibilidad */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Skip links para accesibilidad */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #000;
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    transition: top 0.3s;
+    z-index: 1000;
+  }
+
+  .skip-link:focus {
+    top: 6px;
+  }
+
+  /* Asegurar que el main tenga el spacing correcto */
+  main {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Focus visible para accesibilidad */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid #ff5722;
+    outline-offset: 2px;
+  }
+</style>
