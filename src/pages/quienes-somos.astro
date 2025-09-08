@@ -13,13 +13,22 @@ import HeroSection from "../components/HeroSection.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
 import SectionInfo2 from "../components/ui/SectionInfo2.astro";
 import ServiceCard from "../components/ui/ServiceCard.astro";
+import TitleSectionInfo from "../components/TitleSectionInfo.astro";
+import ProjectShowcase from "../components/ui/ProjectShowcase.astro";
+
+// Lógica específica para Strapi
+import strapi from "../utils/strapi";
+import type {
+  TitleSectionInfo as TitleSectionInfoType,
+} from "../types/strapi";
+import ColorBorderCard from "../components/ui/ColorBorderCard.astro";
 
 // Props específicas para el Layout de Quiénes Somos
 const layoutProps = {
   pageTitle: "Quiénes Somos",
   metaDescription:
     "Conoce a SJT Contratistas S.A. de C.V., empresa especializada en construcción, obra civil, terracerías, electromecánica y desarrollo de proyectos con más de 20 años de experiencia en el sureste mexicano.",
-  showBreadcrumb: true,
+  showBreadcrumb: false,
   breadcrumbItems: [
     { href: "/", text: "Inicio" },
     { href: "/quienes-somos", text: "Quiénes Somos" },
@@ -33,11 +42,70 @@ const layoutProps = {
     phone: "(99) 31 67 44 90",
     email: "asastre@sjtcontratistas.com",
     address: "C.P. Alberto Sastre Arias - Contacto de Negocios",
-    accentColor: "#FF5722",
-    backgroundColor: "bg-gray-900",
+    accentColor: "var(--orange)",
+    backgroundColor: "bg-dark",
     placeholder: "Describe tu proyecto...",
     buttonText: "Enviar",
   },
+};
+
+// Obtener contenido específico para Quiénes Somos
+let filosofiaSectionData: TitleSectionInfoType | null = null;
+let visionSectionData: TitleSectionInfoType | null = null;
+let misionSectionData: TitleSectionInfoType | null = null;
+let valoresSectionData: TitleSectionInfoType | null = null;
+let error: string | null = null;
+
+try {
+  // Title Section Info data - Sección "Filosofía"
+  console.log("🔍 Obteniendo title-section-info: somos-filosofia");
+  filosofiaSectionData = await strapi.getTitleSectionInfoByIdentifier("somos-filosofia");
+  
+  // Title Section Info data - Sección "Visión"
+  console.log("🔍 Obteniendo title-section-info: somos-vision");
+  visionSectionData = await strapi.getTitleSectionInfoByIdentifier("somos-vision");
+  
+  // Title Section Info data - Sección "Misión"
+  console.log("🔍 Obteniendo title-section-info: somos-mision");
+  misionSectionData = await strapi.getTitleSectionInfoByIdentifier("somos-mision");
+  
+  // Title Section Info data - Sección "Valores"
+  console.log("🔍 Obteniendo title-section-info: somos-valores");
+  valoresSectionData = await strapi.getTitleSectionInfoByIdentifier("somos-valores");
+} catch (e) {
+  error = e instanceof Error ? e.message : "Error loading data";
+  console.error("❌ Error cargando datos:", error);
+}
+
+// ========================================
+// PROPUESTA ALTERNATIVA: VALORES CON PROJECTSHOWCASE
+// ========================================
+const valoresShowcaseData = {
+  title: "Nuestros Valores Corporativos",
+  subtitle: "Principios Fundamentales",
+  description: "En SJT Contratistas, nuestros valores son el fundamento de cada proyecto y relación que construimos. Estos principios nos definen como empresa y guían cada decisión que tomamos, asegurando que nuestro trabajo contribuya positivamente al desarrollo de las comunidades donde operamos.",
+  category: "Valores Empresariales",
+  location: "Sureste Mexicano",
+  year: "Desde 20XX",
+  client: "",
+  heroImage: panoramica1,
+  heroImageAlt: "Equipo SJT Contratistas trabajando en proyecto",
+  categoryColor: "var(--blue)",
+  stats: [
+    { value: "7", label: "Valores Fundamentales" },
+    { value: "100%", label: "Integridad Garantizada" },
+    { value: "X+", label: "Años de Experiencia" },
+    { value: "∞", label: "Compromiso Continuo" },
+  ],
+  highlights: [
+    "Compromiso total con nuestros colaboradores y su desarrollo profesional",
+    "Innovación constante en nuestros procesos y metodologías de trabajo",
+    "Confianza y credibilidad construida con cada uno de nuestros clientes",
+    "Excelencia en cada proyecto, sin importar su magnitud o complejidad",
+    "Transparencia absoluta en todas nuestras relaciones comerciales",
+    "Integridad y rectitud como pilares fundamentales de nuestro actuar",
+    "Respeto profundo por la comunidad y el medio ambiente en cada obra"
+  ],
 };
 ---
 
@@ -50,52 +118,274 @@ const layoutProps = {
   <HeroSection
     name_company="SJT Contratistas S.A. de C.V."
     subtitle="Especialistas en Construcción, Obra Civil y Desarrollo de Proyectos"
-    showOverlay={true}
+    showOverlay={false}
     titlePosition="center"
     backgroundImage={panoramica1.src}
   />
 
-  <!-- Política Integral -->
-  <section class="py-16 bg-gray-50">
-    <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
-      <SectionTitle
-        highlightText="nuestra filosofía"
-        title="Política Integral de Calidad, Medio Ambiente y Seguridad"
-        highlightColor="blue"
-        alignment="center"
-        size="lg"
+  <!-- Política Integral desde Strapi -->
+  {filosofiaSectionData ? (
+    <TitleSectionInfo
+      highlightText={filosofiaSectionData.highlightText}
+      title={filosofiaSectionData.title}
+      titleSection={filosofiaSectionData.titleSection}
+      highlightColor={filosofiaSectionData.highlightColor || "blue"}
+      customColor={filosofiaSectionData.customColor}
+      alignment={filosofiaSectionData.alignment || "center"}
+      size={filosofiaSectionData.size || "lg"}
+      description={filosofiaSectionData.description}
+      image={filosofiaSectionData.image?.url || obra1.src}
+      imageAlt={filosofiaSectionData.imageAlt || filosofiaSectionData.image?.alternativeText}
+      imagePosition={filosofiaSectionData.imagePosition || "right"}
+      buttonText={filosofiaSectionData.buttonText}
+      buttonLink={filosofiaSectionData.buttonLink}
+      floatingElement1={filosofiaSectionData.floatingElement1 ? {
+        number: filosofiaSectionData.floatingElement1.number,
+        title: filosofiaSectionData.floatingElement1.title,
+        subtitle: filosofiaSectionData.floatingElement1.subtitle,
+        svg: filosofiaSectionData.floatingElement1.svg,
+        bgColor: filosofiaSectionData.floatingElement1.bgColor || "bg-blue",
+        textColor: filosofiaSectionData.floatingElement1.textColor || "text-white"
+      } : undefined}
+      floatingElement2={filosofiaSectionData.floatingElement2 ? {
+        number: filosofiaSectionData.floatingElement2.number,
+        title: filosofiaSectionData.floatingElement2.title,
+        subtitle: filosofiaSectionData.floatingElement2.subtitle,
+        svg: filosofiaSectionData.floatingElement2.svg,
+        bgColor: filosofiaSectionData.floatingElement2.bgColor || "bg-green",
+        textColor: filosofiaSectionData.floatingElement2.textColor || "text-white"
+      } : undefined}
+      backgroundColor={filosofiaSectionData.backgroundColor || "bg-gray-50"}
+      sectionClass={filosofiaSectionData.sectionClass || "py-16"}
+    />
+  ) : (
+    <!-- Fallback: Sección hardcodeada si no hay datos de Strapi -->
+    <section class="py-16 bg-gray-50">
+      <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
+        <SectionTitle
+          highlightText="nuestra filosofía"
+          title="Política Integral de Calidad, Medio Ambiente y Seguridad"
+          highlightColor="blue"
+          alignment="center"
+          size="lg"
+        />
+      </div>
+
+      <SectionInfo2
+        title="Compromiso Total con la Excelencia"
+        description="SJT Contratistas S.A. de C.V. somos una empresa dedicada a los servicios de obra civil, eléctrica y electromecánica, comprometidos con la calidad, para lograr la satisfacción de nuestros clientes y responsable del cuidado al medio ambiente, la seguridad y la salud de todo nuestro personal, proveedores y aliados comerciales en cada uno de nuestros procesos, cumpliendo con los requisitos del cliente y los legales aplicables en materia de la calidad, ambiental, seguridad y salud en el trabajo estableciendo, comunicando y revisando objetivos a todos nuestros colaboradores y partes interesadas para evitar la contaminación de los recursos naturales y evitar incidentes o daños a la salud en cada servicio, mejorando continuamente la competencia laboral de nuestro recurso humano, los controles operacionales a través de una cultura de prevención."
+        image={obra1.src}
+        imagePosition="right"
+        buttonText="Ver Certificaciones"
+        buttonLink="#certificaciones"
+        floatingElement1={{
+          number: "ISO",
+          title: "9001:2015",
+          subtitle: "Calidad",
+          svg: `<svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9l-5.91.74L12 22l-3.09-6.26L2 15l5.91-.74L12 2z"/></svg>`,
+          bgColor: "bg-blue",
+          textColor: "text-white",
+        }}
+        floatingElement2={{
+          number: "ISO",
+          title: "14001",
+          subtitle: "Medio Ambiente",
+          svg: `<svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22c5.421 0 9.5-4.187 9.5-9.5S17.421 3 12 3s-9.5 4.187-9.5 9.5S6.579 22 12 22z"/><path d="M8 12l2 2 4-4"/></svg>`,
+          bgColor: "bg-green",
+          textColor: "text-white",
+        }}
+      />
+    </section>
+  )}
+
+  <!-- Mision Section desde Strapi -->
+  {misionSectionData ? (
+    <TitleSectionInfo
+      highlightText={misionSectionData.highlightText}
+      title={misionSectionData.title}
+      titleSection={misionSectionData.titleSection}
+      highlightColor={misionSectionData.highlightColor || "orange"}
+      customColor={misionSectionData.customColor}
+      alignment={misionSectionData.alignment || "center"}
+      size={misionSectionData.size || "lg"}
+      description={misionSectionData.description}
+      image={misionSectionData.image?.url || obra1.src}
+      imageAlt={misionSectionData.imageAlt || misionSectionData.image?.alternativeText}
+      imagePosition={misionSectionData.imagePosition || "left"}
+      buttonText={misionSectionData.buttonText}
+      buttonLink={misionSectionData.buttonLink}
+      floatingElement1={misionSectionData.floatingElement1 ? {
+        number: misionSectionData.floatingElement1.number,
+        title: misionSectionData.floatingElement1.title,
+        subtitle: misionSectionData.floatingElement1.subtitle,
+        svg: misionSectionData.floatingElement1.svg,
+        bgColor: misionSectionData.floatingElement1.bgColor || "bg-orange",
+        textColor: misionSectionData.floatingElement1.textColor || "text-white"
+      } : undefined}
+      floatingElement2={misionSectionData.floatingElement2 ? {
+        number: misionSectionData.floatingElement2.number,
+        title: misionSectionData.floatingElement2.title,
+        subtitle: misionSectionData.floatingElement2.subtitle,
+        svg: misionSectionData.floatingElement2.svg,
+        bgColor: misionSectionData.floatingElement2.bgColor || "bg-red",
+        textColor: misionSectionData.floatingElement2.textColor || "text-white"
+      } : undefined}
+      backgroundColor={misionSectionData.backgroundColor || "bg-gray-50"}
+      sectionClass={misionSectionData.sectionClass || "py-16"}
+    />
+  ) : (
+    <!-- Fallback: Sección hardcodeada si no hay datos de Strapi -->
+    <section class="py-16 bg-gray-50">
+      <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
+        <SectionTitle
+          highlightText="nuestra misión"
+          title="Construyendo el Futuro con Excelencia"
+          highlightColor="orange"
+          alignment="center"
+          size="lg"
+        />
+      </div>
+
+      <SectionInfo2
+        title="Compromiso y Propósito"
+        description="Brindar servicios integrales de construcción, obra civil, terracerías y electromecánica con los más altos estándares de calidad, seguridad y responsabilidad ambiental. Nos comprometemos a superar las expectativas de nuestros clientes mediante soluciones innovadoras, personal altamente capacitado y tecnología de vanguardia, contribuyendo al desarrollo sostenible del sureste mexicano."
+        image={obra1.src}
+        imagePosition="left"
+        buttonText="Ver Servicios"
+        buttonLink="/servicios"
+        floatingElement1={{
+          number: "ISO",
+          title: "Certificado",
+          subtitle: "Calidad",
+          svg: `<svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9l-5.91.74L12 22l-3.09-6.26L2 15l5.91-.74L12 2z"/></svg>`,
+          bgColor: "bg-orange",
+          textColor: "text-white",
+        }}
+        floatingElement2={{
+          number: "24/7",
+          title: "Soporte",
+          subtitle: "Disponible",
+          svg: `<svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`,
+          bgColor: "bg-red",
+          textColor: "text-white",
+        }}
+      />
+    </section>
+  )}
+
+  <!-- Vision Section desde Strapi -->
+  {visionSectionData ? (
+    <TitleSectionInfo
+      highlightText={visionSectionData.highlightText}
+      title={visionSectionData.title}
+      titleSection={visionSectionData.titleSection}
+      highlightColor={visionSectionData.highlightColor || "green"}
+      customColor={visionSectionData.customColor}
+      alignment={visionSectionData.alignment || "center"}
+      size={visionSectionData.size || "lg"}
+      description={visionSectionData.description}
+      image={visionSectionData.image?.url || panoramica1.src}
+      imageAlt={visionSectionData.imageAlt || visionSectionData.image?.alternativeText}
+      imagePosition={visionSectionData.imagePosition || "right"}
+      buttonText={visionSectionData.buttonText}
+      buttonLink={visionSectionData.buttonLink}
+      floatingElement1={visionSectionData.floatingElement1 ? {
+        number: visionSectionData.floatingElement1.number,
+        title: visionSectionData.floatingElement1.title,
+        subtitle: visionSectionData.floatingElement1.subtitle,
+        svg: visionSectionData.floatingElement1.svg,
+        bgColor: visionSectionData.floatingElement1.bgColor || "bg-green",
+        textColor: visionSectionData.floatingElement1.textColor || "text-white"
+      } : undefined}
+      floatingElement2={visionSectionData.floatingElement2 ? {
+        number: visionSectionData.floatingElement2.number,
+        title: visionSectionData.floatingElement2.title,
+        subtitle: visionSectionData.floatingElement2.subtitle,
+        svg: visionSectionData.floatingElement2.svg,
+        bgColor: visionSectionData.floatingElement2.bgColor || "bg-purple",
+        textColor: visionSectionData.floatingElement2.textColor || "text-white"
+      } : undefined}
+      backgroundColor={visionSectionData.backgroundColor || "bg-white"}
+      sectionClass={visionSectionData.sectionClass || "py-16"}
+    />
+  ) : (
+    <!-- Fallback: Sección hardcodeada si no hay datos de Strapi -->
+    <section class="py-16 bg-white">
+      <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
+        <SectionTitle
+          highlightText="nuestra visión"
+          title="Líderes en Construcción y Desarrollo Sostenible"
+          highlightColor="green"
+          alignment="center"
+          size="lg"
+        />
+      </div>
+
+      <SectionInfo2
+        title="Visión de Futuro"
+        description="Ser reconocidos como la empresa líder en construcción, obra civil y desarrollo de proyectos en el sureste mexicano, destacando por nuestra innovación, calidad excepcional y compromiso con el desarrollo sostenible. Aspiramos a ser el socio estratégico preferido de nuestros clientes, contribuyendo al crecimiento de la región a través de proyectos que transformen positivamente las comunidades donde operamos."
+        image={panoramica1.src}
+        imagePosition="right"
+        buttonText="Conocer Proyectos"
+        buttonLink="/portafolio"
+        floatingElement1={{
+          number: "20+",
+          title: "Años",
+          subtitle: "Experiencia",
+          svg: `<svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`,
+          bgColor: "bg-green",
+          textColor: "text-white",
+        }}
+        floatingElement2={{
+          number: "100+",
+          title: "Proyectos",
+          subtitle: "Completados",
+          svg: `<svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9l-5.91.74L12 22l-3.09-6.26L2 15l5.91-.74L12 2z"/></svg>`,
+          bgColor: "bg-purple",
+          textColor: "text-white",
+        }}
+      />
+    </section>
+  )} 
+
+
+ 
+  <section class="py-16 lg:py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <SectionTitle
+          highlightText="propuesta alternativa"
+          title="Los Principios que Nos Definen"
+          highlightColor="purple"
+          alignment="center"
+          size="lg"
+        />
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto mt-6 leading-relaxed">
+          Más que palabras, nuestros valores son acciones que se reflejan en cada proyecto,
+          cada relación y cada decisión que tomamos como empresa.
+        </p>
+      </div>
+
+      <ProjectShowcase
+        title={valoresShowcaseData.title}
+        subtitle={valoresShowcaseData.subtitle}
+        description={valoresShowcaseData.description}
+        category={valoresShowcaseData.category}
+        location={valoresShowcaseData.location}
+        year={valoresShowcaseData.year}
+        client={valoresShowcaseData.client}
+        heroImage={valoresShowcaseData.heroImage}
+        heroImageAlt={valoresShowcaseData.heroImageAlt}
+        categoryColor={valoresShowcaseData.categoryColor}
+        stats={valoresShowcaseData.stats}
+        highlights={valoresShowcaseData.highlights}
       />
     </div>
-
-    <SectionInfo2
-      title="Compromiso Total con la Excelencia"
-      description="SJT Contratistas S.A. de C.V. somos una empresa dedicada a los servicios de obra civil, eléctrica y electromecánica, comprometidos con la calidad, para lograr la satisfacción de nuestros clientes y responsable del cuidado al medio ambiente, la seguridad y la salud de todo nuestro personal, proveedores y aliados comerciales en cada uno de nuestros procesos, cumpliendo con los requisitos del cliente y los legales aplicables en materia de la calidad, ambiental, seguridad y salud en el trabajo estableciendo, comunicando y revisando objetivos a todos nuestros colaboradores y partes interesadas para evitar la contaminación de los recursos naturales y evitar incidentes o daños a la salud en cada servicio, mejorando continuamente la competencia laboral de nuestro recurso humano, los controles operacionales a través de una cultura de prevención."
-      image={obra1.src}
-      imagePosition="right"
-      buttonText="Ver Certificaciones"
-      buttonLink="#certificaciones"
-      floatingElement1={{
-        number: "ISO",
-        title: "9001:2015",
-        subtitle: "Calidad",
-        icon: "🏆",
-        bgColor: "bg-blue-600",
-        textColor: "text-white",
-      }}
-      floatingElement2={{
-        number: "ISO",
-        title: "14001",
-        subtitle: "Medio Ambiente",
-        icon: "🌱",
-        bgColor: "bg-green-600",
-        textColor: "text-white",
-      }}
-    />
   </section>
 
   <!-- Compromiso Empresarial -->
   <section class="py-16 bg-white">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <div class=" mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <SectionTitle
         highlightText="nuestro compromiso"
         title="Cultura de Prevención y Excelencia"
@@ -116,26 +406,34 @@ const layoutProps = {
         </p>
 
         <div class="flex flex-wrap justify-center gap-4 mt-8">
-          <span
-            class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-800"
-          >
-            ✅ Calidad Certificada
-          </span>
-          <span
-            class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-green-100 text-green-800"
-          >
-            🌱 Responsabilidad Ambiental
-          </span>
-          <span
-            class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-orange-100 text-orange-800"
-          >
-            🛡️ Seguridad Laboral
-          </span>
-          <span
-            class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-purple-100 text-purple-800"
-          >
-            📈 Mejora Continua
-          </span>
+          <ColorBorderCard
+          borderColor="var(--orange)"
+          backgroundColor="bg-white"
+          cardNumber="01"
+          text="Calidad certificada"
+          />           
+          
+          <ColorBorderCard
+          borderColor="var(--orange)"
+          backgroundColor="bg-white"
+          cardNumber="02"
+          text="Responsabilidad ambiental"
+          />          
+          
+          <ColorBorderCard
+          borderColor="var(--orange)"
+          backgroundColor="bg-white"
+          cardNumber="03"
+          text="Seguridad laboral"
+          />       
+         
+          <ColorBorderCard
+          borderColor="var(--orange)"
+          backgroundColor="bg-white"
+          cardNumber="04"
+          text="Mejora continua"
+          />           
+        
         </div>
       </div>
     </div>
@@ -162,9 +460,9 @@ const layoutProps = {
           serviceName="Construcción & Obra Civil"
           description="Servicios especializados en construcción y obra civil con estándares de calidad superiores y cumplimiento normativo integral."
           buttonText="Ver más"
-          href="/servicios/construccion"
+          href="/servicios"
           cardNumber="01"
-          iconColor="#FF5722"
+          iconColor="var(--orange)"
         />
 
         <!-- Terracerías y Carreteras -->
@@ -173,9 +471,9 @@ const layoutProps = {
           serviceName="Terracerías & Carreteras"
           description="Desarrollo y construcción de carreteras, caminos y terracerías con tecnología avanzada y equipos especializados."
           buttonText="Ver más"
-          href="/servicios/terracerias"
+          href="/servicios"
           cardNumber="02"
-          iconColor="#4CAF50"
+          iconColor="var(--green)"
         />
 
         <!-- Mecánica y Electromecánica -->
@@ -184,9 +482,9 @@ const layoutProps = {
           serviceName="Mecánica & Electromecánica"
           description="Instalación, mantenimiento y desarrollo de sistemas mecánicos y electromecánicos industriales de alta complejidad."
           buttonText="Ver más"
-          href="/servicios/electromecanica"
+          href="/servicios"
           cardNumber="03"
-          iconColor="#2196F3"
+          iconColor="var(--blue)"
         />
 
         <!-- Desarrollo de Proyectos -->
@@ -195,36 +493,13 @@ const layoutProps = {
           serviceName="Desarrollo de Proyectos"
           description="Gestión integral de proyectos desde la conceptualización hasta la entrega, con metodologías probadas y control total."
           buttonText="Ver más"
-          href="/servicios/desarrollo-proyectos"
+          href="/servicios"
           cardNumber="04"
-          iconColor="#9C27B0"
+          iconColor="var(--purple)"
         />
       </div>
     </div>
   </section>
 </BaseLayout>
 
-<!-- 
-=============================================
-✅ BENEFICIOS DE USAR BASELAYOUT:
-=============================================
 
-🔥 REDUCCIÓN DE CÓDIGO:
-- ANTES: 319 líneas con HTML completo
-- DESPUÉS: ~165 líneas solo con contenido
-- AHORRO: 48% menos código
-
-🔧 ELEMENTOS MANEJADOS POR BASELAYOUT:
-- HeaderNav: ✅ Con datos de Strapi
-- Breadcrumbs: ✅ Configurables
-- ContactSection: ✅ Personalizada
-- Footer: ✅ Consistente
-- Meta tags SEO: ✅ Optimizados
-- Scripts globales: ✅ Centralizados
-
-⚡ CONSISTENCIA AUTOMÁTICA:
-- Header común: ✅ En todas las páginas
-- Footer común: ✅ En todas las páginas
-- SEO consistente: ✅ En todas las páginas
-- Navegación coherente: ✅ En todas las páginas
--->

@@ -7,6 +7,7 @@ import "../styles/globals.css";
 // Componentes comunes
 import HeaderNav from "../components/HeaderNav.astro";
 import ContactSection from "../components/ui/ContactSection.astro";
+import Footer from "../components/ui/Footer.astro";
 
 // Strapi integration
 import strapi from "../utils/strapi";
@@ -38,7 +39,7 @@ export interface Props {
 // Destructurar props con valores por defecto
 const {
   pageTitle,
-  metaDescription = "SJT Contratistas - Más de 20 años especializados en construcción, obra civil, terracerías y desarrollo integral de proyectos en el sureste mexicano.",
+  metaDescription = "SJT Contratistas - Especializados en construcción, obra civil, terracerías y desarrollo integral de proyectos en el sureste mexicano.",
   canonicalUrl,
   ogImage,
   showBreadcrumb = false,
@@ -106,7 +107,6 @@ const mainNavLinks = [
   { href: "/quienes-somos", text: "Quiénes Somos" },
   { href: "/servicios", text: "Servicios" },
   { href: "/portafolio", text: "Portafolio" },
-  { href: "/contacto", text: "Contacto" },
 ];
 ---
 
@@ -152,8 +152,8 @@ const mainNavLinks = [
         <HeaderNav
           companyName={headerProps.companyName}
           logoFile={headerProps.logoFile}
-          sticky={true}
-          transparent={currentUrl === "/" ? true : false}
+          sticky={false}
+          transparent={true}
           navLinks={mainNavLinks}
           ctaText="Solicitar Cotización"
           ctaHref="#contacto"
@@ -161,8 +161,8 @@ const mainNavLinks = [
       ) : (
         <HeaderNav
           companyName="SJT Contratistas"
-          sticky={true}
-          transparent={currentUrl === "/" ? true : false}
+          sticky={false}
+          transparent={true}
           navLinks={mainNavLinks}
           ctaText="Solicitar Cotización"
           ctaHref="#contacto"
@@ -223,118 +223,22 @@ const mainNavLinks = [
             accentColor={contactConfig.accentColor!}
             backgroundColor={contactConfig.backgroundColor!}
             placeholder={contactConfig.placeholder!}
-            buttonText={contactConfig.buttonText!}
           />
         </section>
       )
     }
 
     <!-- Footer (común en todas las páginas) -->
-    <footer class="bg-gray-900 text-white py-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <!-- Company Information -->
-          <div class="space-y-4">
-            <h3 class="text-xl font-bold text-white mb-4">
-              {headerProps?.companyName || "SJT Contratistas S.A. de C.V."}
-            </h3>
-            <p class="text-gray-300 text-sm leading-relaxed">
-              Más de 20 años especializados en construcción, obra civil,
-              terracerías y desarrollo integral de proyectos en el sureste
-              mexicano.
-            </p>
-
-            <!-- Social Links (si los hay) -->
-            <div class="flex space-x-4 mt-4">
-              <!-- Espacio para íconos sociales -->
-            </div>
-          </div>
-
-          <!-- Services -->
-          <div class="space-y-4">
-            <h4 class="text-lg font-semibold text-white mb-4">
-              Nuestros Servicios
-            </h4>
-            <ul class="space-y-2 text-sm text-gray-300">
-              <li>
-                <a
-                  href="/servicios#construccion"
-                  class="hover:text-orange-400 transition-colors"
-                  >• Construcción & Obra Civil</a
-                >
-              </li>
-              <li>
-                <a
-                  href="/servicios#terracerias"
-                  class="hover:text-green-400 transition-colors"
-                  >• Terracerías & Carreteras</a
-                >
-              </li>
-              <li>
-                <a
-                  href="/servicios#electromecanica"
-                  class="hover:text-blue-400 transition-colors"
-                  >• Electromecánica</a
-                >
-              </li>
-              <li>
-                <a
-                  href="/servicios#desarrollo-proyectos"
-                  class="hover:text-purple-400 transition-colors"
-                  >• Desarrollo de Proyectos</a
-                >
-              </li>
-            </ul>
-          </div>
-
-          <!-- Quick Links -->
-          <div class="space-y-4">
-            <h4 class="text-lg font-semibold text-white mb-4">
-              Enlaces Rápidos
-            </h4>
-            <ul class="space-y-2 text-sm text-gray-300">
-              {
-                mainNavLinks
-                  .filter((link) => link.href !== "#contacto")
-                  .map((link) => (
-                    <li>
-                      <a
-                        href={link.href}
-                        class="hover:text-white transition-colors"
-                      >
-                        • {link.text}
-                      </a>
-                    </li>
-                  ))
-              }
-              <li>
-                <a href="/portafolio" class="hover:text-white transition-colors"
-                  >• Portafolio</a
-                >
-              </li>
-            </ul>
-          </div>
-
-          <!-- Contact Information -->
-          <div class="space-y-4">
-            <h4 class="text-lg font-semibold text-white mb-4">Contacto</h4>
-            <div class="space-y-2 text-sm text-gray-300">
-              <p><strong>General:</strong> {contactConfig.email}</p>
-              <p><strong>Teléfono:</strong> {contactConfig.phone}</p>
-              <p><strong>Dirección:</strong> {contactConfig.address}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Copyright -->
-        <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-          <p class="text-gray-400 text-sm">
-            © {new Date().getFullYear()} SJT Contratistas S.A. de C.V. - Todos los
-            derechos reservados
-          </p>
-        </div>
-      </div>
-    </footer>
+    <Footer
+      companyName={headerProps?.companyName || "SJT Contratistas S.A. de C.V."}
+      quickLinks={mainNavLinks}
+      contactInfo={{
+        email: contactConfig.email!,
+        phone: contactConfig.phone!,
+        address: contactConfig.address!,
+      }}
+      showSocialLinks={false}
+    />
 
     <!-- Scripts globales si los necesitas -->
     <script>

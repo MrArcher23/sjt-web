@@ -389,6 +389,60 @@ class StrapiClient {
       ...options,
     });
   }
+
+  // ==================== TITLE SECTION INFO METHODS ====================
+
+  // Obtener todas las title section infos
+  async getTitleSectionInfos(options: StrapiOptions = {}) {
+    return this.request("title-section-infos", {
+      populate: {
+        image: true,
+        floatingElement1: true,
+        floatingElement2: true,
+      },
+      sort: ["createdAt:desc"],
+      ...options,
+    });
+  }
+
+  // Obtener title section info por identifier
+  async getTitleSectionInfoByIdentifier(identifier: string) {
+    try {
+      console.log(
+        `🔍 Obteniendo title-section-info con identifier: ${identifier}`
+      );
+      const response = await this.request("title-section-infos", {
+        filters: { identifier: { $eq: identifier } },
+        populate: {
+          image: true,
+          floatingElement1: true,
+          floatingElement2: true,
+        },
+      });
+      console.log(
+        `📊 Title section info obtenida: ${response?.data?.[0] ? "Éxito" : "No encontrada"}`
+      );
+      return response?.data?.[0] || null;
+    } catch (error) {
+      console.warn(
+        `⚠️ Error obteniendo title-section-info ${identifier}:`,
+        error
+      );
+      return null;
+    }
+  }
+
+  // Obtener title section info por slug (si decides usar slug en el futuro)
+  async getTitleSectionInfoBySlug(slug: string) {
+    return this.request("title-section-infos", {
+      filters: { slug: { $eq: slug } },
+      populate: {
+        image: true,
+        floatingElement1: true,
+        floatingElement2: true,
+      },
+    });
+  }
 }
 
 export default new StrapiClient();

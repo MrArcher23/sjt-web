@@ -28,7 +28,7 @@ const featuredProject = {
   client: "PEMEX",
   heroImage:
     "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
-  categoryColor: "#9C27B0",
+  categoryColor: "var(--purple)",
   stats: [
     { value: "18", label: "Meses de Ejecución" },
     { value: "450M", label: "Inversión (MXN)" },
@@ -47,7 +47,7 @@ const featuredProject = {
 const carouselProject = {
   title: "Carretera Federal Villahermosa-Frontera",
   category: "Terracerías & Carreteras",
-  categoryColor: "#4CAF50",
+  categoryColor: "var(--green)",
   description:
     "Modernización de 45 km de carretera federal con tecnología avanzada de pavimentación y sistemas de drenaje inteligente.",
   images: [
@@ -79,25 +79,25 @@ const filterCategories = [
   {
     id: "construccion",
     label: "Construcción & Obra Civil",
-    color: "#FF5722",
+    color: "var(--orange)",
     count: 12,
   },
   {
     id: "terracerias",
     label: "Terracerías & Carreteras",
-    color: "#4CAF50",
+    color: "var(--green)",
     count: 8,
   },
   {
     id: "electromecanica",
     label: "Electromecánica",
-    color: "#2196F3",
+    color: "var(--blue)",
     count: 6,
   },
   {
     id: "desarrollo",
     label: "Desarrollo Integral",
-    color: "#9C27B0",
+    color: "var(--purple)",
     count: 4,
   },
 ];
@@ -107,7 +107,7 @@ const projectsGrid = [
   {
     title: "Planta de Tratamiento de Aguas Residuales",
     category: "Construcción & Obra Civil",
-    categoryColor: "#FF5722",
+    categoryColor: "var(--orange)",
     location: "Comalcalco, Tabasco",
     year: "2024",
     image:
@@ -121,7 +121,7 @@ const projectsGrid = [
   {
     title: "Modernización de Carretera Estatal Tab-180",
     category: "Terracerías & Carreteras",
-    categoryColor: "#4CAF50",
+    categoryColor: "var(--green)",
     location: "Centro, Tabasco",
     year: "2023",
     image:
@@ -134,7 +134,7 @@ const projectsGrid = [
   {
     title: "Sistema HVAC para Complejo Hospitalario",
     category: "Electromecánica",
-    categoryColor: "#2196F3",
+    categoryColor: "var(--blue)",
     location: "Villahermosa, Tabasco",
     year: "2024",
     image:
@@ -148,7 +148,7 @@ const projectsGrid = [
   {
     title: "Edificio Corporativo Grupo Pemex",
     category: "Desarrollo Integral",
-    categoryColor: "#9C27B0",
+    categoryColor: "var(--purple)",
     location: "Villahermosa, Tabasco",
     year: "2023",
     image:
@@ -162,7 +162,7 @@ const projectsGrid = [
   {
     title: "Puente Vehicular Grijalva",
     category: "Construcción & Obra Civil",
-    categoryColor: "#FF5722",
+    categoryColor: "var(--orange)",
     location: "Cunduacán, Tabasco",
     year: "2023",
     image:
@@ -175,7 +175,7 @@ const projectsGrid = [
   {
     title: "Autopista Villahermosa-Teapa (Tramo 3)",
     category: "Terracerías & Carreteras",
-    categoryColor: "#4CAF50",
+    categoryColor: "var(--green)",
     location: "Tabasco",
     year: "2024",
     image:
@@ -188,7 +188,7 @@ const projectsGrid = [
   {
     title: "Planta Industrial Petroquímica",
     category: "Electromecánica",
-    categoryColor: "#2196F3",
+    categoryColor: "var(--blue)",
     location: "Coatzacoalcos, Veracruz",
     year: "2024",
     image:
@@ -202,7 +202,7 @@ const projectsGrid = [
   {
     title: "Centro Logístico Multifuncional",
     category: "Desarrollo Integral",
-    categoryColor: "#9C27B0",
+    categoryColor: "var(--purple)",
     location: "Cárdenas, Tabasco",
     year: "2025",
     image:
@@ -219,7 +219,7 @@ const layoutProps = {
   pageTitle: "Portafolio",
   metaDescription:
     "Conoce nuestros proyectos más destacados: construcción, obra civil, terracerías, electromecánica y desarrollo integral. Más de 20 años de experiencia en Tabasco y el sureste mexicano.",
-  showBreadcrumb: true,
+  showBreadcrumb: false,
   breadcrumbItems: [
     { href: "/", text: "Inicio" },
     { href: "/portafolio", text: "Portafolio" },
@@ -233,8 +233,8 @@ const layoutProps = {
     phone: "(993) 324-5488",
     email: "proyectos@sjtcontratistas.com",
     address: "Carr. Reforma-Dos Bocas s/n, Cumuapa 1ra. Tabasco",
-    accentColor: "#FF5722",
-    backgroundColor: "bg-gray-50",
+    accentColor: "var(--orange)",
+    backgroundColor: "bg-dark",
     placeholder: "Cuéntanos sobre tu proyecto...",
     buttonText: "Solicitar Consulta",
   },
@@ -381,7 +381,7 @@ const layoutProps = {
       </div>
 
       <!-- Load More Button -->
-      <div class="text-center mt-12">
+      <!-- <div class="text-center mt-12">
         <button
           class="inline-flex items-center px-8 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 font-semibold rounded-full transition-all duration-300 group"
         >
@@ -399,12 +399,12 @@ const layoutProps = {
               d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
           </svg>
         </button>
-      </div>
+      </div> -->
     </div>
   </section>
 
   <!-- Stats Section -->
-  <section
+  <!-- <section
     class="py-16 lg:py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -418,7 +418,7 @@ const layoutProps = {
         />
       </div>
 
-      <!-- Stats Grid -->
+      
       <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
         <div class="text-center">
           <div class="text-5xl lg:text-6xl font-black text-orange-400 mb-4">
@@ -461,41 +461,8 @@ const layoutProps = {
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
 </BaseLayout>
-
-<!-- 
-=============================================
-✅ BENEFICIOS DE USAR BASELAYOUT:
-=============================================
-
-🔥 REDUCCIÓN DE CÓDIGO:
-- ANTES: 696 líneas con HTML completo
-- DESPUÉS: ~495 líneas solo con contenido
-- AHORRO: 29% menos código
-
-🔧 ELEMENTOS MANEJADOS POR BASELAYOUT:
-- HeaderNav: ✅ Con datos de Strapi
-- Breadcrumbs: ✅ Configurables (/ > Portafolio)
-- ContactSection: ✅ Personalizada para proyectos
-- Footer: ✅ Consistente
-- Meta tags SEO: ✅ Optimizados
-- Scripts globales: ✅ Centralizados
-
-⚡ CONSISTENCIA AUTOMÁTICA:
-- Header común: ✅ En todas las páginas
-- Footer común: ✅ En todas las páginas
-- SEO consistente: ✅ En todas las páginas
-- Navegación coherente: ✅ En todas las páginas
-- Breadcrumbs automáticos: ✅ Para navegación
-
-🎯 FUNCIONALIDADES ESPECÍFICAS:
-- ProjectShowcase: ✅ Proyecto destacado
-- ProjectCarousel: ✅ Proceso construcción
-- ProjectFilter: ✅ Filtros inteligentes
-- ProjectCard: ✅ Grid de proyectos
-- Stats Section: ✅ Métricas portfolio
--->
 
 <style>
   /* Custom animations for portfolio page */

@@ -1,4 +1,38 @@
 // Tipos base de Strapi v5 (estructura directa, sin attributes wrapper)
+
+// Floating Element Component
+export interface FloatingElement {
+  number: string;
+  title: string;
+  subtitle?: string;
+  svg?: string;
+  bgColor?: string;
+  textColor?: string;
+}
+
+// Title Section Info Content Type
+export interface TitleSectionInfo {
+  identifier: string;
+  highlightText?: string;
+  title: string;
+  titleSection: string;
+  highlightColor?: "orange" | "red" | "blue" | "green" | "purple" | "custom";
+  customColor?: string;
+  alignment?: "left" | "center" | "right";
+  size?: "sm" | "md" | "lg" | "xl";
+  description: string;
+  image?: StrapiMedia;
+  imageAlt?: string;
+  imagePosition?: "left" | "right";
+  buttonText?: string;
+  buttonLink?: string;
+  floatingElement1?: FloatingElement;
+  floatingElement2?: FloatingElement;
+  backgroundColor?: string;
+  containerClass?: string;
+  sectionClass?: string;
+  titleContainerClass?: string;
+}
 export interface StrapiMedia {
   id: number;
   documentId: string;

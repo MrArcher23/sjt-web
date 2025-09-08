@@ -1,0 +1,166 @@
+---
+/**
+ * ColorBorderCard Component - Contenedor con borde animado y color dinámico
+ *
+ * Basado en ServiceCard pero simplificado como contenedor genérico
+ * con efectos de hover y borde animado.
+ *
+ * @example
+ * <!-- Usando texto por props -->
+ * <ColorBorderCard
+ *   borderColor="var(--orange)"
+ *   backgroundColor="bg-white"
+ *   cardNumber="01"
+ *   text="Calidad Certificada"
+ *   textSize="text-xl"
+ * />
+ *
+ * <!-- O usando slot para contenido personalizado -->
+ * <ColorBorderCard
+ *   borderColor="var(--orange)"
+ *   backgroundColor="bg-white"
+ *   cardNumber="01"
+ * >
+ *   <h3 class="text-lg font-semibold mb-2">Título</h3>
+ *   <p class="text-gray-600">Contenido del card...</p>
+ * </ColorBorderCard>
+ */
+
+export interface Props {
+  borderColor: string; // Color del borde (puede ser CSS variable o hex)
+  backgroundColor?: string; // Clase de Tailwind para el fondo
+  cardNumber?: string; // Número identificador del card
+  hoverEffect?: boolean; // Si debe tener efecto hover
+  padding?: string; // Clase de padding personalizada
+  rounded?: string; // Clase de border-radius personalizada
+  text?: string; // Texto principal del card
+  textSize?: string; // Tamaño del texto (clase Tailwind)
+}
+
+const {
+  borderColor,
+  backgroundColor = "bg-white",
+  cardNumber = "01",
+  hoverEffect = true,
+  padding = "p-8",
+  rounded = "rounded-2xl",
+  text,
+  textSize = "text-lg",
+} = Astro.props;
+---
+
+<div
+  class={`color-border-card group relative ${backgroundColor} ${rounded} ${padding} shadow-lg transition-all duration-500 overflow-hidden border border-gray-200 ${hoverEffect ? "hover:shadow-xl" : ""}`}
+  data-border-color={borderColor}
+>
+  <!-- SVG Animated Border -->
+  <svg
+    class="absolute inset-0 w-full h-full pointer-events-none"
+    style={`border-radius: ${rounded === "rounded-2xl" ? "1rem" : "0.5rem"};`}
+  >
+    <defs>
+      <linearGradient
+        id={`gradient-${cardNumber}`}
+        x1="0%"
+        y1="0%"
+        x2="100%"
+        y2="0%"
+      >
+        <stop offset="0%" style={`stop-color:${borderColor};stop-opacity:1`}
+        ></stop>
+        <stop offset="50%" style={`stop-color:${borderColor};stop-opacity:0.8`}
+        ></stop>
+        <stop offset="100%" style={`stop-color:${borderColor};stop-opacity:1`}
+        ></stop>
+      </linearGradient>
+    </defs>
+    <rect
+      x="2"
+      y="2"
+      width="calc(100% - 4px)"
+      height="calc(100% - 4px)"
+      rx="14"
+      ry="14"
+      fill="none"
+      stroke={`url(#gradient-${cardNumber})`}
+      stroke-width="3"
+      stroke-dasharray="1000"
+      stroke-dashoffset="1000"
+      class="border-animation"></rect>
+  </svg>
+
+  <!-- Card Number (Optional) -->
+  {
+    cardNumber ? (
+      <div
+        class="relative z-10 inline-flex items-center justify-center w-12 h-8 text-black text-sm font-bold rounded-2xl mb-6 transition-all duration-300 card-number"
+        style={`--border-color: ${borderColor}`}
+      >
+        {cardNumber}
+      </div>
+    ) : null
+  }
+
+  <!-- Text Content (if provided via props) -->
+  {
+    text ? (
+      <div class="relative z-10 ">
+        <p
+          class={`${textSize} font-semibold transition-colors duration-300 text-black card-text`}
+          style={`--border-color: ${borderColor}`}
+        >
+          {text}
+        </p>
+      </div>
+    ) : null
+  }
+
+  <!-- Content Slot -->
+  <div class="relative z-10">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .color-border-card {
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .color-border-card:hover {
+    transform: translateY(-4px);
+  }
+
+  /* Card Number Hover Effect */
+  .card-number {
+    /* Sin fondo ni borde por defecto */
+  }
+
+  .color-border-card:hover .card-number {
+    background-color: var(--border-color);
+    color: white;
+    border-color: var(--border-color);
+  }
+
+  /* Text Hover Effect - Same as Card Number */
+  .color-border-card:hover .card-text {
+    background-color: var(--border-color);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+  }
+
+  /* SVG Border Animation */
+  .border-animation {
+    transition: stroke-dashoffset 1s ease-in-out;
+  }
+
+  .color-border-card:hover .border-animation {
+    stroke-dashoffset: 0;
+  }
+
+  /* Hover effect for entire card */
+  .color-border-card:hover {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+</style>

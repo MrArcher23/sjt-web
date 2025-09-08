@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
 export interface Props {
   title: string;
   subtitle?: string;
@@ -7,7 +10,8 @@ export interface Props {
   location: string;
   year: string;
   client?: string;
-  heroImage: string;
+  heroImage: string | ImageMetadata;
+  heroImageAlt?: string;
   stats?: Array<{
     value: string;
     label: string;
@@ -25,6 +29,7 @@ const {
   year, 
   client,
   heroImage, 
+  heroImageAlt,
   stats = [], 
   highlights = [],
   categoryColor 
@@ -34,11 +39,24 @@ const {
 <div class="project-showcase relative">
   <!-- Hero Image with Overlay -->
   <div class="relative h-[70vh] overflow-hidden rounded-3xl shadow-2xl group">
-    <img 
-      src={heroImage}
-      alt={title}
-      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-    />
+    {typeof heroImage === 'string' ? (
+      <img 
+        src={heroImage}
+        alt={heroImageAlt || title}
+        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        loading="lazy"
+      />
+    ) : (
+      <Image 
+        src={heroImage}
+        alt={heroImageAlt || title}
+        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        width={1600}
+        height={900}
+        format="webp"
+        loading="lazy"
+      />
+    )}
     
     <!-- Gradient Overlay -->
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
@@ -60,7 +78,10 @@ const {
     <div class="absolute bottom-0 left-0 right-0 p-8 lg:p-12">
       <div class="max-w-4xl">
         {subtitle && (
-          <p class="text-orange-400 text-sm font-semibold tracking-wide uppercase mb-2">
+          <p 
+            class="text-sm font-semibold tracking-wide uppercase mb-2"
+            style={`color: ${categoryColor};`}
+          >
             {subtitle}
           </p>
         )}

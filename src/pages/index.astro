@@ -21,11 +21,14 @@ import type {
   StrapiEntity,
   Hero as HeroType,
   SectionInfo as SectionInfoType,
+  TitleSectionInfo as TitleSectionInfoType,
 } from "../types/strapi";
+import TitleSectionInfo from "../components/TitleSectionInfo.astro";
 
 // Obtener contenido específico para la home
 let heroData: StrapiEntity<HeroType> | null = null;
 let sectionInfoData: StrapiEntity<SectionInfoType> | null = null;
+let titleSectionData: TitleSectionInfoType | null = null;
 let error: string | null = null;
 
 try {
@@ -44,6 +47,10 @@ try {
   console.log("🔍 Obteniendo section info activa");
   const sectionResponse = await strapi.getActiveSectionInfos();
   sectionInfoData = sectionResponse.data?.[0] || null;
+
+  // Title Section Info data - Sección "Quiénes Somos"
+  console.log("🔍 Obteniendo title-section-info: landing-somos");
+  titleSectionData = await strapi.getTitleSectionInfoByIdentifier("landing-somos");
 
 } catch (e) {
   error = e instanceof Error ? e.message : "Error loading data";
@@ -121,29 +128,62 @@ const layoutProps = {
   )}
   <CertificationsIso borderColor="blue" />
 
-  <section class="py-16 bg-white">
-    <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
-      <SectionTitle
-        highlightText="quiénes somos"
-        title="LÍDERES EN LA INDUSTRIA DE CONSTRUCCIÓN"
-        highlightColor="blue"
-        alignment="left"
-        size="lg"
-      />
-    </div>
-    
-    <SectionInfo2
-      title="Comprometidos con la Calidad, Medio Ambiente y Seguridad"
-      description="Somos una empresa tabasqueña y orgullosamente mexicana, comprometida con la más alta calidad en nuestros productos así como en nuestros servicios. SJT Contratistas S.A. de C.V. somos una empresa dedicada a los servicios de obra civil, eléctrica y electromecánica, comprometidos con la calidad, para lograr la satisfacción de nuestros clientes y responsable del cuidado al medio ambiente, la seguridad y la salud de todo nuestro personal, proveedores y aliados comerciales en cada uno de nuestros procesos, cumpliendo con los requisitos del cliente y los legales aplicables en materia de la calidad, ambiental, seguridad y salud en el trabajo estableciendo, comunicando y revisando objetivos a todos nuestros colaboradores y partes interesadas para evitar la contaminación de los recursos naturales y evitar incidentes o daños a la salud en cada servicio, mejorando continuamente la competencia laboral de nuestro recurso humano, los controles operacionales a través de una cultura de prevención."
+  <!-- Sección "Quiénes Somos" desde Strapi -->
+  {titleSectionData ? (
+    <TitleSectionInfo
+      highlightText={titleSectionData.highlightText}
+      title={titleSectionData.title}
+      titleSection={titleSectionData.titleSection}
+      highlightColor={titleSectionData.highlightColor || "blue"}
+      customColor={titleSectionData.customColor}
+      alignment={titleSectionData.alignment || "left"}
+      size={titleSectionData.size || "lg"}
+      description={titleSectionData.description}
+      image={titleSectionData.image?.url || obra1.src}
+      imageAlt={titleSectionData.imageAlt || titleSectionData.image?.alternativeText}
+      imagePosition={titleSectionData.imagePosition || "right"}
+      buttonText={titleSectionData.buttonText}
+      buttonLink={titleSectionData.buttonLink}
+      floatingElement1={titleSectionData.floatingElement1 ? {
+        number: titleSectionData.floatingElement1.number,
+        title: titleSectionData.floatingElement1.title,
+        subtitle: titleSectionData.floatingElement1.subtitle,
+        svg: titleSectionData.floatingElement1.svg,
+        bgColor: titleSectionData.floatingElement1.bgColor || "bg-gray-900",
+        textColor: titleSectionData.floatingElement1.textColor || "text-white"
+      } : undefined}
+      floatingElement2={titleSectionData.floatingElement2 ? {
+        number: titleSectionData.floatingElement2.number,
+        title: titleSectionData.floatingElement2.title,
+        subtitle: titleSectionData.floatingElement2.subtitle,
+        svg: titleSectionData.floatingElement2.svg,
+        bgColor: titleSectionData.floatingElement2.bgColor || "bg-orange-500",
+        textColor: titleSectionData.floatingElement2.textColor || "text-white"
+      } : undefined}
+      backgroundColor={titleSectionData.backgroundColor}
+      containerClass={titleSectionData.containerClass}
+      sectionClass={titleSectionData.sectionClass}
+      titleContainerClass={titleSectionData.titleContainerClass}
+    />
+  ) : (
+    <!-- Fallback: Sección hardcodeada si no hay datos de Strapi -->
+    <TitleSectionInfo
+      highlightText="quiénes somos"
+      title="LÍDERES EN LA INDUSTRIA DE CONSTRUCCIÓN"
+      titleSection="Comprometidos con la Calidad, Medio Ambiente y Seguridad"
+      highlightColor="blue"
+      alignment="left"
+      size="lg"
+      description="Somos una empresa tabasqueña y orgullosamente mexicana, comprometida con la más alta calidad en nuestros productos así como en nuestros servicios."
       image={obra1.src}
       imagePosition="right"
       buttonText="Más información"
-      buttonLink="#servicios"
+      buttonLink="/quienes-somos"
       floatingElement1={{
         number: "500+",
         title: "Proyectos",
         subtitle: "Realizados",
-        icon: "🏗️",
+        svg: `<svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3l8 8v9a1 1 0 01-1 1h-6v-6H9v6H3a1 1 0 01-1-1v-9l8-8z"/></svg>`,
         bgColor: "bg-gray-900",
         textColor: "text-white"
       }}
@@ -151,13 +191,13 @@ const layoutProps = {
         number: "03+",
         title: "Certificaciones",
         subtitle: "Internacionales",
-        icon: "🏆",
+        svg: `<svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9l-5.91.74L12 22l-3.09-6.26L2 15l5.91-.74L12 2z"/></svg>`,
         bgColor: "bg-orange-500",
         textColor: "text-white"
       }}
-      
     />
-  </section>
+  )}
+
 
   <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
     <SectionTitle
@@ -305,30 +345,3 @@ const layoutProps = {
 
 </BaseLayout>
 
-<!-- 
-=============================================
-✅ BENEFICIOS DE USAR BASELAYOUT:
-=============================================
-
-🔥 REDUCCIÓN DE CÓDIGO:
-- ANTES: 422 líneas
-- DESPUÉS: ~150 líneas  
-- AHORRO: 64% menos código
-
-🔧 MANTENIMIENTO:
-- HeaderNav: ✅ Solo en BaseLayout
-- Footer: ✅ Solo en BaseLayout  
-- ContactSection: ✅ Solo en BaseLayout
-- Meta tags: ✅ Solo en BaseLayout
-
-⚡ VELOCIDAD DE DESARROLLO:
-- Nuevas páginas: Solo contenido + props
-- Cambios globales: Solo editar BaseLayout
-- Consistencia: Automática
-
-🎯 FLEXIBILIDAD:
-- Props específicas por página
-- Contact configurable
-- Breadcrumbs opcionales
-- SEO personalizable
--->

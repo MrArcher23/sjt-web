@@ -2,17 +2,284 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Estilos personalizados globales */
+/* ============================================ */
+/* SISTEMA DE COLORES SJT - VARIABLES CSS      */
+/* ============================================ */
+
+:root {
+  /* === COLORES PRINCIPALES === */
+  /* Basados en frecuencia de uso del análisis */
+  --orange: #ff5722; /* 15 usos - Color principal de marca */
+  --gray-dark: #111827; /* 10 usos - Fondos oscuros (bg-gray-900) */
+  --green: #4caf50; /* 8 usos - Color secundario */
+  --blue: #2196f3; /* 7 usos - Color de apoyo */
+  --purple: #9c27b0; /* 7 usos - Color de apoyo */
+
+  /* === ALIAS SEMÁNTICOS === */
+  --primary: var(--orange);
+  --secondary: var(--green);
+  --accent-blue: var(--blue);
+  --accent-purple: var(--purple);
+  --surface-dark: var(--gray-dark);
+
+  /* === ORANGE SCALE === */
+  --orange-50: #fff3e0;
+  --orange-100: #ffe0b2;
+  --orange-200: #ffcc80;
+  --orange-300: #ffb74d;
+  --orange-400: #ffa726;
+  --orange-500: #ff5722; /* Color base */
+  --orange-600: #e64a19;
+  --orange-700: #d84315;
+  --orange-800: #bf360c;
+  --orange-900: #a0290e;
+
+  /* === GREEN SCALE === */
+  --green-50: #e8f5e8;
+  --green-100: #c8e6c9;
+  --green-200: #a5d6a7;
+  --green-300: #81c784;
+  --green-400: #66bb6a;
+  --green-500: #4caf50; /* Color base */
+  --green-600: #43a047;
+  --green-700: #388e3c;
+  --green-800: #2e7d32;
+  --green-900: #1b5e20;
+
+  /* === BLUE SCALE === */
+  --blue-50: #e3f2fd;
+  --blue-100: #bbdefb;
+  --blue-200: #90caf9;
+  --blue-300: #64b5f6;
+  --blue-400: #42a5f5;
+  --blue-500: #2196f3; /* Color base */
+  --blue-600: #1e88e5;
+  --blue-700: #1976d2;
+  --blue-800: #1565c0;
+  --blue-900: #0d47a1;
+
+  /* === PURPLE SCALE === */
+  --purple-50: #f3e5f5;
+  --purple-100: #e1bee7;
+  --purple-200: #ce93d8;
+  --purple-300: #ba68c8;
+  --purple-400: #ab47bc;
+  --purple-500: #9c27b0; /* Color base */
+  --purple-600: #8e24aa;
+  --purple-700: #7b1fa2;
+  --purple-800: #6a1b9a;
+  --purple-900: #4a148c;
+
+  /* === GRAY SCALE === */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827; /* Más usado */
+
+  /* === ALIAS SEMÁNTICOS PARA GRISES === */
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-600);
+  --text-muted: var(--gray-500);
+  --border-light: var(--gray-200);
+  --border-medium: var(--gray-300);
+  --border-dark: var(--gray-700);
+  --bg-light: var(--gray-50);
+  --bg-medium: var(--gray-100);
+  --bg-dark: var(--gray-900);
+
+  /* === ESTADOS === */
+  --success: #22c55e; /* Verde éxito */
+  --warning: #f59e0b; /* Amarillo advertencia */
+  --error: #ef4444; /* Rojo error */
+  --info: #6366f1; /* Azul información */
+
+  /* === ESTADOS CON ESCALAS === */
+  --success-light: #dcfce7;
+  --success-dark: #166534;
+  --warning-light: #fef3c7;
+  --warning-dark: #92400e;
+  --error-light: #fecaca;
+  --error-dark: #991b1b;
+  --info-light: #e0e7ff;
+  --info-dark: #3730a3;
+
+  /* === SOMBRAS === */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
+
+  /* === SOMBRAS DE COLOR === */
+  --shadow-orange: 0 8px 25px rgba(255, 87, 34, 0.3);
+  --shadow-blue: 0 8px 25px rgba(33, 150, 243, 0.3);
+  --shadow-green: 0 8px 25px rgba(76, 175, 80, 0.3);
+  --shadow-purple: 0 8px 25px rgba(156, 39, 176, 0.3);
+
+  /* === GRADIENTES DE SERVICIOS === */
+  --gradient-orange: linear-gradient(90deg, var(--orange) 0%, transparent 70%);
+  --gradient-green: linear-gradient(90deg, var(--green) 0%, transparent 70%);
+  --gradient-blue: linear-gradient(90deg, var(--blue) 0%, transparent 70%);
+  --gradient-purple: linear-gradient(90deg, var(--purple) 0%, transparent 70%);
+
+  /* === GRADIENTES DE OVERLAY === */
+  --gradient-hero: linear-gradient(
+    135deg,
+    rgba(37, 99, 235, 0.6) 0%,
+    rgba(29, 78, 216, 0.5) 50%,
+    rgba(31, 41, 55, 0.4) 100%
+  );
+
+  --gradient-dark: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    rgba(0, 0, 0, 0.2) 80%
+  );
+}
+
+/* ============================================ */
+/* UTILIDADES CSS PERSONALIZADAS               */
+/* ============================================ */
+
+@layer utilities {
+  /* === UTILIDADES DE FONDO === */
+  .bg-orange {
+    background-color: var(--orange);
+  }
+  .bg-orange-100 {
+    background-color: var(--orange-100);
+  }
+  .bg-orange-500 {
+    background-color: var(--orange-500);
+  }
+  .bg-green {
+    background-color: var(--green);
+  }
+  .bg-blue {
+    background-color: var(--blue);
+  }
+  .bg-purple {
+    background-color: var(--purple);
+  }
+  .bg-dark {
+    background-color: var(--bg-dark);
+  }
+  .bg-medium {
+    background-color: var(--bg-medium);
+  }
+
+  /* === UTILIDADES DE TEXTO === */
+  .text-orange {
+    color: var(--orange);
+  }
+  .text-green {
+    color: var(--green);
+  }
+  .text-blue {
+    color: var(--blue);
+  }
+  .text-purple {
+    color: var(--purple);
+  }
+  .text-muted {
+    color: var(--text-muted);
+  }
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+  .placeholder-muted::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
+  }
+
+  /* === UTILIDADES DE BORDE === */
+  .border-orange {
+    border-color: var(--orange);
+  }
+  .border-green {
+    border-color: var(--green);
+  }
+  .border-blue {
+    border-color: var(--blue);
+  }
+  .border-purple {
+    border-color: var(--purple);
+  }
+  .border-border-dark {
+    border-color: var(--border-dark);
+  }
+
+  /* === UTILIDADES DE HOVER === */
+  .hover\:text-orange:hover {
+    color: var(--orange);
+  }
+  .hover\:text-green:hover {
+    color: var(--green);
+  }
+  .hover\:text-blue:hover {
+    color: var(--blue);
+  }
+  .hover\:text-purple:hover {
+    color: var(--purple);
+  }
+
+  /* === UTILIDADES DE GRADIENTE === */
+  .gradient-orange {
+    background: var(--gradient-orange);
+  }
+  .gradient-green {
+    background: var(--gradient-green);
+  }
+  .gradient-blue {
+    background: var(--gradient-blue);
+  }
+  .gradient-purple {
+    background: var(--gradient-purple);
+  }
+
+  /* === UTILIDADES DE SOMBRA === */
+  .shadow-orange {
+    box-shadow: var(--shadow-orange);
+  }
+  .shadow-blue {
+    box-shadow: var(--shadow-blue);
+  }
+  .shadow-green {
+    box-shadow: var(--shadow-green);
+  }
+  .shadow-purple {
+    box-shadow: var(--shadow-purple);
+  }
+}
+
+/* ============================================ */
+/* ESTILOS BASE PERSONALIZADOS                 */
+/* ============================================ */
+
 @layer base {
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
   }
-  
+
   body {
-    @apply bg-white text-gray-900;
+    @apply bg-white;
+    color: var(--text-primary);
   }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Roboto Slab', serif;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Roboto Slab", serif;
+    color: var(--text-primary);
   }
 }

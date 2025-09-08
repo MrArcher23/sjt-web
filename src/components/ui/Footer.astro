@@ -1,0 +1,180 @@
+---
+/**
+ * Footer Component - Componente de pie de página reutilizable
+ * 
+ * @example
+ * <Footer
+ *   companyName="Mi Empresa"
+ *   services={[
+ *     { name: "Servicio 1", href: "/servicio1", color: "orange" },
+ *     { name: "Servicio 2", href: "/servicio2", color: "green" }
+ *   ]}
+ *   contactInfo={{
+ *     email: "contacto@empresa.com",
+ *     phone: "+52 999 123 4567",
+ *     address: "Ciudad, Estado"
+ *   }}
+ * />
+ */
+export interface Props {
+  companyName?: string;
+  companyDescription?: string;
+  services?: Array<{
+    name: string;
+    href: string;
+    color?: string;
+  }>;
+  quickLinks?: Array<{
+    text: string;
+    href: string;
+  }>;
+  contactInfo?: {
+    email: string;
+    phone: string;
+    address: string;
+  };
+  showSocialLinks?: boolean;
+  backgroundColor?: string;
+  textColor?: string;
+}
+
+const {
+  companyName = "SJT Contratistas S.A. de C.V.",
+  companyDescription = "Especializados en construcción, obra civil, terracerías y desarrollo integral de proyectos en el sureste mexicano.",
+  services = [
+    { name: "Construcción & Obra Civil", href: "/servicios#construccion", color: "orange" },
+    { name: "Terracerías & Carreteras", href: "/servicios#terracerias", color: "green" },
+    { name: "Electromecánica", href: "/servicios#electromecanica", color: "blue" },
+    { name: "Desarrollo de Proyectos", href: "/servicios#desarrollo-proyectos", color: "purple" }
+  ],
+  quickLinks = [
+    { text: "Inicio", href: "/" },
+    { text: "Nosotros", href: "/nosotros" },
+    { text: "Servicios", href: "/servicios" },
+    { text: "Quienes Somos", href: "/quienes-somos" },
+    { text: "Portafolio", href: "/portafolio" }
+  ],
+  contactInfo = {
+    email: "contacto@sjtcontratistas.com",
+    phone: "+52 (999) 123-4567",
+    address: "Mérida, Yucatán, México"
+  },
+  showSocialLinks = false,
+  backgroundColor = "bg-dark",
+  textColor = "text-white"
+} = Astro.props;
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer class={`footer-component ${backgroundColor} ${textColor} py-12`}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- Company Information -->
+      <div class="space-y-4">
+        <h3 class="text-xl font-bold text-white mb-4">
+          {companyName}
+        </h3>
+        <p class="text-muted text-sm leading-relaxed">
+          {companyDescription}
+        </p>
+
+        <!-- Social Links -->
+        {showSocialLinks && (
+          <div class="flex space-x-4 mt-4">
+            <!-- Espacio para íconos sociales futuros -->
+            <div class="text-muted text-sm">
+              Síguenos en redes sociales (próximamente)
+            </div>
+          </div>
+        )}
+      </div>
+
+      <!-- Services -->
+      <div class="space-y-4">
+        <h4 class="text-lg font-semibold text-white mb-4">
+          Nuestros Servicios
+        </h4>
+        <ul class="space-y-2 text-sm text-muted">
+          {services.map((service) => (
+            <li>
+              <a
+                href={service.href}
+                class={service.color === 'green' ? 'hover:text-green transition-colors' :
+                       service.color === 'blue' ? 'hover:text-blue transition-colors' :
+                       service.color === 'purple' ? 'hover:text-purple transition-colors' :
+                       'hover:text-orange transition-colors'}
+              >
+                • {service.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="space-y-4">
+        <h4 class="text-lg font-semibold text-white mb-4">
+          Enlaces Rápidos
+        </h4>
+        <ul class="space-y-2 text-sm text-muted">
+          {quickLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="hover:text-white transition-colors"
+              >
+                • {link.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="space-y-4">
+        <h4 class="text-lg font-semibold text-white mb-4">Contacto</h4>
+        <div class="space-y-2 text-sm text-muted">
+          <p><strong>General:</strong> {contactInfo.email}</p>
+          <p><strong>Teléfono:</strong> {contactInfo.phone}</p>
+          <p><strong>Dirección:</strong> {contactInfo.address}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="border-t border-border-dark mt-8 pt-8 text-center">
+      <p class="text-secondary text-sm">
+        © {currentYear} {companyName} - Todos los derechos reservados
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer-component {
+    position: relative;
+  }
+
+  /* Hover effects for links */
+  .footer-component a:hover {
+    transform: translateX(2px);
+    transition: all 0.2s ease-in-out;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .footer-component .grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    
+    .footer-component h3 {
+      font-size: 1.125rem;
+    }
+    
+    .footer-component h4 {
+      font-size: 1rem;
+    }
+  }
+</style>

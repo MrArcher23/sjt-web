@@ -1,0 +1,140 @@
+---
+// TitleSectionInfo.astro - Componente combinado que incluye SectionTitle + SectionInfo2
+// Diseñado para recibir datos de Strapi Cloud y eliminar código repetitivo
+
+import SectionTitle from "./ui/SectionTitle.astro";
+import SectionInfo2 from "./ui/SectionInfo2.astro";
+
+export interface Props {
+  // Props para SectionTitle
+  highlightText?: string;
+  title: string;
+  highlightColor?: "orange" | "red" | "blue" | "green" | "purple" | "custom";
+  customColor?: string;
+  alignment?: "left" | "center" | "right";
+  size?: "sm" | "md" | "lg" | "xl";
+
+  // Props para SectionInfo2
+  titleSection: string;
+  description: string;
+  image: string;
+  imageAlt?: string;
+  imagePosition?: "left" | "right";
+  buttonText?: string;
+  buttonLink?: string;
+  floatingElement1?: {
+    number: string;
+    title: string;
+    subtitle?: string;
+    svg?: string;
+    bgColor?: string;
+    textColor?: string;
+  };
+  floatingElement2?: {
+    number: string;
+    title: string;
+    subtitle?: string;
+    svg?: string;
+    bgColor?: string;
+    textColor?: string;
+  };
+
+  // Props adicionales para el contenedor
+  backgroundColor?: string;
+  containerClass?: string;
+  sectionClass?: string;
+  titleContainerClass?: string;
+}
+
+const {
+  // SectionTitle props
+  highlightText,
+  title,
+  highlightColor = "blue",
+  customColor,
+  alignment = "left",
+  size = "lg",
+
+  // SectionInfo2 props
+  titleSection,
+  description,
+  image,
+  imageAlt,
+  imagePosition = "right",
+  buttonText,
+  buttonLink,
+  floatingElement1,
+  floatingElement2,
+
+  // Container props
+  backgroundColor = "bg-white",
+  containerClass = "",
+  sectionClass = "py-16",
+  titleContainerClass = "mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12",
+} = Astro.props;
+---
+
+<section
+  class={`strapi-about-section ${sectionClass} ${backgroundColor} ${containerClass}`}
+>
+  <!-- SectionTitle Container -->
+  <div class={titleContainerClass}>
+    <SectionTitle
+      highlightText={highlightText}
+      title={title}
+      highlightColor={highlightColor}
+      customColor={customColor}
+      alignment={alignment}
+      size={size}
+    />
+  </div>
+
+  <!-- SectionInfo2 Component -->
+  <SectionInfo2
+    title={titleSection}
+    description={description}
+    image={image}
+    imageAlt={imageAlt}
+    imagePosition={imagePosition}
+    buttonText={buttonText}
+    buttonLink={buttonLink}
+    floatingElement1={floatingElement1}
+    floatingElement2={floatingElement2}
+    backgroundColor="transparent"
+    containerClass="py-0"
+  />
+</section>
+
+<style>
+  .strapi-about-section {
+    @apply relative;
+  }
+
+  /* Asegurar que el componente tenga un flujo visual coherente */
+  .strapi-about-section .section-title {
+    @apply mb-0;
+  }
+
+  /* Animaciones de entrada suaves */
+  .strapi-about-section {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .strapi-about-section {
+      @apply py-12;
+    }
+  }
+</style>

@@ -9,7 +9,6 @@ export interface Props {
   accentColor?: string;
   backgroundColor?: string;
   placeholder?: string;
-  buttonText?: string;
 }
 
 const {
@@ -19,10 +18,9 @@ const {
   phone,
   email,
   address,
-  accentColor = "#FF5722",
-  backgroundColor = "bg-gray-900",
+  accentColor = "var(--orange)",
+  backgroundColor = "bg-dark",
   placeholder = "Escribe tu Email...",
-  buttonText = "Enviar",
 } = Astro.props;
 ---
 
@@ -91,7 +89,7 @@ const {
           >
             {title}
           </h2>
-          {subtitle && <p class="text-lg text-gray-300 mb-6">{subtitle}</p>}
+          {subtitle && <p class="text-lg text-muted mb-6">{subtitle}</p>}
         </div>
 
         <!-- Email subscription form -->
@@ -102,7 +100,7 @@ const {
             <input
               type="email"
               placeholder={placeholder}
-              class="flex-1 bg-transparent text-white placeholder-gray-300 px-6 py-4 focus:outline-none text-base"
+              class="flex-1 bg-transparent text-white px-6 py-4 focus:outline-none text-base placeholder-muted"
             />
             <button
               type="submit"
@@ -152,7 +150,7 @@ const {
           </div>
           <div>
             <h3
-              class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-1"
+              class="text-sm font-semibold text-secondary uppercase tracking-wide mb-1"
             >
               Teléfono
             </h3>
@@ -188,7 +186,7 @@ const {
           </div>
           <div>
             <h3
-              class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-1"
+              class="text-sm font-semibold text-secondary uppercase tracking-wide mb-1"
             >
               Atención A Clientes
             </h3>
@@ -229,7 +227,7 @@ const {
           </div>
           <div>
             <h3
-              class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-1"
+              class="text-sm font-semibold text-secondary uppercase tracking-wide mb-1"
             >
               Dirección
             </h3>
