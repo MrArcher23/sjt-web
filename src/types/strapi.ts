@@ -252,3 +252,75 @@ export interface Header {
 
 export type HeadersResponse = StrapiResponse<StrapiEntity<Header>[]>;
 export type HeaderResponse = StrapiResponse<StrapiEntity<Header>>;
+
+// === PROJECT SHOWCASE TYPES ===
+export interface ProjectStat {
+  value: string;
+  label: string;
+}
+
+export interface HighlightItem {
+  text: string;
+}
+
+export interface ProjectShowcase {
+  identifier: string;
+  title: string;
+  subtitle?: string;
+  description: string;
+  category: string;
+  location: string;
+  year: string;
+  client?: string;
+  heroImage?: StrapiMedia;
+  heroImageAlt?: string;
+  stats?: ProjectStat[];
+  highlights?: HighlightItem[];
+  titleHighlights?: string;
+  titleStats?: string;
+  categoryColor:
+    | "var(--orange)"
+    | "var(--green)"
+    | "var(--blue)"
+    | "var(--purple)"
+    | "var(--red)"
+    | "custom";
+  customCategoryColor?: string;
+}
+
+export type ProjectShowcasesResponse = StrapiResponse<
+  StrapiEntity<ProjectShowcase>[]
+>;
+export type ProjectShowcaseResponse = StrapiResponse<
+  StrapiEntity<ProjectShowcase>
+>;
+
+// === PROJECT CARD TYPES ===
+export interface TagItem {
+  name: string;
+}
+
+export interface ProjectCard {
+  title: string;
+  category: string;
+  categoryColor:
+    | "var(--orange)"
+    | "var(--green)"
+    | "var(--blue)"
+    | "var(--purple)"
+    | "var(--red)"
+    | "custom";
+  customCategoryColor?: string;
+  location: string;
+  year: string;
+  image?: StrapiMedia;
+  imageAlt?: string;
+  description: string;
+  client?: string;
+  status: "completed" | "in-progress" | "upcoming";
+  href?: string;
+  tags?: TagItem[];
+}
+
+export type ProjectCardsResponse = StrapiResponse<StrapiEntity<ProjectCard>[]>;
+export type ProjectCardResponse = StrapiResponse<StrapiEntity<ProjectCard>>;

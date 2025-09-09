@@ -4,9 +4,26 @@
 // Layout
 import BaseLayout from "../layouts/BaseLayout.astro";
 
+// Strapi
+import strapi from "../utils/strapi";
+import type { 
+  ProjectCard as ProjectCardType,
+  ProjectShowcase as ProjectShowcaseType 
+} from "../types/strapi";
+
 // Importar imágenes locales específicas para esta página
 import panoramica1 from "../assets/images/work/panoramica1.jpeg";
 import obra1 from "../assets/images/work/obra1.jpeg";
+import doraMaria from "../assets/images/work/DoraMaria.jpg";
+import ganadero from "../assets/images/work/ganadero.jpg";
+import centla from "../assets/images/work/centla.jpg";
+import pavimento from "../assets/images/work/pavimento-hidraulico.jpg";
+import anticorrosion from "../assets/images/work/anticorrosion.jpg";
+import procesoobra1 from "../assets/images/work/procesoobra1.jpg";
+import procesoobra2 from "../assets/images/work/procesoobra2.jpg";
+import procesoobra3 from "../assets/images/work/procesoobra3.jpg";
+import procesoobra4 from "../assets/images/work/procesoobra4.jpg";
+
 
 // Componentes específicos para esta página
 import HeroSection from "../components/HeroSection.astro";
@@ -45,174 +62,195 @@ const featuredProject = {
 };
 
 const carouselProject = {
-  title: "Carretera Federal Villahermosa-Frontera",
+  title: "Infraestructura Vial Integral en Frontera, Centla, Tabasco",
   category: "Terracerías & Carreteras",
   categoryColor: "var(--green)",
   description:
-    "Modernización de 45 km de carretera federal con tecnología avanzada de pavimentación y sistemas de drenaje inteligente.",
+    "Proyecto de construcción completa de infraestructura urbana en la Calle Carlos A. Madrazo, entre las calles José María Pino Suárez y Andrés Sánchez Magallanes, Frontera, Centla, Tabasco.",
   images: [
     {
-      src: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+      src: procesoobra1.src,
       alt: "Vista panorámica de la carretera en construcción",
-      caption: "Fase inicial: Movimiento de tierra y preparación del terreno",
+      caption: "Fase de demolición y excavación.",
     },
     {
-      src: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+      src: procesoobra2.src,
       alt: "Equipos de construcción trabajando",
-      caption: "Fase intermedia: Colocación de base y sub-base",
+      caption: "Compactación del terreno.",
     },
     {
-      src: "https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+      src: procesoobra3.src,
       alt: "Pavimentación asfáltica en progreso",
-      caption: "Fase final: Pavimentación asfáltica y señalización",
+      caption: "Colocación de material base",
     },
     {
-      src: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+      src: procesoobra4.src,
       alt: "Carretera terminada",
-      caption: "Proyecto completado: Carretera moderna de 4 carriles",
+      caption: "Pavimento terminado.",
     },
   ],
 };
 
 // Categorías para filtros
-const filterCategories = [
-  {
-    id: "construccion",
-    label: "Construcción & Obra Civil",
-    color: "var(--orange)",
-    count: 12,
-  },
-  {
-    id: "terracerias",
-    label: "Terracerías & Carreteras",
-    color: "var(--green)",
-    count: 8,
-  },
-  {
-    id: "electromecanica",
-    label: "Electromecánica",
-    color: "var(--blue)",
-    count: 6,
-  },
-  {
-    id: "desarrollo",
-    label: "Desarrollo Integral",
-    color: "var(--purple)",
-    count: 4,
-  },
-];
+// const filterCategories = [
+//   {
+//     id: "construccion",
+//     label: "Construcción & Obra Civil",
+//     color: "var(--orange)",
+//     count: 12,
+//   },
+//   {
+//     id: "terracerias",
+//     label: "Terracerías & Carreteras",
+//     color: "var(--green)",
+//     count: 8,
+//   },
+//   {
+//     id: "electromecanica",
+//     label: "Electromecánica",
+//     color: "var(--blue)",
+//     count: 6,
+//   },
+//   {
+//     id: "desarrollo",
+//     label: "Desarrollo Integral",
+//     color: "var(--purple)",
+//     count: 4,
+//   },
+// ];
 
-// Grid de proyectos
-const projectsGrid = [
+// ==================== OBTENER PROYECTOS DE STRAPI ====================
+let strapiProjects: ProjectCardType[] = [];
+let portafolioDestacadoStrapi: ProjectShowcaseType | null = null;
+
+// 🚀 OPTIMIZACIÓN: Llamadas paralelas con Promise.all()
+try {
+  console.log("🔍 Obteniendo datos de portafolio en paralelo...");
+  const startTime = performance.now();
+  
+  const [response, portafolioDestacadoStrapi_temp] = await Promise.all([
+    strapi.getProjectCards({
+      pagination: { pageSize: 100 }, // Ajustar según tu catálogo
+      sort: ["year:desc", "createdAt:desc"],
+    }),
+    strapi.getProjectShowcaseByIdentifier("portafolio-destacado")
+  ]);
+  
+  // Asignar resultados
+  strapiProjects = response?.data || [];
+  portafolioDestacadoStrapi = portafolioDestacadoStrapi_temp;
+  
+  const endTime = performance.now();
+  const duration = endTime - startTime;
+  
+  console.log(`✅ Datos de portafolio obtenidos en paralelo - Tiempo: ${duration.toFixed(2)}ms`);
+  console.log(`📊 Proyectos: ${strapiProjects.length}, Destacado: ${portafolioDestacadoStrapi ? "✅" : "❌"}`);
+  
+} catch (error) {
+  console.warn("⚠️ Error obteniendo datos de portafolio:", error);
+}
+
+// Transformar datos de Strapi al formato esperado por ProjectCard
+const strapiProjectsFormatted = strapiProjects.map((project) => ({
+  title: project.title,
+  category: project.category,
+  categoryColor:
+    project.categoryColor === "custom"
+      ? project.customCategoryColor || "var(--blue)"
+      : project.categoryColor,
+  location: project.location,
+  year: project.year,
+  image: project.image?.url || "/images/default-project.jpg",
+  description: project.description,
+  client: project.client || undefined,
+  status: project.status,
+  tags: project.tags?.map((tag) => tag.name) || [],
+  href: `/proyecto/${project.title
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]/g, "")}`,
+}));
+
+// Grid de proyectos hardcodeados (mantener como fallback)
+const projectsGridHardcoded = [
   {
-    title: "Planta de Tratamiento de Aguas Residuales",
+    title: "Rehabilitacion de nave 2 DEL “Parque Tabasco, Dora Maria",
     category: "Construcción & Obra Civil",
     categoryColor: "var(--orange)",
-    location: "Comalcalco, Tabasco",
+    location: "Vhsa, Tabasco",
     year: "2024",
-    image:
-      "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: doraMaria.src,
     description:
-      "Construcción integral de planta de tratamiento con capacidad para 50,000 habitantes, incluyendo sistemas avanzados de purificación y control ambiental.",
-    client: "CONAGUA",
+      "Impermeabilización • Reparación de fisuras y mantenimiento a canalones • Mantenimiento a baños • Cancelería de aluminio • Ducteria, luminarias y salidas de corriente. • Aplicación de pintura en muros.",
+    client: "Secretaria de Turismo",
     status: "completed" as const,
-    tags: ["Construcción", "Ambiental", "Ingeniería Civil"],
+    tags: ["Construcción", "Rehabilitación", "Ingeniería Civil"],
   },
   {
-    title: "Modernización de Carretera Estatal Tab-180",
+    title: "Mantenimiento de Stand Ganadero del \"Parque Tabasco, Dora Maria\" ",
+    category: "Construcción & Obra Civil",
+    categoryColor: "var(--orange)",
+    location: "Vhsa, Tabasco",
+    year: "2023",
+    image:ganadero.src,
+    description:
+      "Reparaciones en fibra de vidrio • Limpieza de áreas verdes • Demolición y reposición de Pavimiento • Aplicación de pintura • Construcción de bardas • Limpieza y reparaciones en Techumbres.",
+    client: "Secretaria de Turismo",
+    status: "completed" as const,
+    tags: ["Construcción", "Rehabilitación", "Ingeniería Civil"],
+  },
+  {
+    title: "Rehabilitacion de pavimento asfaltico",
     category: "Terracerías & Carreteras",
     categoryColor: "var(--green)",
-    location: "Centro, Tabasco",
-    year: "2023",
-    image:
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    description:
-      "Rehabilitación y ampliación de 28 km de carretera estatal, incluyendo construcción de puentes vehiculares y sistemas de drenaje.",
-    status: "completed" as const,
-    tags: ["Carreteras", "Puentes", "Drenaje"],
-  },
-  {
-    title: "Sistema HVAC para Complejo Hospitalario",
-    category: "Electromecánica",
-    categoryColor: "var(--blue)",
-    location: "Villahermosa, Tabasco",
+    location: "Centla, Tabasco",
     year: "2024",
-    image:
-      "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: centla.src,
     description:
-      "Instalación de sistemas de climatización y ventilación para hospital de especialidades con 180 camas, incluyendo áreas críticas.",
-    client: "Sector Salud",
-    status: "in-progress" as const,
-    tags: ["HVAC", "Hospitalario", "Sistemas Críticos"],
+      "Rehabilitacion de pavimento asfaltico en tramos aislados en el camino ramal miramar del km 0+000 al km 4+600, en el municipio de centla, tabasco.",
+    client: "SCT",
+    status: "completed" as const,
+    tags: ["Construcción", "Rehabilitación", "Ingeniería Civil"],
   },
   {
-    title: "Edificio Corporativo Grupo Pemex",
-    category: "Desarrollo Integral",
-    categoryColor: "var(--purple)",
-    location: "Villahermosa, Tabasco",
+    title: "Construcción de pavimento de concreto hidráulico",
+    category: "Terracerías & Carreteras",
+    categoryColor: "var(--green)",
+    location: "Centla, Tabasco",
     year: "2023",
-    image:
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: pavimento.src,
     description:
-      "Construcción llave en mano de edificio corporativo de 12 niveles con tecnología inteligente y certificación LEED Gold.",
+      "Esta obra transformará significativamente la conectividad del centro de Frontera, beneficiando tanto el tránsito vehicular como peatonal. La inclusión del sistema de alumbrado público mejorará sustancialmente la seguridad nocturna y la calidad de vida de los habitantes de la zona.",
+    client: "SCT",
+    status: "completed" as const,
+    tags: ["Construcción", "Rehabilitación", "Ingeniería Civil"],
+  },
+  {
+    title: "Suministro y aplicacion de proteccion anticorrosiva",
+    category: "Construcción & Obra Civil", 
+    categoryColor: "var(--orange)",
+    location: "Campo Samaria, Tabasco",
+    year: "2024",
+    image: anticorrosion.src,
+    description:
+      "Suministro y aplicacion de proteccion anticorrosiva, mediante sistema no.3 de acuerdo con la et-053-pemex-2019 en lineas, arreglos, accesorios y valvulas en tuberia de 6\" a 12\" en el area de la refineria de dos bocas, tabasco.",
     client: "PEMEX",
     status: "completed" as const,
-    tags: ["Corporativo", "LEED", "Tecnología Inteligente"],
-  },
-  {
-    title: "Puente Vehicular Grijalva",
-    category: "Construcción & Obra Civil",
-    categoryColor: "var(--orange)",
-    location: "Cunduacán, Tabasco",
-    year: "2023",
-    image:
-      "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    description:
-      "Construcción de puente atirantado de 450 metros de longitud sobre el río Grijalva, con tecnología sismorresistente.",
-    status: "completed" as const,
-    tags: ["Puentes", "Estructural", "Sismorresistente"],
-  },
-  {
-    title: "Autopista Villahermosa-Teapa (Tramo 3)",
-    category: "Terracerías & Carreteras",
-    categoryColor: "var(--green)",
-    location: "Tabasco",
-    year: "2024",
-    image:
-      "https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    description:
-      "Construcción de 35 km de autopista de cuota con 4 carriles, incluyendo 3 distribuidores viales y sistemas inteligentes de peaje.",
-    status: "in-progress" as const,
-    tags: ["Autopista", "Distribuidores", "Peaje Inteligente"],
-  },
-  {
-    title: "Planta Industrial Petroquímica",
-    category: "Electromecánica",
-    categoryColor: "var(--blue)",
-    location: "Coatzacoalcos, Veracruz",
-    year: "2024",
-    image:
-      "https://images.unsplash.com/photo-1585435557343-3b092031d9be?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    description:
-      "Instalación de equipos de proceso y sistemas de control automatizado para planta petroquímica con capacidad de 200,000 barriles/día.",
-    client: "PEMEX Transformación Industrial",
-    status: "upcoming" as const,
-    tags: ["Petroquímica", "Automatización", "Proceso Industrial"],
-  },
-  {
-    title: "Centro Logístico Multifuncional",
-    category: "Desarrollo Integral",
-    categoryColor: "var(--purple)",
-    location: "Cárdenas, Tabasco",
-    year: "2025",
-    image:
-      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    description:
-      "Desarrollo integral de centro logístico con área de almacenamiento, oficinas administrativas y plataforma intermodal.",
-    status: "upcoming" as const,
-    tags: ["Logística", "Almacenamiento", "Intermodal"],
-  },
+    tags: ["Construcción", "Rehabilitación", "Ingeniería Civil"],
+  }
 ];
+
+// ==================== COMBINAR PROYECTOS ====================
+// Priorizar proyectos de Strapi, usar hardcodeados como fallback
+const projectsGrid = [
+  ...strapiProjectsFormatted,
+  // Si no hay proyectos de Strapi, usar los hardcodeados
+  ...(strapiProjectsFormatted.length === 0 ? projectsGridHardcoded : []),
+];
+
+console.log(
+  `🎯 Total de proyectos en grid: ${projectsGrid.length} (${strapiProjectsFormatted.length} de Strapi + ${strapiProjectsFormatted.length === 0 ? projectsGridHardcoded.length : 0} hardcodeados)`
+);
 
 // Props específicas para el Layout de Portafolio
 const layoutProps = {
@@ -230,8 +268,8 @@ const layoutProps = {
     title: "¿TIENES UN PROYECTO EN MENTE?",
     subtitle:
       "Nuestro equipo está listo para convertir tu visión en realidad. Contáctanos para una consulta personalizada.",
-    phone: "(993) 324-5488",
-    email: "proyectos@sjtcontratistas.com",
+    phone: "(993) 167-4490",
+    email: "asastre@sjtcontratistas.com",
     address: "Carr. Reforma-Dos Bocas s/n, Cumuapa 1ra. Tabasco",
     accentColor: "var(--orange)",
     backgroundColor: "bg-dark",
@@ -273,20 +311,42 @@ const layoutProps = {
         </p>
       </div>
 
-      <!-- Featured Project -->
-      <ProjectShowcase
-        title={featuredProject.title}
-        subtitle={featuredProject.subtitle}
-        description={featuredProject.description}
-        category={featuredProject.category}
-        location={featuredProject.location}
-        year={featuredProject.year}
-        client={featuredProject.client}
-        heroImage={featuredProject.heroImage}
-        categoryColor={featuredProject.categoryColor}
-        stats={featuredProject.stats}
-        highlights={featuredProject.highlights}
-      />
+      <!-- Featured Project desde Strapi -->
+      {portafolioDestacadoStrapi ? (
+        <ProjectShowcase
+          title={portafolioDestacadoStrapi.title}
+          subtitle={portafolioDestacadoStrapi.subtitle}
+          description={portafolioDestacadoStrapi.description}
+          category={portafolioDestacadoStrapi.category}
+          location={portafolioDestacadoStrapi.location}
+          year={portafolioDestacadoStrapi.year}
+          client={portafolioDestacadoStrapi.client}
+          heroImage={portafolioDestacadoStrapi.heroImage?.url || featuredProject.heroImage}
+          heroImageAlt={portafolioDestacadoStrapi.heroImageAlt || portafolioDestacadoStrapi.heroImage?.alternativeText}
+          categoryColor={portafolioDestacadoStrapi.categoryColor === "custom" ? portafolioDestacadoStrapi.customCategoryColor || "var(--purple)" : portafolioDestacadoStrapi.categoryColor}
+          stats={portafolioDestacadoStrapi.stats || []}
+          highlights={portafolioDestacadoStrapi.highlights?.map(h => h.text) || []}
+          titleHighlights={portafolioDestacadoStrapi.titleHighlights}
+          titleStats={portafolioDestacadoStrapi.titleStats}
+        />
+      ) : (
+        <!-- Fallback: Proyecto hardcodeado si no hay datos de Strapi -->
+        <ProjectShowcase
+          title={featuredProject.title}
+          subtitle={featuredProject.subtitle}
+          description={featuredProject.description}
+          category={featuredProject.category}
+          location={featuredProject.location}
+          year={featuredProject.year}
+          client={featuredProject.client}
+          heroImage={featuredProject.heroImage}
+          categoryColor={featuredProject.categoryColor}
+          stats={featuredProject.stats}
+          highlights={featuredProject.highlights}
+          titleHighlights="Aspectos Destacados"
+          titleStats="Datos del Proyecto"
+        />
+      )}
     </div>
   </section>
 
@@ -340,7 +400,7 @@ const layoutProps = {
       </div>
 
       <!-- Project Filter -->
-      <ProjectFilter categories={filterCategories} defaultCategory="all" />
+      <!-- <ProjectFilter categories={filterCategories} defaultCategory="all" /> -->
 
       <!-- Projects Grid -->
       <div
@@ -403,66 +463,60 @@ const layoutProps = {
     </div>
   </section>
 
-  <!-- Stats Section -->
-  <!-- <section
-    class="py-16 lg:py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white"
-  >
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <SectionTitle
-          highlightText="nuestros números"
-          title="Estadísticas de Nuestro Portafolio"
-          highlightColor="orange"
-          alignment="center"
-          size="lg"
-        />
+  <!-- <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <SectionTitle
+        highlightText="nuestros números"
+        title="Estadísticas de Nuestro Portafolio"
+        highlightColor="orange"
+        alignment="center"
+        size="lg"
+      />
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div class="text-center">
+        <div class="text-5xl lg:text-6xl font-black text-orange-400 mb-4">
+          30+
+        </div>
+        <div class="text-lg font-semibold text-white mb-2">
+          Proyectos Completados
+        </div>
+        <div class="text-sm text-gray-300">En los últimos 5 años</div>
       </div>
 
-      
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-        <div class="text-center">
-          <div class="text-5xl lg:text-6xl font-black text-orange-400 mb-4">
-            30+
-          </div>
-          <div class="text-lg font-semibold text-white mb-2">
-            Proyectos Completados
-          </div>
-          <div class="text-sm text-gray-300">En los últimos 5 años</div>
+      <div class="text-center">
+        <div class="text-5xl lg:text-6xl font-black text-green-400 mb-4">
+          850M
         </div>
+        <div class="text-lg font-semibold text-white mb-2">
+          Inversión Total (MXN)
+        </div>
+        <div class="text-sm text-gray-300">En proyectos ejecutados</div>
+      </div>
 
-        <div class="text-center">
-          <div class="text-5xl lg:text-6xl font-black text-green-400 mb-4">
-            850M
-          </div>
-          <div class="text-lg font-semibold text-white mb-2">
-            Inversión Total (MXN)
-          </div>
-          <div class="text-sm text-gray-300">En proyectos ejecutados</div>
+      <div class="text-center">
+        <div class="text-5xl lg:text-6xl font-black text-blue-400 mb-4">
+          120km
         </div>
+        <div class="text-lg font-semibold text-white mb-2">
+          Carreteras Construidas
+        </div>
+        <div class="text-sm text-gray-300">Infraestructura vial</div>
+      </div>
 
-        <div class="text-center">
-          <div class="text-5xl lg:text-6xl font-black text-blue-400 mb-4">
-            120km
-          </div>
-          <div class="text-lg font-semibold text-white mb-2">
-            Carreteras Construidas
-          </div>
-          <div class="text-sm text-gray-300">Infraestructura vial</div>
+      <div class="text-center">
+        <div class="text-5xl lg:text-6xl font-black text-purple-400 mb-4">
+          15
         </div>
-
-        <div class="text-center">
-          <div class="text-5xl lg:text-6xl font-black text-purple-400 mb-4">
-            15
-          </div>
-          <div class="text-lg font-semibold text-white mb-2">
-            Estados de la República
-          </div>
-          <div class="text-sm text-gray-300">Con presencia activa</div>
+        <div class="text-lg font-semibold text-white mb-2">
+          Estados de la República
         </div>
+        <div class="text-sm text-gray-300">Con presencia activa</div>
       </div>
     </div>
-  </section> -->
-</BaseLayout>
+  </div> -->
+</BaseLayout> 
 
 <style>
   /* Custom animations for portfolio page */

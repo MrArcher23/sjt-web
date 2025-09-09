@@ -161,11 +161,11 @@ const headerClasses = `${stickyClass} ${backgroundClass}`;
   }
 
   .nav-link {
-    @apply text-white text-base font-medium hover:text-gray-200 transition-colors duration-200 relative;
+    @apply text-white text-base font-medium hover:text-gray-200 hover:font-bold transition-all duration-200 relative;
   }
 
   .nav-link:hover::after {
-    @apply absolute bottom-0 left-0 w-full h-0.5 transform scale-x-100;
+    @apply absolute bottom-0 left-0 w-full h-1 transform scale-x-100;
     content: "";
     background: linear-gradient(
       90deg,

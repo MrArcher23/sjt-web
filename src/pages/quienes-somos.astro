@@ -20,6 +20,7 @@ import ProjectShowcase from "../components/ui/ProjectShowcase.astro";
 import strapi from "../utils/strapi";
 import type {
   TitleSectionInfo as TitleSectionInfoType,
+  ProjectShowcase as ProjectShowcaseType,
 } from "../types/strapi";
 import ColorBorderCard from "../components/ui/ColorBorderCard.astro";
 
@@ -39,9 +40,9 @@ const layoutProps = {
     title: "¿LISTO PARA TU PRÓXIMO PROYECTO?",
     subtitle:
       "Contacta directamente a nuestro equipo de negocios para discutir tu proyecto y obtener una propuesta personalizada.",
-    phone: "(99) 31 67 44 90",
+    phone: "(993) 167-4490",
     email: "asastre@sjtcontratistas.com",
-    address: "C.P. Alberto Sastre Arias - Contacto de Negocios",
+    address: "Carr. Reforma-Dos Bocas s/n, Cumuapa 1ra. Tabasco",
     accentColor: "var(--orange)",
     backgroundColor: "bg-dark",
     placeholder: "Describe tu proyecto...",
@@ -54,33 +55,47 @@ let filosofiaSectionData: TitleSectionInfoType | null = null;
 let visionSectionData: TitleSectionInfoType | null = null;
 let misionSectionData: TitleSectionInfoType | null = null;
 let valoresSectionData: TitleSectionInfoType | null = null;
+let valoresShowcaseStrapi: ProjectShowcaseType | null = null;
 let error: string | null = null;
 
 try {
-  // Title Section Info data - Sección "Filosofía"
-  console.log("🔍 Obteniendo title-section-info: somos-filosofia");
-  filosofiaSectionData = await strapi.getTitleSectionInfoByIdentifier("somos-filosofia");
+  // 🚀 OPTIMIZACIÓN: Llamadas paralelas con Promise.all()
+  console.log("🔍 Obteniendo datos de Strapi en paralelo...");
+  const startTime = performance.now();
   
-  // Title Section Info data - Sección "Visión"
-  console.log("🔍 Obteniendo title-section-info: somos-vision");
-  visionSectionData = await strapi.getTitleSectionInfoByIdentifier("somos-vision");
+  const [
+    filosofiaSectionData_temp,
+    visionSectionData_temp,
+    misionSectionData_temp,
+    valoresSectionData_temp,
+    valoresShowcaseStrapi_temp
+  ] = await Promise.all([
+    strapi.getTitleSectionInfoByIdentifier("somos-filosofia"),
+    strapi.getTitleSectionInfoByIdentifier("somos-vision"),
+    strapi.getTitleSectionInfoByIdentifier("somos-mision"),
+    strapi.getTitleSectionInfoByIdentifier("somos-valores"),
+    strapi.getProjectShowcaseByIdentifier("somos-principios")
+  ]);
   
-  // Title Section Info data - Sección "Misión"
-  console.log("🔍 Obteniendo title-section-info: somos-mision");
-  misionSectionData = await strapi.getTitleSectionInfoByIdentifier("somos-mision");
+  // Asignar resultados a las variables originales
+  filosofiaSectionData = filosofiaSectionData_temp;
+  visionSectionData = visionSectionData_temp;
+  misionSectionData = misionSectionData_temp;
+  valoresSectionData = valoresSectionData_temp;
+  valoresShowcaseStrapi = valoresShowcaseStrapi_temp;
   
-  // Title Section Info data - Sección "Valores"
-  console.log("🔍 Obteniendo title-section-info: somos-valores");
-  valoresSectionData = await strapi.getTitleSectionInfoByIdentifier("somos-valores");
+  const endTime = performance.now();
+  console.log(`✅ Datos obtenidos en paralelo - Tiempo: ${(endTime - startTime).toFixed(2)}ms`);
+  console.log(`📊 Datos cargados: ${[filosofiaSectionData, visionSectionData, misionSectionData, valoresSectionData, valoresShowcaseStrapi].filter(Boolean).length}/5`);
 } catch (e) {
   error = e instanceof Error ? e.message : "Error loading data";
   console.error("❌ Error cargando datos:", error);
 }
 
 // ========================================
-// PROPUESTA ALTERNATIVA: VALORES CON PROJECTSHOWCASE
+// PROPUESTA ALTERNATIVA: VALORES CON PROJECTSHOWCASE (HARDCODEADO - COMENTADO)
 // ========================================
-const valoresShowcaseData = {
+/* const valoresShowcaseData = {
   title: "Nuestros Valores Corporativos",
   subtitle: "Principios Fundamentales",
   description: "En SJT Contratistas, nuestros valores son el fundamento de cada proyecto y relación que construimos. Estos principios nos definen como empresa y guían cada decisión que tomamos, asegurando que nuestro trabajo contribuya positivamente al desarrollo de las comunidades donde operamos.",
@@ -97,6 +112,7 @@ const valoresShowcaseData = {
     { value: "X+", label: "Años de Experiencia" },
     { value: "∞", label: "Compromiso Continuo" },
   ],
+  titleHighlights: "Nuestros Valores Fundamentales",
   highlights: [
     "Compromiso total con nuestros colaboradores y su desarrollo profesional",
     "Innovación constante en nuestros procesos y metodologías de trabajo",
@@ -106,7 +122,7 @@ const valoresShowcaseData = {
     "Integridad y rectitud como pilares fundamentales de nuestro actuar",
     "Respeto profundo por la comunidad y el medio ambiente en cada obra"
   ],
-};
+}; */
 ---
 
 <BaseLayout {...layoutProps}>
@@ -354,7 +370,7 @@ const valoresShowcaseData = {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <SectionTitle
-          highlightText="propuesta alternativa"
+          highlightText="Valores y Principios"
           title="Los Principios que Nos Definen"
           highlightColor="purple"
           alignment="center"
@@ -366,20 +382,58 @@ const valoresShowcaseData = {
         </p>
       </div>
 
-      <ProjectShowcase
-        title={valoresShowcaseData.title}
-        subtitle={valoresShowcaseData.subtitle}
-        description={valoresShowcaseData.description}
-        category={valoresShowcaseData.category}
-        location={valoresShowcaseData.location}
-        year={valoresShowcaseData.year}
-        client={valoresShowcaseData.client}
-        heroImage={valoresShowcaseData.heroImage}
-        heroImageAlt={valoresShowcaseData.heroImageAlt}
-        categoryColor={valoresShowcaseData.categoryColor}
-        stats={valoresShowcaseData.stats}
-        highlights={valoresShowcaseData.highlights}
-      />
+      <!-- Valores desde Strapi -->
+      {valoresShowcaseStrapi ? (
+        <ProjectShowcase
+          title={valoresShowcaseStrapi.title}
+          subtitle={valoresShowcaseStrapi.subtitle}
+          description={valoresShowcaseStrapi.description}
+          category={valoresShowcaseStrapi.category}
+          location={valoresShowcaseStrapi.location}
+          year={valoresShowcaseStrapi.year}
+          client={valoresShowcaseStrapi.client}
+          heroImage={valoresShowcaseStrapi.heroImage?.url || panoramica1}
+          heroImageAlt={valoresShowcaseStrapi.heroImageAlt || valoresShowcaseStrapi.heroImage?.alternativeText}
+          categoryColor={valoresShowcaseStrapi.categoryColor === "custom" ? valoresShowcaseStrapi.customCategoryColor || "var(--blue)" : valoresShowcaseStrapi.categoryColor}
+          stats={valoresShowcaseStrapi.stats || []}
+          highlights={valoresShowcaseStrapi.highlights?.map(h => h.text) || []}
+          titleHighlights={valoresShowcaseStrapi.titleHighlights}
+          titleStats={valoresShowcaseStrapi.titleStats}
+        />
+      ) : (
+        <!-- Fallback: Datos hardcodeados si no hay datos de Strapi -->
+        <ProjectShowcase
+          title="Nuestros Valores Corporativos"
+          subtitle="Principios Fundamentales"
+          description="En SJT Contratistas, nuestros valores son el fundamento de cada proyecto y relación que construimos. Estos principios nos definen como empresa y guían cada decisión que tomamos, asegurando que nuestro trabajo contribuya positivamente al desarrollo de las comunidades donde operamos."
+          category="Valores Empresariales"
+          location="Sureste Mexicano"
+          year="Desde 2020"
+          client=""
+          heroImage={panoramica1}
+          heroImageAlt="Equipo SJT Contratistas trabajando en proyecto"
+          categoryColor="var(--blue)"
+          stats={[
+            { value: "7", label: "Valores Fundamentales" },
+            { value: "100%", label: "Integridad Garantizada" },
+            { value: "20+", label: "Años de Experiencia" },
+            { value: "∞", label: "Compromiso Continuo" },
+          ]}
+          highlights={[
+            "Compromiso total con nuestros colaboradores y su desarrollo profesional",
+            "Innovación constante en nuestros procesos y metodologías de trabajo",
+            "Confianza y credibilidad construida con cada uno de nuestros clientes",
+            "Excelencia en cada proyecto, sin importar su magnitud o complejidad",
+            "Transparencia absoluta en todas nuestras relaciones comerciales",
+            "Integridad y rectitud como pilares fundamentales de nuestro actuar",
+            "Respeto profundo por la comunidad y el medio ambiente en cada obra"
+          ]}
+          titleHighlights="Nuestros Valores Fundamentales"
+          titleStats="Estadísticas de Valores"
+        />
+      )}
+
+
     </div>
   </section>
 

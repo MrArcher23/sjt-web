@@ -7,35 +7,34 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 // Importar imágenes locales específicas para esta página
 import panoramica1 from "../assets/images/work/panoramica1.jpeg";
 import obra1 from "../assets/images/work/obra1.jpeg";
+import servicio4 from "../assets/images/work/servicio3.jpeg";
+import obra2 from "../assets/images/work/obra2.jpeg";
+import obra5 from "../assets/images/work/obra5.jpeg";
+
+// Importar componente Image de Astro
+import { Image } from "astro:assets";
 
 // Componentes específicos para esta página
 import HeroSection from "../components/HeroSection.astro";
 import SectionTitle from "../components/ui/SectionTitle.astro";
 import ServiceCard from "../components/ui/ServiceCard.astro";
+import CertificationsIso from "../components/ui/CertificationsIso.astro";
 
 // Props específicas para el Layout de Servicios
 const layoutProps = {
   pageTitle: "Servicios",
   metaDescription:
     "Descubre nuestros servicios especializados: Construcción y Obra Civil, Terracerías y Carreteras, Mecánica y Electromecánica, Desarrollo de Proyectos. Más de 20 años de experiencia en el sureste mexicano.",
-  showBreadcrumb: false,
-  breadcrumbItems: [
-    { href: "/", text: "Inicio" },
-    { href: "/servicios", text: "Servicios" },
-  ],
   showContact: true,
   contactConfig: {
     highlightText: "solicita tu cotización",
     title: "¿LISTO PARA TU PRÓXIMO PROYECTO?",
     subtitle:
       "Contacta a nuestro equipo especializado para discutir los detalles de tu proyecto y recibir una propuesta personalizada.",
-    phone: "(993) 324-5488",
-    email: "contacto@sjtcontratistas.com",
+    phone: "(993) 167-4490",
+    email: "asastre@sjtcontratistas.com",
     address: "Carr. Reforma-Dos Bocas s/n, Cumuapa 1ra. Tabasco",
-    accentColor: "#FF5722",
-    backgroundColor: "bg-gray-900",
     placeholder: "Describe tu proyecto...",
-    buttonText: "Enviar Solicitud",
   },
 };
 ---
@@ -77,7 +76,7 @@ const layoutProps = {
           buttonText="Ver detalles"
           href="#construccion"
           cardNumber="01"
-          iconColor="#FF5722"
+          iconColor="var(--orange)"
         />
 
         <!-- Terracerías y Carreteras -->
@@ -88,7 +87,7 @@ const layoutProps = {
           buttonText="Ver detalles"
           href="#terracerias"
           cardNumber="02"
-          iconColor="#4CAF50"
+          iconColor="var(--green)"
         />
 
         <!-- Mecánica y Electromecánica -->
@@ -99,7 +98,7 @@ const layoutProps = {
           buttonText="Ver detalles"
           href="#electromecanica"
           cardNumber="03"
-          iconColor="#2196F3"
+          iconColor="var(--blue)"
         />
 
         <!-- Desarrollo de Proyectos -->
@@ -110,7 +109,7 @@ const layoutProps = {
           buttonText="Ver detalles"
           href="#desarrollo-proyectos"
           cardNumber="04"
-          iconColor="#9C27B0"
+          iconColor="var(--purple)"
         />
       </div>
     </div>
@@ -133,10 +132,12 @@ const layoutProps = {
         <!-- Imagen -->
         <div class="relative service-image-container">
           <div class="relative rounded-2xl overflow-hidden shadow-2xl group">
-            <img
-              src={obra1.src}
+            <Image
+              src={obra1}
               alt="Construcción y Obra Civil"
               class="w-full h-[500px] lg:h-[600px] object-cover transition-transform duration-500 group-hover:scale-105"
+              width={800}
+              height={600}
             />
             <div
               class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"
@@ -144,14 +145,14 @@ const layoutProps = {
             </div>
 
             <!-- Floating stats -->
-            <div
+            <!-- <div
               class="absolute top-6 right-6 bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-white/20"
             >
               <div class="text-center">
                 <div class="text-2xl font-bold text-orange-600">500+</div>
                 <div class="text-sm text-gray-600">Proyectos</div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -329,10 +330,12 @@ const layoutProps = {
         <!-- Imagen -->
         <div class="relative service-image-container lg:order-2">
           <div class="relative rounded-2xl overflow-hidden shadow-2xl group">
-            <img
-              src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            <Image
+              src={obra2}
               alt="Terracerías y Carreteras"
               class="w-full h-[500px] lg:h-[600px] object-cover transition-transform duration-500 group-hover:scale-105"
+              width={800}
+              height={600}
             />
             <div
               class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"
@@ -340,14 +343,14 @@ const layoutProps = {
             </div>
 
             <!-- Floating stats -->
-            <div
+            <!-- <div
               class="absolute top-6 left-6 bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-white/20"
             >
               <div class="text-center">
                 <div class="text-2xl font-bold text-green-600">200km</div>
                 <div class="text-sm text-gray-600">Carreteras</div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -372,10 +375,12 @@ const layoutProps = {
         <!-- Imagen -->
         <div class="relative service-image-container">
           <div class="relative rounded-2xl overflow-hidden shadow-2xl group">
-            <img
-              src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            <Image
+              src={servicio4}
               alt="Mecánica y Electromecánica"
               class="w-full h-[500px] lg:h-[600px] object-cover transition-transform duration-500 group-hover:scale-105"
+              width={800}
+              height={600}
             />
             <div
               class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"
@@ -571,10 +576,12 @@ const layoutProps = {
         <!-- Imagen -->
         <div class="relative service-image-container lg:order-2">
           <div class="relative rounded-2xl overflow-hidden shadow-2xl group">
-            <img
-              src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            <Image
+              src={obra5}
               alt="Desarrollo de Proyectos"
               class="w-full h-[500px] lg:h-[600px] object-cover transition-transform duration-500 group-hover:scale-105"
+              width={800}
+              height={600}
             />
             <div
               class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"
@@ -586,7 +593,7 @@ const layoutProps = {
               class="absolute top-6 left-6 bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-white/20"
             >
               <div class="text-center">
-                <div class="text-2xl font-bold text-purple-600">98%</div>
+                <div class="text-2xl font-bold text-purple-600">100%</div>
                 <div class="text-sm text-gray-600">Éxito</div>
               </div>
             </div>
@@ -595,6 +602,8 @@ const layoutProps = {
       </div>
     </div>
   </section>
+
+  <CertificationsIso />
 
   <!-- Capacidades y Certificaciones -->
   <!-- <section class="py-20 bg-gray-900 text-white relative overflow-hidden">
@@ -701,7 +710,7 @@ const layoutProps = {
   </section> -->
 
   <!-- Proceso de Trabajo -->
-  <section class="py-20 bg-white">
+  <!-- <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <SectionTitle
@@ -713,16 +722,16 @@ const layoutProps = {
         />
       </div>
 
-      <!-- Timeline -->
+     
       <div class="relative">
-        <!-- Línea principal -->
+       
         <div
           class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-blue-500 via-green-500 to-orange-500 rounded-full hidden lg:block"
         >
         </div>
 
         <div class="space-y-12 lg:space-y-16">
-          <!-- Paso 1 -->
+          
           <div class="relative flex flex-col lg:flex-row items-center">
             <div class="lg:w-1/2 lg:pr-12 mb-8 lg:mb-0">
               <div class="text-right lg:text-right">
@@ -772,7 +781,7 @@ const layoutProps = {
             </div>
           </div>
 
-          <!-- Paso 2 -->
+          
           <div class="relative flex flex-col lg:flex-row-reverse items-center">
             <div class="lg:w-1/2 lg:pl-12 mb-8 lg:mb-0">
               <div class="text-left lg:text-left">
@@ -827,7 +836,7 @@ const layoutProps = {
             </div>
           </div>
 
-          <!-- Paso 3 -->
+          
           <div class="relative flex flex-col lg:flex-row items-center">
             <div class="lg:w-1/2 lg:pr-12 mb-8 lg:mb-0">
               <div class="text-right lg:text-right">
@@ -878,10 +887,8 @@ const layoutProps = {
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
 </BaseLayout>
-
-
 
 <style>
   .service-image-container {

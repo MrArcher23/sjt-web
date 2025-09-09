@@ -6,6 +6,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 // Importar imágenes locales específicas para esta página
 import panoramica1 from "../assets/images/work/panoramica1.jpeg";
 import obra1 from "../assets/images/work/obra1.jpeg";
+import obra2 from "../assets/images/work/obra2.jpeg";
+import obra5 from "../assets/images/work/obra5.jpeg";
+import servicio9 from "../assets/images/work/servicio9.jpeg";
+import servicio3 from "../assets/images/work/servicio3.jpeg";
 
 // Componentes específicos para esta página
 import HeroSection from "../components/HeroSection.astro";
@@ -13,7 +17,7 @@ import SectionTitle from "../components/ui/SectionTitle.astro";
 import SectionInfo2 from "../components/ui/SectionInfo2.astro";
 import CertificationsIso from "../components/ui/CertificationsIso.astro";
 import ServiceCard from "../components/ui/ServiceCard.astro";
-import StrapiServiceGallery from "../components/StrapiServiceGallery.astro";
+import ServiceGallery from "../components/ui/ServiceGallery.astro";
 
 // Lógica específica para la página de inicio
 import strapi from "../utils/strapi";
@@ -27,35 +31,85 @@ import TitleSectionInfo from "../components/TitleSectionInfo.astro";
 
 // Obtener contenido específico para la home
 let heroData: StrapiEntity<HeroType> | null = null;
-let sectionInfoData: StrapiEntity<SectionInfoType> | null = null;
+
 let titleSectionData: TitleSectionInfoType | null = null;
+let misionSectionData: TitleSectionInfoType | null = null;
+let visionSectionData: TitleSectionInfoType | null = null;
 let error: string | null = null;
 
 try {
-  // Hero data
-  console.log("🔍 Obteniendo heroes activos");
-  const heroResponse = await strapi.getActiveHeroes();
+  // 🚀 OPTIMIZACIÓN: Llamadas paralelas con Promise.all()
+  console.log("🔍 Obteniendo datos de Strapi en paralelo para index...");
+  const startTime = performance.now();
+  
+  // Primero intentamos obtener heroes activos y title sections en paralelo
+  const [
+    heroResponse,
+    titleSectionData_temp,
+    misionSectionData_temp,
+    visionSectionData_temp
+  ] = await Promise.all([
+    strapi.getActiveHeroes(),
+    strapi.getTitleSectionInfoByIdentifier("landing-somos"),
+    strapi.getTitleSectionInfoByIdentifier("landing-mision"),
+    strapi.getTitleSectionInfoByIdentifier("landing-vision")
+  ]);
+
+  // Procesar hero data
   heroData = heroResponse.data?.[0] || null;
 
+  // Si no hay heroes activos, hacer fallback (solo si es necesario)
   if (!heroData) {
-    console.log("⚠️ No hay heroes activos, usando cualquier hero...");
+    console.log("⚠️ No hay heroes activos, obteniendo cualquier hero...");
     const allHeroesResponse = await strapi.getHeroes();
     heroData = allHeroesResponse.data?.[0] || null;
   }
 
-  // Section Info data
-  console.log("🔍 Obteniendo section info activa");
-  const sectionResponse = await strapi.getActiveSectionInfos();
-  sectionInfoData = sectionResponse.data?.[0] || null;
-
-  // Title Section Info data - Sección "Quiénes Somos"
-  console.log("🔍 Obteniendo title-section-info: landing-somos");
-  titleSectionData = await strapi.getTitleSectionInfoByIdentifier("landing-somos");
+  // Asignar resultados de title sections
+  titleSectionData = titleSectionData_temp;
+  misionSectionData = misionSectionData_temp;
+  visionSectionData = visionSectionData_temp;
+  
+  const endTime = performance.now();
+  console.log(`✅ Datos de index obtenidos en paralelo - Tiempo: ${(endTime - startTime).toFixed(2)}ms`);
+  console.log(`📊 Datos cargados: Hero: ${heroData ? "✅" : "❌"}, Sections: ${[titleSectionData, misionSectionData, visionSectionData].filter(Boolean).length}/3`);
 
 } catch (e) {
   error = e instanceof Error ? e.message : "Error loading data";
   console.error("❌ Error cargando datos:", error);
 }
+
+// Datos de servicios (reemplaza StrapiServiceGallery que buscaba content-type inexistente)
+const serviceGalleryData = [
+  {
+    service_name: "Construcción & Obra Civil",
+    img: obra5.src,
+    overlayColor: "black" as const,
+    description: "Construcción y desarrollo de infraestructura civil",
+    link: "/servicios"
+  },
+  {
+    service_name: "Terracerías & Carreteras", 
+    img: obra2.src,
+    overlayColor: "black" as const,
+    description: "Desarrollo y construcción de carreteras, caminos y terracerías con tecnología avanzada",
+    link: "/servicios"
+  },
+  {
+    service_name: "Mecánica & Electromecánica",
+    img: servicio9.src,
+    overlayColor: "black" as const, 
+    description: "Sistemas electromecánicos industriales",
+    link: "/servicios"
+  },
+  {
+    service_name: "Desarrollo de Proyectos",
+    img: servicio3.src,
+    overlayColor: "black" as const,
+    description: "Mantenimiento preventivo y correctivo",
+    link: "/servicios"
+  }
+];
 
 // Transformar datos para los componentes
 const heroProps = heroData
@@ -69,16 +123,7 @@ const heroProps = heroData
     }
   : null;
 
-const sectionInfoProps = sectionInfoData
-  ? {
-      title: sectionInfoData.title,
-      description: sectionInfoData.description,
-      image: sectionInfoData.image?.url || obra1.src,
-      imagePosition: "right" as const, // Valor por defecto
-      buttonText: sectionInfoData.buttonText,
-      buttonLink: sectionInfoData.buttonLink,
-    }
-  : null;
+
 
 // Props específicas para el Layout de la home
 const layoutProps = {
@@ -90,14 +135,11 @@ const layoutProps = {
     highlightText: "escribenos y te atenderemos",
     title: "¿TE INTERESA SABER MÁS?",
     subtitle: "Ponte en contacto con nosotros y te brindaremos toda la información que necesites sobre nuestros servicios de construcción.",
-    phone: "(993) 324-5488",
-    email: "contacto@sjtcontratistas.com",
+    phone: "(993) 167-4490",
+    email: "asastre@sjtcontratistas.com",
     address: "Carr. Reforma-Dos Bocas s/n, Cumuapa 1ra. Tabasco",
-    accentColor: "#FF5722",
-    backgroundColor: "bg-gray-900",
-    placeholder: "Escribe tu Email...",
-    buttonText: "Enviar"
-  }
+    placeholder: "Escribe tu Email...",    
+  },
 };
 ---
 
@@ -207,132 +249,171 @@ const layoutProps = {
       alignment="left"
       size="lg"
     />
-    <StrapiServiceGallery
-   
-    
-    buttonColor="bg-yellow-500"
-    fallbackServices={[
-      {
-        service_name: "Obra Civil",
-        img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        overlayColor: "black",
-        description: "Construcción y desarrollo de infraestructura civil",
-        link: "#obra-civil"
-      },
-      {
-        service_name: "Instalaciones Eléctricas",
-        img: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        overlayColor: "black",
-        description: "Instalaciones y mantenimiento eléctrico especializado",
-        link: "#electrica"
-      },
-      {
-        service_name: "Sistemas Electromecánicos",
-        img: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        overlayColor: "black",
-        description: "Sistemas electromecánicos industriales",
-        link: "#electromecanica"
-      },
-      {
-        service_name: "Mantenimiento Industrial",
-        img: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        overlayColor: "black",
-        description: "Mantenimiento preventivo y correctivo",
-        link: "#mantenimiento"
-      }
-    ]}
-  />
+    <ServiceGallery
+      services={serviceGalleryData}
+      buttonColor="bg-yellow-500"
+    />
 
   </div>
 
   
   
-  <section class="py-16 bg-white">
-    <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
-      <SectionTitle
-        highlightText="nuestra MISIÓN"
-        title="Nuestra Misión: Calidad, Integridad y Crecimiento"
-        highlightColor="red"
-        alignment="left"
-        size="lg"
-      />
-    </div>
-    <SectionInfo2
-      title="Compromiso con la Excelencia y el Desarrollo"
-      description="Ofrecer a nuestros clientes productos y servicios de ingeniería de excelente calidad en los tiempos establecidos, mediante una gestión íntegra y honesta, ofreciendo estabilidad laboral y oportunidades de desarrollo al personal que labora en la empresa, asegurando la inversión de los clientes y excediendo sus expectativas, a fin de garantizar la rentabilidad de las operaciones y el cumplimiento de los compromisos asumidos con los proveedores."
-      image={obra1.src}
-      imagePosition="right"
-      buttonText="Más información"
-      buttonLink="#servicios"         
-      
+  <!-- Misión Section desde Strapi -->
+  {misionSectionData ? (
+    <TitleSectionInfo
+      highlightText={misionSectionData.highlightText}
+      title={misionSectionData.title}
+      titleSection={misionSectionData.titleSection}
+      highlightColor={misionSectionData.highlightColor || "red"}
+      customColor={misionSectionData.customColor}
+      alignment={misionSectionData.alignment || "left"}
+      size={misionSectionData.size || "lg"}
+      description={misionSectionData.description}
+      image={misionSectionData.image?.url || obra1.src}
+      imageAlt={misionSectionData.imageAlt || misionSectionData.image?.alternativeText}
+      imagePosition={misionSectionData.imagePosition || "right"}
+      buttonText={misionSectionData.buttonText}
+      buttonLink={misionSectionData.buttonLink}
+      floatingElement1={misionSectionData.floatingElement1 ? {
+        number: misionSectionData.floatingElement1.number,
+        title: misionSectionData.floatingElement1.title,
+        subtitle: misionSectionData.floatingElement1.subtitle,
+        svg: misionSectionData.floatingElement1.svg,
+        bgColor: misionSectionData.floatingElement1.bgColor || "bg-red",
+        textColor: misionSectionData.floatingElement1.textColor || "text-white"
+      } : undefined}
+      floatingElement2={misionSectionData.floatingElement2 ? {
+        number: misionSectionData.floatingElement2.number,
+        title: misionSectionData.floatingElement2.title,
+        subtitle: misionSectionData.floatingElement2.subtitle,
+        svg: misionSectionData.floatingElement2.svg,
+        bgColor: misionSectionData.floatingElement2.bgColor || "bg-orange",
+        textColor: misionSectionData.floatingElement2.textColor || "text-white"
+      } : undefined}
     />
-  </section>
+  ) : (
+    <!-- Fallback: Sección hardcodeada si no hay datos de Strapi -->
+    <section class="py-16 bg-white">
+      <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
+        <SectionTitle
+          highlightText="nuestra MISIÓN"
+          title="Nuestra Misión: Calidad, Integridad y Crecimiento"
+          highlightColor="red"
+          alignment="left"
+          size="lg"
+        />
+      </div>
+      <SectionInfo2
+        title="Compromiso con la Excelencia y el Desarrollo"
+        description="Ofrecer a nuestros clientes productos y servicios de ingeniería de excelente calidad en los tiempos establecidos, mediante una gestión íntegra y honesta, ofreciendo estabilidad laboral y oportunidades de desarrollo al personal que labora en la empresa, asegurando la inversión de los clientes y excediendo sus expectativas, a fin de garantizar la rentabilidad de las operaciones y el cumplimiento de los compromisos asumidos con los proveedores."
+        image={obra1.src}
+        imagePosition="right"
+        buttonText="Más información"
+        buttonLink="/quienes-somos"         
+      />
+    </section>
+  )}
+
+  <!-- Visión Section desde Strapi -->
+  {visionSectionData ? (
+    <TitleSectionInfo
+      highlightText={visionSectionData.highlightText}
+      title={visionSectionData.title}
+      titleSection={visionSectionData.titleSection}
+      highlightColor={visionSectionData.highlightColor || "blue"}
+      customColor={visionSectionData.customColor}
+      alignment={visionSectionData.alignment || "left"}
+      size={visionSectionData.size || "lg"}
+      description={visionSectionData.description}
+      image={visionSectionData.image?.url || obra1.src}
+      imageAlt={visionSectionData.imageAlt || visionSectionData.image?.alternativeText}
+      imagePosition={visionSectionData.imagePosition || "left"}
+      buttonText={visionSectionData.buttonText}
+      buttonLink={visionSectionData.buttonLink}
+      floatingElement1={visionSectionData.floatingElement1 ? {
+        number: visionSectionData.floatingElement1.number,
+        title: visionSectionData.floatingElement1.title,
+        subtitle: visionSectionData.floatingElement1.subtitle,
+        svg: visionSectionData.floatingElement1.svg,
+        bgColor: visionSectionData.floatingElement1.bgColor || "bg-blue",
+        textColor: visionSectionData.floatingElement1.textColor || "text-white"
+      } : undefined}
+      floatingElement2={visionSectionData.floatingElement2 ? {
+        number: visionSectionData.floatingElement2.number,
+        title: visionSectionData.floatingElement2.title,
+        subtitle: visionSectionData.floatingElement2.subtitle,
+        svg: visionSectionData.floatingElement2.svg,
+        bgColor: visionSectionData.floatingElement2.bgColor || "bg-green",
+        textColor: visionSectionData.floatingElement2.textColor || "text-white"
+      } : undefined}
+    />
+  ) : (
+    <!-- Fallback: Sección hardcodeada si no hay datos de Strapi -->
+    <section class="py-16 bg-white">
+      <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
+        <SectionTitle
+          highlightText="nuestra visiÓN"
+          title="Nuestra Visión: Liderazgo Dinámico y Vanguardista"
+          highlightColor="blue"
+          alignment="left"
+          size="lg"
+        />
+      </div>
+      <SectionInfo2
+        title="Liderazgo e Innovación en Vanguardia"
+        description="ser reconocida como una empresa líder y dinámica, comprometidos a romper esquemas, colocándonos a la vanguardia en todos y cada uno de nuestros procesos para nuestros proyectos, productos y servicios."
+        image={obra1.src}
+        imagePosition="left"
+        buttonText="Más información"
+        buttonLink="/quienes-somos"         
+      />
+    </section>
+  )}
 
   <section class="py-16 bg-white">
     <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
       <SectionTitle
-        highlightText="nuestra visiÓN"
-        title="Nuestra Visión: Liderazgo Dinámico y Vanguardista"
-        highlightColor="blue"
-        alignment="left"
-        size="lg"
-      />
-    </div>
-    <SectionInfo2
-      title="Liderazgo e Innovación en Vanguardia"
-      description="ser reconocida como una empresa líder y dinámica, comprometidos a romper esquemas, colocándonos a la vanguardia en todos y cada uno de nuestros procesos para nuestros proyectos, productos y servicios."
-      image={obra1.src}
-      imagePosition="left"
-      buttonText="Más información"
-      buttonLink="#servicios"         
-      
-    />
-  </section>
-
-  <section class="py-16 bg-white">
-    <div class="mx-8 sm:mx-12 lg:mx-16 xl:mx-20 px-0 mb-12">
-      <SectionTitle
-        highlightText="nuestros servicios"
-        title="Nuestros Servicios: Profesionalismo y Excelencia"
+        highlightText="conoce mas de nosotros"
+        title="Explora mas de SJT Contratistas"
         highlightColor="orange"
-        alignment="left"
+        alignment="center"
         size="lg"
       />
     </div>
     
-    <!-- Service Cards Grid -->
+    
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         
-        <!-- Civil Construction Service -->
+       
         <ServiceCard
           area='<path d="M12 3l8 8v9a1 1 0 01-1 1h-6v-6H9v6H3a1 1 0 01-1-1v-9l8-8z"/>'
-          serviceName="Civil Construction"
-          description="We offer comprehensive civil construction services with over 20 years of experience, specializing in infrastructure development, building construction, and project management with the highest quality standards."
+          serviceName="Quienes Somos"
+          description="Conoce mas de nosotros, nuestra historia, nuestros valores, nuestros objetivos y nuestros servicios."
           buttonText="Ver más"
-          href="/services/civil-construction"
+          href="/quienes-somos"
           cardNumber="01"
           iconColor="#FF5722"
         />
 
-        <!-- Electrical Installations Service -->
+       
         <ServiceCard
           area='<path d="M13 10V3L4 14h7v7l9-11h-7z"/>'
-          serviceName="Electrical Systems"
-          description="Professional electrical installation and maintenance services including industrial electrical systems, power distribution, lighting solutions, and electrical safety compliance for commercial and industrial projects."
+          serviceName="Portafolio"
+          description="Conoce nuestros proyectos realizados, nuestros clientes y nuestros resultados."
           buttonText="Ver más"
-          href="/services/electrical-systems"
+          href="/portafolio"
           cardNumber="02"
           iconColor="#FF5722"
         />
 
-        <!-- Electromechanical Systems Service -->
+       
         <ServiceCard
           area='<path d="M12 2l3.09 6.26L22 9l-5.91.74L12 22l-3.09-6.26L2 15l5.91-.74L12 2z"/><circle cx="12" cy="12" r="3"/>'
-          serviceName="Electromechanical"
-          description="Specialized electromechanical systems installation and maintenance including HVAC systems, pumping equipment, industrial machinery, and automated control systems for optimal operational efficiency."
+          serviceName="Servicios"
+          description="Conoce nuestros servicios, nuestros productos y nuestros procesos."
           buttonText="Ver más"
-          href="/services/electromechanical"
+          href="/servicios"
           cardNumber="03"
           iconColor="#FF5722"
         />

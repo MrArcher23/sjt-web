@@ -8,6 +8,7 @@ import "../styles/globals.css";
 import HeaderNav from "../components/HeaderNav.astro";
 import ContactSection from "../components/ui/ContactSection.astro";
 import Footer from "../components/ui/Footer.astro";
+import ScrollToTop from "../components/ui/ScrollToTop.astro";
 
 // Strapi integration
 import strapi from "../utils/strapi";
@@ -32,7 +33,6 @@ export interface Props {
     accentColor?: string;
     backgroundColor?: string;
     placeholder?: string;
-    buttonText?: string;
   };
 }
 
@@ -50,34 +50,50 @@ const {
     title: "¿LISTO PARA TU PRÓXIMO PROYECTO?",
     subtitle:
       "Nuestro equipo está preparado para hacer realidad tus ideas. Contactános para una consulta personalizada sin compromiso.",
-    phone: "(993) 324-5488",
-    email: "contacto@sjtcontratistas.com",
+    phone: "(993) 167-4490",
+    email: "asastre@sjtcontratistas.com",
     address: "Carr. Reforma-Dos Bocas s/n, Cumuapa 1ra. Tabasco",
-    accentColor: "#FF5722",
-    backgroundColor: "bg-gray-50",
+    accentColor: "var(--orange)",
+    backgroundColor: "bg-dark",
     placeholder: "Cuéntanos sobre tu proyecto...",
-    buttonText: "Solicitar Consulta",
   },
 } = Astro.props;
 
-// Obtener datos del header desde Strapi (común para todas las páginas)
+// 🚀 OPTIMIZACIÓN CRÍTICA: Usar DataManager con cache para evitar llamadas duplicadas
+// Antes: Cada página llamaba getActiveHeader() = 4+ llamadas al mismo endpoint
+// Después: Una sola llamada con cache compartido entre todas las páginas
+import DataManager from "../utils/dataManager";
+
 let headerData: StrapiEntity<HeaderType> | null = null;
 let headerError: string | null = null;
 
 try {
-  // getActiveHeader() devuelve el objeto directamente o null
-  headerData = await strapi.getActiveHeader();
+  console.log("🔍 BaseLayout: Obteniendo header con cache centralizado...");
+  const startTime = performance.now();
+
+  // Usar DataManager en lugar de llamada directa a strapi
+  headerData = await DataManager.getHeader();
+
+  const endTime = performance.now();
+  const duration = endTime - startTime;
+
   if (headerData) {
     console.log(
-      "🏠 Header activo encontrado en BaseLayout:",
+      `🏠 Header obtenido desde DataManager en ${duration.toFixed(2)}ms:`,
       headerData.companyName
     );
   } else {
-    console.log("⚠️ No se encontró header activo en BaseLayout");
+    console.log("⚠️ No se encontró header activo en DataManager");
   }
+
+  // Mostrar estadísticas de cache
+  const stats = DataManager.getStats();
+  console.log(
+    `📊 Cache Stats - Hit Rate: ${stats.hitRate}, Avg Time: ${stats.avgTime}`
+  );
 } catch (e) {
   headerError = e instanceof Error ? e.message : "Error loading header";
-  console.warn("⚠️ Header Strapi error:", headerError);
+  console.warn("⚠️ Header DataManager error:", headerError);
 }
 
 // Transformar datos del header para el componente
@@ -155,7 +171,7 @@ const mainNavLinks = [
           sticky={false}
           transparent={true}
           navLinks={mainNavLinks}
-          ctaText="Solicitar Cotización"
+          ctaText="Contactar"
           ctaHref="#contacto"
         />
       ) : (
@@ -211,7 +227,7 @@ const mainNavLinks = [
 
     <!-- Contact Section (opcional, común en la mayoría de páginas) -->
     {
-      showContact && (
+      showContact ? (
         <section id="contacto">
           <ContactSection
             highlightText={contactConfig.highlightText!}
@@ -225,7 +241,7 @@ const mainNavLinks = [
             placeholder={contactConfig.placeholder!}
           />
         </section>
-      )
+      ) : null
     }
 
     <!-- Footer (común en todas las páginas) -->
@@ -239,6 +255,9 @@ const mainNavLinks = [
       }}
       showSocialLinks={false}
     />
+
+    <!-- Scroll to Top Button (común en todas las páginas) -->
+    <ScrollToTop />
 
     <!-- Scripts globales si los necesitas -->
     <script>

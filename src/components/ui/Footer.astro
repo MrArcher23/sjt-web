@@ -42,10 +42,10 @@ const {
   companyName = "SJT Contratistas S.A. de C.V.",
   companyDescription = "Especializados en construcción, obra civil, terracerías y desarrollo integral de proyectos en el sureste mexicano.",
   services = [
-    { name: "Construcción & Obra Civil", href: "/servicios#construccion", color: "orange" },
-    { name: "Terracerías & Carreteras", href: "/servicios#terracerias", color: "green" },
-    { name: "Electromecánica", href: "/servicios#electromecanica", color: "blue" },
-    { name: "Desarrollo de Proyectos", href: "/servicios#desarrollo-proyectos", color: "purple" }
+    { name: "Construcción & Obra Civil", href: "/servicios", color: "orange" },
+    { name: "Terracerías & Carreteras", href: "/servicios", color: "green" },
+    { name: "Electromecánica", href: "/servicios", color: "blue" },
+    { name: "Desarrollo de Proyectos", href: "/servicios", color: "purple" }
   ],
   quickLinks = [
     { text: "Inicio", href: "/" },
@@ -55,9 +55,9 @@ const {
     { text: "Portafolio", href: "/portafolio" }
   ],
   contactInfo = {
-    email: "contacto@sjtcontratistas.com",
-    phone: "+52 (999) 123-4567",
-    address: "Mérida, Yucatán, México"
+    email: "asastre@sjtcontratistas.com",
+    phone: "+52 (993) 167-4490",
+    address: "Carr. Reforma-Dos Bocas s/n, Cumuapa 1ra. Tabasco"
   },
   showSocialLinks = false,
   backgroundColor = "bg-dark",
@@ -80,14 +80,14 @@ const currentYear = new Date().getFullYear();
         </p>
 
         <!-- Social Links -->
-        {showSocialLinks && (
+        {showSocialLinks ? (
           <div class="flex space-x-4 mt-4">
             <!-- Espacio para íconos sociales futuros -->
             <div class="text-muted text-sm">
               Síguenos en redes sociales (próximamente)
             </div>
           </div>
-        )}
+        ) : null}
       </div>
 
       <!-- Services -->

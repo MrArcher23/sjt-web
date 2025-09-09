@@ -1,0 +1,158 @@
+---
+// ScrollToTop.astro - Botón flotante para volver al inicio de la página
+---
+
+<button
+  id="scroll-to-top"
+  class="scroll-to-top-btn"
+  aria-label="Volver al inicio"
+  title="Volver al inicio"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="icon icon-tabler icons-tabler-outline icon-tabler-chevrons-up"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path d="M7 11l5 -5l5 5"></path>
+    <path d="M7 17l5 -5l5 5"></path>
+  </svg>
+</button>
+
+<style>
+  .scroll-to-top-btn {
+    /* Posicionamiento fijo */
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+
+    /* Estilos del botón */
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+
+    /* Colores usando variables CSS */
+    background: var(--orange);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
+
+    /* Transiciones suaves */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(100px);
+    opacity: 0;
+    visibility: hidden;
+
+    /* Flexbox para centrar el ícono */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Estado visible */
+  .scroll-to-top-btn.visible {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Efectos hover */
+  .scroll-to-top-btn:hover {
+    background: var(--orange);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 87, 34, 0.4);
+  }
+
+  /* Efectos active */
+  .scroll-to-top-btn:active {
+    transform: translateY(0) scale(0.95);
+  }
+
+  /* Animación del ícono en hover */
+  .scroll-to-top-btn:hover svg {
+    animation: bounce-up 0.6s ease-in-out;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .scroll-to-top-btn {
+      bottom: 1.5rem;
+      right: 1.5rem;
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .scroll-to-top-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  /* Animación de rebote hacia arriba */
+  @keyframes bounce-up {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  /* Reducir animaciones para usuarios que las prefieren reducidas */
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-to-top-btn {
+      transition: opacity 0.2s ease;
+    }
+
+    .scroll-to-top-btn:hover svg {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // Funcionalidad del botón scroll to top
+  document.addEventListener("DOMContentLoaded", function () {
+    const scrollToTopBtn = document.getElementById("scroll-to-top");
+
+    if (!scrollToTopBtn) return;
+
+    // Mostrar/ocultar botón basado en scroll
+    function toggleScrollButton() {
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      const showThreshold = 300; // Mostrar después de 300px de scroll
+
+      if (scrollTop > showThreshold) {
+        scrollToTopBtn.classList.add("visible");
+      } else {
+        scrollToTopBtn.classList.remove("visible");
+      }
+    }
+
+    // Función para scroll suave al inicio
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+
+    // Event listeners
+    window.addEventListener("scroll", toggleScrollButton, { passive: true });
+    scrollToTopBtn.addEventListener("click", scrollToTop);
+
+    // Verificar posición inicial
+    toggleScrollButton();
+  });
+</script>

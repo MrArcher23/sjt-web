@@ -443,6 +443,145 @@ class StrapiClient {
       },
     });
   }
+
+  // ==================== PROJECT SHOWCASE METHODS ====================
+
+  // Obtener todos los project showcases
+  async getProjectShowcases(options: StrapiOptions = {}) {
+    return this.request("project-showcases", {
+      populate: {
+        heroImage: true,
+        stats: true,
+        highlights: true,
+      },
+      sort: ["createdAt:desc"],
+      ...options,
+    });
+  }
+
+  // Obtener project showcase por identifier
+  async getProjectShowcaseByIdentifier(identifier: string) {
+    try {
+      console.log(
+        `🔍 Obteniendo project-showcase con identifier: ${identifier}`
+      );
+      const response = await this.request("project-showcases", {
+        filters: { identifier: { $eq: identifier } },
+        populate: {
+          heroImage: true,
+          stats: true,
+          highlights: true,
+        },
+      });
+      console.log(
+        `📊 Project showcase obtenido: ${response?.data?.[0] ? "Éxito" : "No encontrado"}`
+      );
+      return response?.data?.[0] || null;
+    } catch (error) {
+      console.warn(
+        `⚠️ Error obteniendo project-showcase ${identifier}:`,
+        error
+      );
+      return null;
+    }
+  }
+
+  // Obtener project showcase por slug (si decides usar slug en el futuro)
+  async getProjectShowcaseBySlug(slug: string) {
+    return this.request("project-showcases", {
+      filters: { slug: { $eq: slug } },
+      populate: {
+        heroImage: true,
+        stats: true,
+        highlights: true,
+      },
+    });
+  }
+
+  // ==================== PROJECT CARD METHODS ====================
+
+  // Obtener todas las project cards
+  async getProjectCards(options: StrapiOptions = {}) {
+    return this.request("project-cards", {
+      populate: {
+        image: true,
+        tags: true,
+      },
+      sort: ["year:desc", "createdAt:desc"],
+      ...options,
+    });
+  }
+
+  // Obtener project cards con filtros múltiples
+  async getProjectCardsFiltered(
+    filters: {
+      categories?: string[];
+      statuses?: string[];
+      years?: string[];
+      limit?: number;
+    } = {}
+  ) {
+    const { categories, statuses, years, limit = 50 } = filters;
+
+    let filterQuery: any = {};
+
+    if (categories?.length) {
+      filterQuery.category = { $in: categories };
+    }
+
+    if (statuses?.length) {
+      filterQuery.status = { $in: statuses };
+    }
+
+    if (years?.length) {
+      filterQuery.year = { $in: years };
+    }
+
+    return this.request("project-cards", {
+      filters: filterQuery,
+      populate: {
+        image: true,
+        tags: true,
+      },
+      pagination: { pageSize: limit },
+      sort: ["year:desc", "createdAt:desc"],
+    });
+  }
+
+  // Obtener project cards por categoría
+  async getProjectCardsByCategory(category: string) {
+    return this.request("project-cards", {
+      filters: { category: { $eq: category } },
+      populate: {
+        image: true,
+        tags: true,
+      },
+      sort: ["createdAt:desc"],
+    });
+  }
+
+  // Obtener project cards por estado
+  async getProjectCardsByStatus(status: string) {
+    return this.request("project-cards", {
+      filters: { status: { $eq: status } },
+      populate: {
+        image: true,
+        tags: true,
+      },
+      sort: ["createdAt:desc"],
+    });
+  }
+
+  // Obtener project card por slug (si decides usar slug en el futuro)
+  async getProjectCardBySlug(slug: string) {
+    return this.request("project-cards", {
+      filters: { slug: { $eq: slug } },
+      populate: {
+        image: true,
+        tags: true,
+      },
+    });
+  }
 }
 
 export default new StrapiClient();
