@@ -26,7 +26,7 @@ const {
 } = Astro.props;
 
 // Generate unique ID for this carousel instance
-const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
+const carouselId = `carousel-${Math.random().toString(36).substring(2, 11)}`;
 ---
 
 <div class="project-carousel bg-white rounded-3xl shadow-xl overflow-hidden">
@@ -131,7 +131,7 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
   )}
 </div>
 
-<script define:vars={{ carouselId, categoryColor, autoPlay }}>
+<script is:inline define:vars={{ carouselId, categoryColor, autoPlay }}>
   const carouselTrack = document.querySelector(`.carousel-track-${carouselId}`);
   const prevBtn = document.querySelector(`.prev-btn-${carouselId}`);
   const nextBtn = document.querySelector(`.next-btn-${carouselId}`);

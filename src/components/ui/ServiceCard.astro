@@ -7,7 +7,6 @@ export interface Props {
   href: string;
   cardNumber?: string;
   iconColor?: string;
-  hoverColor?: string;
   backgroundColor?: string;
 }
 
@@ -19,7 +18,6 @@ const {
   href,
   cardNumber = "01",
   iconColor = "#FF5722",
-  hoverColor = "#4F46E5",
   backgroundColor = "bg-white",
 } = Astro.props;
 ---
@@ -167,5 +165,3 @@ const {
     overflow: hidden;
   }
 </style>
-
-
