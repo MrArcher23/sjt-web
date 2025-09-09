@@ -37,8 +37,7 @@ class StrapiClient {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`❌ Strapi Error Response:`, errorText);
-      throw new Error(`Strapi request failed: ${response.statusText}`);
+      throw new Error(`Strapi request failed: ${response.statusText} - ${errorText}`);
     }
 
     return response.json();
@@ -127,18 +126,13 @@ class StrapiClient {
   // Obtener hero activo (el que se muestra actualmente)
   async getActiveHero() {
     try {
-      console.log("🔍 Obteniendo hero activo (primero de los activos)");
       const response = await this.request("heroes", {
         filters: { isActive: { $eq: true } },
         populate: ["backgroundVideo", "backgroundImage"],
         sort: ["createdAt:desc"],
       });
-      console.log(
-        `📊 Hero activo obtenido: ${response?.data?.[0] ? "Éxito" : "No encontrado"}`
-      );
       return response?.data?.[0] || null;
     } catch (error) {
-      console.warn("⚠️ Error obteniendo hero activo:", error);
       return null;
     }
   }
@@ -224,18 +218,13 @@ class StrapiClient {
   // Obtener la primera section info activa usando filtros estándar
   async getActiveSectionInfo() {
     try {
-      console.log("🔍 Obteniendo section info activa (primera)");
       const response = await this.request("section-infos", {
         filters: { isActive: { $eq: true } },
         populate: ["image"],
         sort: ["createdAt:desc"],
       });
-      console.log(
-        `📊 Section info activa obtenida: ${response?.data ? "Éxito" : "No encontrada"}`
-      );
       return response?.data?.[0] || null;
     } catch (error) {
-      console.warn("⚠️ Error obteniendo section info activa:", error);
       return null;
     }
   }
@@ -329,18 +318,13 @@ class StrapiClient {
   // Obtener header activo (para navegación principal)
   async getActiveHeader() {
     try {
-      console.log("🔍 Obteniendo header activo");
       const response = await this.request("headers", {
         filters: { isActive: { $eq: true } },
         populate: ["logoFile"],
         sort: ["createdAt:desc"],
       });
-      console.log(
-        `📊 Header activo obtenido: ${response?.data ? "Éxito" : "No encontrado"}`
-      );
       return response?.data?.[0] || null;
     } catch (error) {
-      console.warn("⚠️ Error obteniendo header activo:", error);
       return null;
     }
   }
@@ -408,9 +392,6 @@ class StrapiClient {
   // Obtener title section info por identifier
   async getTitleSectionInfoByIdentifier(identifier: string) {
     try {
-      console.log(
-        `🔍 Obteniendo title-section-info con identifier: ${identifier}`
-      );
       const response = await this.request("title-section-infos", {
         filters: { identifier: { $eq: identifier } },
         populate: {
@@ -419,15 +400,8 @@ class StrapiClient {
           floatingElement2: true,
         },
       });
-      console.log(
-        `📊 Title section info obtenida: ${response?.data?.[0] ? "Éxito" : "No encontrada"}`
-      );
       return response?.data?.[0] || null;
     } catch (error) {
-      console.warn(
-        `⚠️ Error obteniendo title-section-info ${identifier}:`,
-        error
-      );
       return null;
     }
   }
@@ -462,9 +436,6 @@ class StrapiClient {
   // Obtener project showcase por identifier
   async getProjectShowcaseByIdentifier(identifier: string) {
     try {
-      console.log(
-        `🔍 Obteniendo project-showcase con identifier: ${identifier}`
-      );
       const response = await this.request("project-showcases", {
         filters: { identifier: { $eq: identifier } },
         populate: {
@@ -473,15 +444,8 @@ class StrapiClient {
           highlights: true,
         },
       });
-      console.log(
-        `📊 Project showcase obtenido: ${response?.data?.[0] ? "Éxito" : "No encontrado"}`
-      );
       return response?.data?.[0] || null;
     } catch (error) {
-      console.warn(
-        `⚠️ Error obteniendo project-showcase ${identifier}:`,
-        error
-      );
       return null;
     }
   }

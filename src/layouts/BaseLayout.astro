@@ -65,35 +65,12 @@ const {
 import DataManager from "../utils/dataManager";
 
 let headerData: StrapiEntity<HeaderType> | null = null;
-let headerError: string | null = null;
 
 try {
-  console.log("🔍 BaseLayout: Obteniendo header con cache centralizado...");
-  const startTime = performance.now();
-
-  // Usar DataManager en lugar de llamada directa a strapi
+  // Usar DataManager para obtener header con cache
   headerData = await DataManager.getHeader();
-
-  const endTime = performance.now();
-  const duration = endTime - startTime;
-
-  if (headerData) {
-    console.log(
-      `🏠 Header obtenido desde DataManager en ${duration.toFixed(2)}ms:`,
-      headerData.companyName
-    );
-  } else {
-    console.log("⚠️ No se encontró header activo en DataManager");
-  }
-
-  // Mostrar estadísticas de cache
-  const stats = DataManager.getStats();
-  console.log(
-    `📊 Cache Stats - Hit Rate: ${stats.hitRate}, Avg Time: ${stats.avgTime}`
-  );
 } catch (e) {
-  headerError = e instanceof Error ? e.message : "Error loading header";
-  console.warn("⚠️ Header DataManager error:", headerError);
+  // Error silencioso - headerData permanece null y usa fallback
 }
 
 // Transformar datos del header para el componente

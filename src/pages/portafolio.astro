@@ -123,31 +123,25 @@ const carouselProject = {
 let strapiProjects: ProjectCardType[] = [];
 let portafolioDestacadoStrapi: ProjectShowcaseType | null = null;
 
-// 🚀 OPTIMIZACIÓN: Llamadas paralelas con Promise.all()
+// 🚀 OPTIMIZACIÓN: Llamadas paralelas con manejo de errores independiente
+// 📊 Llamada 1: Project Cards (puede fallar si no hay contenido)
 try {
-  console.log("🔍 Obteniendo datos de portafolio en paralelo...");
-  const startTime = performance.now();
-  
-  const [response, portafolioDestacadoStrapi_temp] = await Promise.all([
-    strapi.getProjectCards({
-      pagination: { pageSize: 100 }, // Ajustar según tu catálogo
-      sort: ["year:desc", "createdAt:desc"],
-    }),
-    strapi.getProjectShowcaseByIdentifier("portafolio-destacado")
-  ]);
-  
-  // Asignar resultados
+  const response = await strapi.getProjectCards({
+    pagination: { pageSize: 100 },
+    sort: ["year:desc", "createdAt:desc"],
+  });
   strapiProjects = response?.data || [];
-  portafolioDestacadoStrapi = portafolioDestacadoStrapi_temp;
-  
-  const endTime = performance.now();
-  const duration = endTime - startTime;
-  
-  console.log(`✅ Datos de portafolio obtenidos en paralelo - Tiempo: ${duration.toFixed(2)}ms`);
-  console.log(`📊 Proyectos: ${strapiProjects.length}, Destacado: ${portafolioDestacadoStrapi ? "✅" : "❌"}`);
-  
 } catch (error) {
-  console.warn("⚠️ Error obteniendo datos de portafolio:", error);
+  // Silencioso: usar fallback hardcodeado
+  strapiProjects = [];
+}
+
+// 🎯 Llamada 2: Project Showcase (independiente de la anterior)
+try {
+  portafolioDestacadoStrapi = await strapi.getProjectShowcaseByIdentifier("portafolio-destacado");
+} catch (error) {
+  // Silencioso: usar fallback hardcodeado
+  portafolioDestacadoStrapi = null;
 }
 
 // Transformar datos de Strapi al formato esperado por ProjectCard
@@ -248,9 +242,7 @@ const projectsGrid = [
   ...(strapiProjectsFormatted.length === 0 ? projectsGridHardcoded : []),
 ];
 
-console.log(
-  `🎯 Total de proyectos en grid: ${projectsGrid.length} (${strapiProjectsFormatted.length} de Strapi + ${strapiProjectsFormatted.length === 0 ? projectsGridHardcoded.length : 0} hardcodeados)`
-);
+// Total de proyectos combinados (Strapi + hardcodeados como fallback)
 
 // Props específicas para el Layout de Portafolio
 const layoutProps = {

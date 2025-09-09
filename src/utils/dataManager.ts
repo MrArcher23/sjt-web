@@ -37,19 +37,16 @@ class DataManager {
    */
   static async getSharedData(): Promise<SharedData> {
     const cacheKey = "shared-data";
-    const startTime = performance.now();
 
     // 🎯 Verificar cache primero
     const cached = this.getFromCache<SharedData>(cacheKey);
     if (cached) {
       this.stats.hits++;
-      console.log(`🎯 Cache HIT: ${cacheKey} - Tiempo: 0ms`);
       return cached;
     }
 
     // 📡 Cache MISS - Fetch datos en paralelo
     this.stats.misses++;
-    console.log(`📡 Cache MISS: ${cacheKey} - Fetching datos compartidos...`);
 
     try {
       const [header, activeHero] = await Promise.all([
@@ -65,21 +62,10 @@ class DataManager {
       // 💾 Guardar en cache
       this.setCache(cacheKey, sharedData, this.DEFAULT_TTL);
 
-      const endTime = performance.now();
-      const duration = endTime - startTime;
       this.stats.totalCalls++;
-      this.stats.totalTime += duration;
-
-      console.log(
-        `✅ Datos compartidos obtenidos - Tiempo: ${duration.toFixed(2)}ms`
-      );
-      console.log(
-        `📊 Cache Stats - Hits: ${this.stats.hits}, Misses: ${this.stats.misses}`
-      );
 
       return sharedData;
     } catch (error) {
-      console.error("❌ Error obteniendo datos compartidos:", error);
       // Retornar datos vacíos en caso de error
       return {
         header: null,
@@ -104,7 +90,6 @@ class DataManager {
       this.setCache(cacheKey, header, this.DEFAULT_TTL);
       return header;
     } catch (error) {
-      console.warn("⚠️ Error obteniendo header:", error);
       this.setCache(cacheKey, null, this.DEFAULT_TTL);
       return null;
     }
@@ -126,7 +111,6 @@ class DataManager {
       this.setCache(cacheKey, hero, this.DEFAULT_TTL);
       return hero;
     } catch (error) {
-      console.warn("⚠️ Error obteniendo hero:", error);
       this.setCache(cacheKey, null, this.DEFAULT_TTL);
       return null;
     }
@@ -144,19 +128,16 @@ class DataManager {
     const cached = this.getFromCache(cacheKey);
     if (cached !== undefined) {
       this.stats.hits++;
-      console.log(`🎯 Cache HIT: ${cacheKey}`);
       return cached;
     }
 
     this.stats.misses++;
-    console.log(`📡 Cache MISS: ${cacheKey} - Fetching...`);
 
     try {
       const data = await fetcher();
       this.setCache(cacheKey, data, this.DEFAULT_TTL);
       return data;
     } catch (error) {
-      console.error(`❌ Error obteniendo datos de página ${pageId}:`, error);
       this.setCache(cacheKey, null, this.DEFAULT_TTL);
       return null;
     }
@@ -175,7 +156,6 @@ class DataManager {
     const now = Date.now();
     if (now > entry.timestamp + entry.ttl) {
       this.cache.delete(key);
-      console.log(`⏰ Cache EXPIRED: ${key}`);
       return undefined;
     }
 
@@ -194,7 +174,6 @@ class DataManager {
     };
 
     this.cache.set(key, entry);
-    console.log(`💾 Cache SET: ${key} (TTL: ${ttl}ms)`);
   }
 
   /**
@@ -203,7 +182,6 @@ class DataManager {
   static clearCache(): void {
     this.cache.clear();
     this.stats = { hits: 0, misses: 0, totalCalls: 0, totalTime: 0 };
-    console.log("🧹 Cache limpiado");
   }
 
   /**
